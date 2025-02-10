@@ -1,14 +1,24 @@
+import "dotenv/config";
 import express from "express";
-const app = express();
 import cors from "cors";
-const PORT = 1337;
 import pool from "./db.js";
 import authRoutes from "./routes/authRoutes.js";
+import planRoutes from "./routes/planRoutes.js";
+
+const PORT = 1337;
+const app = express();
+
+console.log("DB_USER:", process.env.DB_USER);
+console.log("DB_PW:", process.env.DB_PW);
+console.log("DB_NAME:", process.env.DB_NAME);
 
 app.use(cors());
 app.use(express.json());
 
+// Any api request to the /auth route will go through here
 app.use("/auth", authRoutes);
+// Any api request to the /plan route will go through here
+app.use("/plan", planRoutes);
 
 app.get("/users", async (req, res) => {
   try {
