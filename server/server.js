@@ -8,10 +8,6 @@ import planRoutes from "./routes/planRoutes.js";
 const PORT = 1337;
 const app = express();
 
-console.log("DB_USER:", process.env.DB_USER);
-console.log("DB_PW:", process.env.DB_PW);
-console.log("DB_NAME:", process.env.DB_NAME);
-
 app.use(cors());
 app.use(express.json());
 
