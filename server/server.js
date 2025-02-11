@@ -4,6 +4,7 @@ import cors from "cors";
 import pool from "./db.js";
 import authRoutes from "./routes/authRoutes.js";
 import planRoutes from "./routes/planRoutes.js";
+import exerciseRoutes from "./routes/exerciseRoutes.js";
 
 const PORT = 1337;
 const app = express();
@@ -11,35 +12,26 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Any api request to the /auth route will go through here
+// Any api requests that has to do with registration and login
 app.use("/auth", authRoutes);
-// Any api request to the /plan route will go through here
+// Any api requests that has to do with splits and plans
 app.use("/plan", planRoutes);
+// Any api requests that has to do with fetching exercises
+app.use("/exercises", exerciseRoutes);
+
+app.get("/", async (req, res) => {
+  try {
+    // Loading front end
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ message: err.message });
+  }
+});
 
 app.get("/users", async (req, res) => {
   try {
     const allUsers = await pool.query("SELECT * FROM users");
     res.status(200).json(allUsers.rows);
-  } catch (err) {
-    console.log(err.message);
-    res.status(500).json({ message: err.message });
-  }
-});
-
-app.get("/workout_splits", async (req, res) => {
-  try {
-    const allSplits = await pool.query("SELECT * FROM workout_splits");
-    res.status(200).json(allSplits.rows);
-  } catch (err) {
-    console.log(err.message);
-    res.status(500).json({ message: err.message });
-  }
-});
-
-app.get("/workouts", async (req, res) => {
-  try {
-    const allworkouts = await pool.query("SELECT * FROM workouts");
-    res.status(200).json(allworkouts.rows);
   } catch (err) {
     console.log(err.message);
     res.status(500).json({ message: err.message });
