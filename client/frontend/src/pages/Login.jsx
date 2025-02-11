@@ -21,20 +21,30 @@ export default function Login() {
             <input className="p-1 rounded" type="password" />
           </div>
           <button
-            className="w-[90px] h-[40px] bg-slate-50 rounded-2xl"
+            className="w-[90px] h-[40px] bg-slate-50 rounded-2xl font-medium hover:scale-105 transition-transform duration-100"
             type="submit"
           >
             {isRegistered ? "Log in" : "Sign up"}
           </button>
           {isRegistered ? (
             <p className="text-slate-50">
-              Not yet registered? Register{" "}
-              <span onClick={() => setIsRegistered(!isRegistered)}>here</span>
+              Not yet registered? Register
+              <span
+                className="underline hover:cursor-pointer hover:text-slate-300 p-1"
+                onClick={() => setIsRegistered(!isRegistered)}
+              >
+                here
+              </span>
             </p>
           ) : (
-            <p className="text-slate-50">
-              Already have an account? Login{" "}
-              <span onClick={() => setIsRegistered(!isRegistered)}>here</span>
+            <p className="text-slate-50 ">
+              Already have an account? Login
+              <span
+                className="underline hover:cursor-pointer hover:text-slate-300 p-1"
+                onClick={() => setIsRegistered(!isRegistered)}
+              >
+                here
+              </span>
             </p>
           )}
         </div>
