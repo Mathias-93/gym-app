@@ -3,6 +3,7 @@ import express from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import pool from "../db.js";
+import authenticateToken from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
@@ -93,6 +94,15 @@ router.post("/login", async (req, res) => {
       message: "An error occured while attempting to log in.",
       error: err.message,
     });
+  }
+});
+
+router.get("/me", authenticateToken, async (req, res) => {
+  try {
+    res.status(200).json({ user: req.user });
+  } catch (err) {
+    console.error("Auth check error:", err.message);
+    res.status(500).json({ message: "Server error" });
   }
 });
 

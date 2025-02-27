@@ -79,6 +79,7 @@ export default function Login() {
         password: "",
       });
       setIsAuthenticated(true);
+      navigate("/dashboard");
     } catch (err) {
       console.log(err.message);
       alert("Failed to register. Please try again.");
