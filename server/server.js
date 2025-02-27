@@ -5,19 +5,27 @@ import pool from "./db.js";
 import authRoutes from "./routes/authRoutes.js";
 import planRoutes from "./routes/planRoutes.js";
 import exerciseRoutes from "./routes/exerciseRoutes.js";
+import authenticateToken from "./middleware/authMiddleware.js";
 
 const PORT = 1337;
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localholst:5173", // Allow frontend access
+    credentials: true, // Allows cookies (JWT) to be sent
+  })
+);
 app.use(express.json());
 
 // Any api requests that has to do with registration and login
 app.use("/auth", authRoutes);
+
 // Any api requests that has to do with splits and plans
-app.use("/plan", planRoutes);
+app.use("/plan", authenticateToken, planRoutes);
+
 // Any api requests that has to do with fetching exercises
-app.use("/exercises", exerciseRoutes);
+app.use("/exercises", authenticateToken, exerciseRoutes);
 
 app.get("/", async (req, res) => {
   try {
