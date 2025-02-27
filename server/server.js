@@ -12,7 +12,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "http://localholst:5173", // Allow frontend access
+    origin: "http://localhost:5173", // Allow frontend access
     credentials: true, // Allows cookies (JWT) to be sent
   })
 );
@@ -38,7 +38,7 @@ app.get("/", async (req, res) => {
   }
 });
 
-app.get("/users", async (req, res) => {
+app.get("/users", authenticateToken, async (req, res) => {
   try {
     const allUsers = await pool.query("SELECT * FROM users");
     res.status(200).json(allUsers.rows);

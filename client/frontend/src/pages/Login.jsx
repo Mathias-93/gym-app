@@ -12,25 +12,90 @@ export default function Login() {
 
   console.log(userInformation);
 
-  const handleLoginUser = () => {
+  const handleLoginUser = async () => {
     console.log("Login");
+
+    try {
+      const response = await fetch("http://localhost:1337/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: userInformation.email,
+          password: userInformation.password,
+        }),
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        throw new Error(`Login failed: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log("Login Success:", data);
+
+      // Update state with user info and authentication status
+      setUserInformation({
+        ...userInformation,
+        username: data.user.username, // Store user info
+        email: data.user.email,
+      });
+      setIsAuthenticated(true);
+    } catch (err) {
+      console.error("Login Error:", err.message);
+      alert("Failed to login. Please check your credentials.");
+    }
   };
 
-  const handleRegisterUser = () => {
+  const handleRegisterUser = async () => {
     console.log("Register");
+    // API request to register user
+    try {
+      const response = await fetch("http://localhost:1337/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: userInformation.email,
+          password: userInformation.password,
+          username: userInformation.username,
+        }),
+        credentials: "include",
+      });
+
+      // If failed to register throw error
+      if (!response.ok)
+        throw new Error(`Registration failed: ${response.statusText}`);
+
+      const data = await response.json();
+      console.log(data);
+
+      setUserInformation({
+        ...userInformation,
+        username: data.user.username,
+        email: data.user.email,
+        password: "",
+      });
+      setIsAuthenticated(true);
+    } catch (err) {
+      console.log(err.message);
+      alert("Failed to register. Please try again.");
+    }
+
+    // if successful, set isAuthenticated to true, login and reveal user info
+
+    // else handle showing error message
   };
 
   const handleAuthenticateUser = () => {
     console.log("Hi!");
-    if (isAuthenticated) {
-      handleLoginUser();
-    } else {
+    if (!isRegistered) {
       handleRegisterUser();
+    } else {
+      handleLoginUser();
     }
   };
 
   return (
-    <div className="w-[400px] h-[450px] bg-slate-500 mt-36 rounded shadow-xl">
+    <div className="w-[400px] h-[550px] bg-slate-500 mt-36 rounded shadow-xl">
       <div className="flex justify-center p-4 w-full bg-slate-800 rounded shadow-lg">
         <h2 className="text-2xl text-slate-50 font-semibold">
           {isRegistered ? "Log in" : "Register an account"}
@@ -43,13 +108,13 @@ export default function Login() {
             <input
               className="p-1 rounded"
               type="email"
-              placeholder="john-smith@email.com"
+              placeholder="GymBroMan@gmail.com"
               value={userInformation.email || ""}
               onChange={(e) =>
-                setUserInformation({
-                  ...userInformation,
+                setUserInformation((prev) => ({
+                  ...prev,
                   email: e.target.value,
-                })
+                }))
               }
             />
           </div>
@@ -61,13 +126,30 @@ export default function Login() {
               placeholder="•••••••••••••"
               value={userInformation.password || ""}
               onChange={(e) =>
-                setUserInformation({
-                  ...userInformation,
+                setUserInformation((prev) => ({
+                  ...prev,
                   password: e.target.value,
-                })
+                }))
               }
             />
           </div>
+          {!isRegistered && (
+            <div>
+              <p className="text-slate-50">Username:</p>
+              <input
+                className="p-1 rounded"
+                type="text"
+                placeholder="GymBroMan"
+                value={userInformation.username || ""}
+                onChange={(e) =>
+                  setUserInformation((prev) => ({
+                    ...prev,
+                    username: e.target.value,
+                  }))
+                }
+              />
+            </div>
+          )}
           <button
             className="w-[90px] h-[40px] bg-slate-50 rounded-2xl font-medium hover:scale-105 transition-transform duration-100"
             type="submit"
