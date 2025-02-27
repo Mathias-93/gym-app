@@ -3,7 +3,7 @@ import { createContext, useState } from "react";
 export const GlobalContext = createContext(null);
 
 export default function GlobalState({ children }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userInformation, setUserInformation] = useState({
     email: "",
     password: "",

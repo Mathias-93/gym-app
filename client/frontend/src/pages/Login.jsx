@@ -1,4 +1,5 @@
 import React, { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { GlobalContext } from "../Context";
 
 export default function Login() {
@@ -9,6 +10,8 @@ export default function Login() {
     isAuthenticated,
     setIsAuthenticated,
   } = useContext(GlobalContext);
+
+  const navigate = useNavigate();
 
   console.log(userInformation);
 
@@ -40,6 +43,7 @@ export default function Login() {
         email: data.user.email,
       });
       setIsAuthenticated(true);
+      navigate("/dashboard");
     } catch (err) {
       console.error("Login Error:", err.message);
       alert("Failed to login. Please check your credentials.");
