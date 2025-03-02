@@ -1,15 +1,23 @@
 import { useContext, useEffect, useState } from "react";
 import Login from "./pages/Login";
 import LandingPage from "./pages/LandingPage";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import Home from "./pages/Home";
 import NavHeader from "./components/NavHeader";
 import Dashboard from "./pages/Dashboard";
 import { GlobalContext } from "./Context";
 
 function App() {
-  const { setIsAuthenticated, setUserInformation, userInformation } =
-    useContext(GlobalContext);
+  const {
+    setIsAuthenticated,
+    isAuthenticated,
+    setUserInformation,
+    userInformation,
+    setIsLoadingAuth,
+    isLoadingAuth,
+  } = useContext(GlobalContext);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -24,12 +32,15 @@ function App() {
           setUserInformation(data.user);
           setIsAuthenticated(true);
           console.log(userInformation);
+          navigate("/dashboard");
         } else {
           setIsAuthenticated(false);
         }
       } catch (err) {
         console.log(err.message);
         setIsAuthenticated(false);
+      } finally {
+        setIsLoadingAuth(false);
       }
     };
 

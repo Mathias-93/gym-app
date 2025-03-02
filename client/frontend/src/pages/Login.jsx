@@ -13,7 +13,7 @@ export default function Login() {
 
   const navigate = useNavigate();
 
-  console.log(userInformation);
+  /* console.log(userInformation); */
 
   const handleLoginUser = async () => {
     console.log("Login");
@@ -91,7 +91,7 @@ export default function Login() {
   };
 
   const handleAuthenticateUser = () => {
-    console.log("Hi!");
+    /* console.log("Hi!"); */
     if (!isRegistered) {
       handleRegisterUser();
     } else {

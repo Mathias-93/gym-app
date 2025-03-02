@@ -3,15 +3,24 @@ import { GlobalContext } from "../Context";
 import { useNavigate } from "react-router";
 
 export default function Dashboard() {
-  const { isAuthenticated } = useContext(GlobalContext);
+  const { isAuthenticated, isLoadingAuth, loadingAuth } =
+    useContext(GlobalContext);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!isAuthenticated && !isLoadingAuth) {
       alert("Please login to access dashboard!");
       navigate("/login");
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, loadingAuth, navigate]);
+
+  if (!isAuthenticated) {
+    return (
+      <div>
+        <h1 className="text-2xl ">Loading...</h1>
+      </div>
+    );
+  }
 
   return (
     <div>
