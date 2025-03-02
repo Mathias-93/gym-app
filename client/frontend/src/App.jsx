@@ -32,7 +32,6 @@ function App() {
           setUserInformation(data.user);
           setIsAuthenticated(true);
           console.log(userInformation);
-          navigate("/dashboard");
         } else {
           setIsAuthenticated(false);
         }

@@ -97,6 +97,20 @@ router.post("/login", async (req, res) => {
   }
 });
 
+router.post("/logout", async (req, res) => {
+  try {
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Strict",
+    });
+    res.status(200).json({ message: "Successfully logged out" });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 router.get("/me", authenticateToken, async (req, res) => {
   try {
     res.status(200).json({ user: req.user });
