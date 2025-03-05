@@ -5,10 +5,14 @@ const router = express.Router();
 
 router.get("/workout_splits", async (req, res) => {
   try {
-    const allSplits = await pool.query("SELECT * FROM workout_splits");
-    res.status(200).json(allSplits.rows);
+    const userId = req.user.id;
+    const splits = await pool.query(
+      "SELECT * FROM workout_splits WHERE user_id = $1",
+      [userId]
+    );
+    res.status(200).json(splits.rows);
   } catch (err) {
-    console.log(err.message);
+    console.log("Error fetching splits:", err.message);
     res.status(500).json({ message: err.message });
   }
 });

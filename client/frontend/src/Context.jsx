@@ -10,6 +10,8 @@ export default function GlobalState({ children }) {
     password: "",
     username: "",
   });
+  const [userSplit, setUserSplit] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   return (
     <GlobalContext.Provider
@@ -20,6 +22,10 @@ export default function GlobalState({ children }) {
         setIsAuthenticated,
         isLoadingAuth,
         setIsLoadingAuth,
+        userSplit,
+        setUserSplit,
+        isLoading,
+        setIsLoading,
       }}
     >
       {children}

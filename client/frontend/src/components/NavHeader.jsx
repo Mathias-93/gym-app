@@ -55,11 +55,12 @@ export default function NavHeader() {
             <div className="w-full flex justify-between p-2">
               <Link to="/dashboard">
                 <li className="text-slate-600 text-2xl font-semibold">
-                  Dashboard
+                  Overview
                 </li>
               </Link>
+
               <li className="text-slate-600 text-2xl font-semibold">
-                <button onClick={logoutUser}>Logout</button>
+                <button onClick={logoutUser}>Log out</button>
               </li>
             </div>
           )}
