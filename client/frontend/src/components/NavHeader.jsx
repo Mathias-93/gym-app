@@ -35,30 +35,36 @@ export default function NavHeader() {
   };
 
   return (
-    <div className="w-screen h-[100px] p-10 bg-slate-700 flex justify-between items-center">
-      <h1 className="text-4xl text-slate-100 font-semibold">Gym app</h1>
+    <>
+      <div className="w-screen h-[100px] p-10 blue-gradient-custom flex items-center justify-center">
+        <h1 className="text-4xl text-slate-100 font-semibold text-center">
+          Gym app
+        </h1>
+      </div>
       {!isLoadingAuth && (
-        <ul className="flex gap-5">
+        <ul className="flex bg-slate-100 gap-5 px-6 items-center justify-between">
           <Link to={"/"}>
-            <li className="text-slate-100 text-2xl">Home</li>
+            <li className="text-slate-600 text-2xl font-semibold">Home</li>
           </Link>
           {!isAuthenticated && (
             <Link to="/login">
-              <li className="text-slate-100 text-2xl">Login</li>
+              <li className="text-slate-600 text-2xl font-semibold">Login</li>
             </Link>
           )}
           {isAuthenticated && (
-            <>
+            <div className="w-full flex justify-between p-2">
               <Link to="/dashboard">
-                <li className="text-slate-100 text-2xl">Dashboard</li>
+                <li className="text-slate-600 text-2xl font-semibold">
+                  Dashboard
+                </li>
               </Link>
-              <li className="text-slate-100 text-2xl">
+              <li className="text-slate-600 text-2xl font-semibold">
                 <button onClick={logoutUser}>Logout</button>
               </li>
-            </>
+            </div>
           )}
         </ul>
       )}
-    </div>
+    </>
   );
 }

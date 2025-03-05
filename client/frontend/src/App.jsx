@@ -49,7 +49,7 @@ function App() {
   return (
     <div className="w-screen h-screen">
       <NavHeader />
-      <div className="w-screen h-screen bg-slate-300 flex justify-center">
+      <div className="w-screen h-screen bg-slate-100 flex justify-center">
         <Routes>
           <Route exact path="/" element={<Home />} />
           <Route exact path="/login" element={<Login />} />

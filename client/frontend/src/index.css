@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+:root {
+    --blue-gradient: linear-gradient(to bottom, rgb(37, 99, 235), rgb(30, 64, 175))
+}
+
+.blue-gradient-custom {
+    background: var(--blue-gradient)
+}
+

@@ -100,8 +100,8 @@ export default function Login() {
   };
 
   return (
-    <div className="w-[400px] h-[550px] bg-slate-500 mt-36 rounded shadow-xl">
-      <div className="flex justify-center p-4 w-full bg-slate-800 rounded shadow-lg">
+    <div className="w-[400px] h-[550px] bg-slate-100 mt-36 rounded shadow-xl">
+      <div className="flex justify-center p-4 w-full blue-gradient-custom rounded-t-lg shadow-lg">
         <h2 className="text-2xl text-slate-50 font-semibold">
           {isRegistered ? "Log in" : "Register an account"}
         </h2>
@@ -109,7 +109,7 @@ export default function Login() {
       <form className="flex flex-col items-center">
         <div className="flex flex-col gap-6 mt-7 items-center w-[70%]">
           <div>
-            <p className="text-slate-50">Email:</p>
+            <p className="text-slate-800 font-semibold">Email:</p>
             <input
               className="p-1 rounded"
               type="email"
@@ -124,11 +124,11 @@ export default function Login() {
             />
           </div>
           <div>
-            <p className="text-slate-50">Password:</p>
+            <p className="text-slate-800 font-semibold">Password:</p>
             <input
               className="p-1 rounded"
               type="password"
-              placeholder="•••••••••••••"
+              placeholder="•••••••••"
               value={userInformation.password || ""}
               onChange={(e) =>
                 setUserInformation((prev) => ({
@@ -140,7 +140,7 @@ export default function Login() {
           </div>
           {!isRegistered && (
             <div>
-              <p className="text-slate-50">Username:</p>
+              <p className="text-slate-800 font-semibold">Username:</p>
               <input
                 className="p-1 rounded"
                 type="text"
@@ -156,7 +156,7 @@ export default function Login() {
             </div>
           )}
           <button
-            className="w-[90px] h-[40px] bg-slate-50 rounded-2xl font-medium hover:scale-105 transition-transform duration-100"
+            className="w-[90px] h-[40px] bg-blue-700 text-slate-50 rounded-2xl font-medium hover:scale-105 transition-transform duration-100"
             type="submit"
             onClick={(e) => {
               e.preventDefault();
@@ -166,20 +166,20 @@ export default function Login() {
             {isRegistered ? "Log in" : "Sign up"}
           </button>
           {isRegistered ? (
-            <p className="text-slate-50">
+            <p className="text-slate-800">
               Not yet registered? Register
               <span
-                className="underline hover:cursor-pointer hover:text-slate-300 p-1"
+                className="underline hover:cursor-pointer hover:text-slate-500 p-1"
                 onClick={() => setIsRegistered(!isRegistered)}
               >
                 here
               </span>
             </p>
           ) : (
-            <p className="text-slate-50 ">
+            <p className="text-slate-800">
               Already have an account? Login
               <span
-                className="underline hover:cursor-pointer hover:text-slate-300 p-1"
+                className="underline hover:cursor-pointer hover:text-slate-500 p-1"
                 onClick={() => setIsRegistered(!isRegistered)}
               >
                 here
