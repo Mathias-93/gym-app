@@ -14,7 +14,6 @@ export default function NavHeader() {
 
   const logoutUser = async () => {
     try {
-      console.log("Logout");
       const response = await fetch("http://localhost:1337/auth/logout", {
         method: "POST",
         credentials: "include",
@@ -23,11 +22,7 @@ export default function NavHeader() {
         throw new Error(`Logout failed: ${response.statusText}`);
       }
       setIsAuthenticated(false);
-      setUserInformation({
-        email: "",
-        password: "",
-        username: "",
-      });
+      setUserInformation({ email: "", password: "", username: "" });
       navigate("/login");
     } catch (err) {
       console.error(err.message);
@@ -35,39 +30,64 @@ export default function NavHeader() {
   };
 
   return (
-    <>
-      <div className="w-screen h-[100px] p-10 blue-gradient-custom flex items-center justify-center shadow-lg">
-        <h1 className="text-4xl text-slate-100 font-semibold text-center">
+    <header className="w-full bg-gray-900 dark:bg-gray-950 shadow-lg">
+      {/* Title Bar */}
+      <div className="w-full h-20 flex items-center justify-center">
+        <h1 className="text-3xl font-bold text-white tracking-wide">
           The Church of Iron
         </h1>
       </div>
-      {!isLoadingAuth && (
-        <ul className="flex bg-slate-100 gap-5 px-6 items-center justify-between">
-          <Link to={"/"}>
-            <li className="text-slate-600 text-2xl font-semibold">Home</li>
-          </Link>
-          {!isAuthenticated && (
-            <Link to="/login">
-              <li className="text-slate-600 text-2xl font-semibold p-2">
-                Log in
-              </li>
-            </Link>
-          )}
-          {isAuthenticated && (
-            <div className="w-full flex justify-between p-2">
-              <Link to="/dashboard">
-                <li className="text-slate-600 text-2xl font-semibold">
-                  Overview
-                </li>
-              </Link>
 
-              <li className="text-slate-600 text-2xl font-semibold">
-                <button onClick={logoutUser}>Log out</button>
+      {/* Navigation Menu */}
+      {!isLoadingAuth && (
+        <nav className="bg-gray-100 dark:bg-gray-800 shadow-md">
+          <ul className="flex items-center justify-between px-8 py-3">
+            {/* Home Link */}
+            <li>
+              <Link
+                to="/"
+                className="text-gray-700 dark:text-gray-300 text-lg font-medium hover:text-blue-600 dark:hover:text-blue-400 transition-all"
+              >
+                Home
+              </Link>
+            </li>
+
+            {/* Conditional Auth Links */}
+            {!isAuthenticated ? (
+              <li>
+                <Link
+                  to="/login"
+                  className="text-gray-700 dark:text-gray-300 text-lg font-medium hover:text-blue-600 dark:hover:text-blue-400 transition-all"
+                >
+                  Log In
+                </Link>
               </li>
-            </div>
-          )}
-        </ul>
+            ) : (
+              <div className="flex gap-6">
+                {/* Dashboard Link */}
+                <li>
+                  <Link
+                    to="/dashboard"
+                    className="text-gray-700 dark:text-gray-300 text-lg font-medium hover:text-blue-600 dark:hover:text-blue-400 transition-all"
+                  >
+                    Overview
+                  </Link>
+                </li>
+
+                {/* Logout Button */}
+                <li>
+                  <button
+                    onClick={logoutUser}
+                    className="bg-red-600 text-white text-lg px-4 py-1 rounded-lg hover:bg-red-700 transition-all"
+                  >
+                    Log Out
+                  </button>
+                </li>
+              </div>
+            )}
+          </ul>
+        </nav>
       )}
-    </>
+    </header>
   );
 }

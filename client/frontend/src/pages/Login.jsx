@@ -13,11 +13,7 @@ export default function Login() {
 
   const navigate = useNavigate();
 
-  /* console.log(userInformation); */
-
   const handleLoginUser = async () => {
-    console.log("Login");
-
     try {
       const response = await fetch("http://localhost:1337/auth/login", {
         method: "POST",
@@ -34,25 +30,20 @@ export default function Login() {
       }
 
       const data = await response.json();
-      console.log("Login Success:", data);
-
-      // Update state with user info and authentication status
       setUserInformation({
         ...userInformation,
-        username: data.user.username, // Store user info
+        username: data.user.username,
         email: data.user.email,
       });
       setIsAuthenticated(true);
       navigate("/dashboard");
     } catch (err) {
-      console.error("Login Error:", err.message);
       alert("Failed to login. Please check your credentials.");
+      console.error("Login Error:", err.message);
     }
   };
 
   const handleRegisterUser = async () => {
-    console.log("Register");
-    // API request to register user
     try {
       const response = await fetch("http://localhost:1337/auth/register", {
         method: "POST",
@@ -65,13 +56,11 @@ export default function Login() {
         credentials: "include",
       });
 
-      // If failed to register throw error
-      if (!response.ok)
+      if (!response.ok) {
         throw new Error(`Registration failed: ${response.statusText}`);
+      }
 
       const data = await response.json();
-      console.log(data);
-
       setUserInformation({
         ...userInformation,
         username: data.user.username,
@@ -81,39 +70,36 @@ export default function Login() {
       setIsAuthenticated(true);
       navigate("/dashboard");
     } catch (err) {
-      console.log(err.message);
       alert("Failed to register. Please try again.");
+      console.error(err.message);
     }
-
-    // if successful, set isAuthenticated to true, login and reveal user info
-
-    // else handle showing error message
   };
 
-  const handleAuthenticateUser = () => {
-    /* console.log("Hi!"); */
-    if (!isRegistered) {
-      handleRegisterUser();
-    } else {
-      handleLoginUser();
-    }
+  const handleAuthenticateUser = (e) => {
+    e.preventDefault();
+    isRegistered ? handleLoginUser() : handleRegisterUser();
   };
 
   return (
-    <div className="w-[400px] h-[550px] bg-slate-100 mt-36 rounded shadow-xl">
-      <div className="flex justify-center p-4 w-full blue-gradient-custom rounded-t-lg shadow-lg">
-        <h2 className="text-2xl text-slate-50 font-semibold">
-          {isRegistered ? "Log in" : "Register an account"}
-        </h2>
-      </div>
-      <form className="flex flex-col items-center">
-        <div className="flex flex-col gap-6 mt-7 items-center w-[70%]">
+    <div className="flex justify-center items-start min-h-screen pt-20 bg-gray-100 dark:bg-gray-900">
+      <div className="w-[400px] bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+        {/* Header */}
+        <div className="text-center mb-6">
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200">
+            {isRegistered ? "Log in" : "Register an Account"}
+          </h2>
+        </div>
+
+        {/* Form */}
+        <form className="flex flex-col gap-5" onSubmit={handleAuthenticateUser}>
           <div>
-            <p className="text-slate-800 font-semibold">Email:</p>
+            <label className="block text-gray-700 dark:text-gray-300 font-medium mb-1">
+              Email:
+            </label>
             <input
-              className="p-1 rounded"
+              className="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-200 focus:ring-2 focus:ring-blue-500"
               type="email"
-              placeholder="GymBroMan@gmail.com"
+              placeholder="example@gmail.com"
               value={userInformation.email || ""}
               onChange={(e) =>
                 setUserInformation((prev) => ({
@@ -121,12 +107,16 @@ export default function Login() {
                   email: e.target.value,
                 }))
               }
+              required
             />
           </div>
+
           <div>
-            <p className="text-slate-800 font-semibold">Password:</p>
+            <label className="block text-gray-700 dark:text-gray-300 font-medium mb-1">
+              Password:
+            </label>
             <input
-              className="p-1 rounded"
+              className="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-200 focus:ring-2 focus:ring-blue-500"
               type="password"
               placeholder="•••••••••"
               value={userInformation.password || ""}
@@ -136,13 +126,17 @@ export default function Login() {
                   password: e.target.value,
                 }))
               }
+              required
             />
           </div>
+
           {!isRegistered && (
             <div>
-              <p className="text-slate-800 font-semibold">Username:</p>
+              <label className="block text-gray-700 dark:text-gray-300 font-medium mb-1">
+                Username:
+              </label>
               <input
-                className="p-1 rounded"
+                className="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-200 focus:ring-2 focus:ring-blue-500"
                 type="text"
                 placeholder="GymBroMan"
                 value={userInformation.username || ""}
@@ -152,42 +146,45 @@ export default function Login() {
                     username: e.target.value,
                   }))
                 }
+                required
               />
             </div>
           )}
+
+          {/* Submit Button */}
           <button
-            className="w-[90px] h-[40px] bg-blue-700 text-slate-50 rounded-2xl font-medium hover:scale-105 transition-transform duration-100"
+            className="w-full py-2 bg-blue-600 text-white rounded-lg text-lg font-medium hover:bg-blue-700 dark:hover:bg-blue-500 transition-all"
             type="submit"
-            onClick={(e) => {
-              e.preventDefault();
-              handleAuthenticateUser();
-            }}
           >
             {isRegistered ? "Log in" : "Sign up"}
           </button>
+        </form>
+
+        {/* Switch between Login/Register */}
+        <div className="text-center mt-4 text-gray-700 dark:text-gray-300">
           {isRegistered ? (
-            <p className="text-slate-800">
-              Not yet registered? Register
+            <p>
+              Not yet registered?{" "}
               <span
-                className="underline hover:cursor-pointer hover:text-slate-500 p-1"
-                onClick={() => setIsRegistered(!isRegistered)}
+                className="text-blue-600 dark:text-blue-400 font-medium hover:underline cursor-pointer"
+                onClick={() => setIsRegistered(false)}
               >
-                here
+                Sign up here
               </span>
             </p>
           ) : (
-            <p className="text-slate-800">
-              Already have an account? Login
+            <p>
+              Already have an account?{" "}
               <span
-                className="underline hover:cursor-pointer hover:text-slate-500 p-1"
-                onClick={() => setIsRegistered(!isRegistered)}
+                className="text-blue-600 dark:text-blue-400 font-medium hover:underline cursor-pointer"
+                onClick={() => setIsRegistered(true)}
               >
-                here
+                Log in here
               </span>
             </p>
           )}
         </div>
-      </form>
+      </div>
     </div>
   );
 }
