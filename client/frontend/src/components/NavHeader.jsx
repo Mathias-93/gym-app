@@ -1,6 +1,8 @@
 import React, { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { GlobalContext } from "../Context";
+import useTheme from "../hooks/useTheme";
+import { SunIcon, MoonIcon } from "@heroicons/react/24/outline";
 
 export default function NavHeader() {
   const {
@@ -11,6 +13,8 @@ export default function NavHeader() {
   } = useContext(GlobalContext);
 
   const navigate = useNavigate();
+
+  const { theme, toggleTheme } = useTheme();
 
   const logoutUser = async () => {
     try {
@@ -37,6 +41,19 @@ export default function NavHeader() {
           The Church of Iron
         </h1>
       </div>
+
+      {/* Dark Mode Toggle */}
+
+      <button
+        onClick={toggleTheme}
+        className="p-2 rounded-lg m-2 bg-gray-700 dark:bg-gray-600 text-white hover:scale-105 transition-all"
+      >
+        {theme === "light" ? (
+          <MoonIcon className="w-6 h-6" />
+        ) : (
+          <SunIcon className="w-6 h-6" />
+        )}
+      </button>
 
       {/* Navigation Menu */}
       {!isLoadingAuth && (
@@ -70,7 +87,7 @@ export default function NavHeader() {
                     to="/dashboard"
                     className="text-gray-700 dark:text-gray-300 text-lg font-medium hover:text-blue-600 dark:hover:text-blue-400 transition-all"
                   >
-                    Overview
+                    Dashboard
                   </Link>
                 </li>
 
