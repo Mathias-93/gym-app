@@ -36,9 +36,9 @@ export default function NavHeader() {
 
   return (
     <>
-      <div className="w-screen h-[100px] p-10 blue-gradient-custom flex items-center justify-center">
+      <div className="w-screen h-[100px] p-10 blue-gradient-custom flex items-center justify-center shadow-lg">
         <h1 className="text-4xl text-slate-100 font-semibold text-center">
-          Gym app
+          The Church of Iron
         </h1>
       </div>
       {!isLoadingAuth && (
@@ -48,7 +48,9 @@ export default function NavHeader() {
           </Link>
           {!isAuthenticated && (
             <Link to="/login">
-              <li className="text-slate-600 text-2xl font-semibold">Login</li>
+              <li className="text-slate-600 text-2xl font-semibold p-2">
+                Log in
+              </li>
             </Link>
           )}
           {isAuthenticated && (

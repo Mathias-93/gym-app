@@ -1,6 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import { GlobalContext } from "../Context";
 import { useNavigate } from "react-router";
+import DashboardCard from "../components/DashboardCard";
 
 export default function Dashboard() {
   const {
@@ -54,25 +55,31 @@ export default function Dashboard() {
   }
 
   return (
-    <div>
-      <section id="my-page">
-        <h1 className="text-2xl">Welcome back {userInformation?.username}!</h1>
-        <div>
-          <h2>Upcoming workouts in {userSplit?.name}</h2>
+    <div className="w-full h-full flex flex-col">
+      <h1 className="text-3xl text-center">
+        Welcome back {userInformation?.username}!
+      </h1>
+      <div className="w-full h-full p-4 grid grid-cols-2 items-center">
+        <DashboardCard>
+          <h2>
+            Upcoming workouts in{" "}
+            <span className="font-semibold">{userSplit?.name}</span>
+          </h2>
+
           <p>Next workout: </p>
-        </div>
-        <div>
+        </DashboardCard>
+        <DashboardCard>
           <h2>Previous workouts</h2>
           <p>Exercises</p>
-        </div>
-        <div>
+        </DashboardCard>
+        <DashboardCard>
           <h2>Weekly summary</h2>
           <ul>
             <p>workout 1</p>
             <p>workout 2</p>
           </ul>
-        </div>
-      </section>
+        </DashboardCard>
+      </div>
     </div>
   );
 }
