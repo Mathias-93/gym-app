@@ -81,7 +81,7 @@ export default function Login() {
   };
 
   return (
-    <div className="flex justify-center items-start min-h-screen pt-20 bg-gray-100 dark:bg-gray-900">
+    <div className="flex justify-center items-start min-h-screen bg-gray-100 dark:bg-gray-900 pt-[250px]">
       <div className="w-[400px] bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
         {/* Header */}
         <div className="text-center mb-6">

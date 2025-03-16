@@ -71,7 +71,7 @@ router.post("/login", async (req, res) => {
 
     // Generate a signed token
     const token = jwt.sign(
-      { id: foundUser.id, username: foundUser.username },
+      { id: foundUser.user_id, username: foundUser.username },
       process.env.JWT_SECRET,
       { expiresIn: "12h" }
     );
@@ -82,6 +82,8 @@ router.post("/login", async (req, res) => {
       sameSite: "Strict",
       maxAge: 12 * 60 * 60 * 1000, // 12 hours
     });
+    console.log("Generated Token:", token);
+    console.log("Decoded Token:", jwt.decode(token));
 
     res.status(200).json({
       message: "Successfully authenticated.",

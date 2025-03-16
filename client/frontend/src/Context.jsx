@@ -10,7 +10,7 @@ export default function GlobalState({ children }) {
     password: "",
     username: "",
   });
-  const [userSplit, setUserSplit] = useState(null);
+  const [userSplit, setUserSplit] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
   return (

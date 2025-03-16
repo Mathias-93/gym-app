@@ -34,26 +34,29 @@ export default function NavHeader() {
   };
 
   return (
-    <header className="w-full bg-gray-900 dark:bg-gray-950 shadow-lg">
+    <header className="fixed top-0 left-0 w-full bg-gray-900 dark:bg-gray-950 shadow-lg z-50">
       {/* Title Bar */}
-      <div className="w-full h-20 flex items-center justify-center">
-        <h1 className="text-3xl font-bold text-white tracking-wide">
+      <div className="w-full h-20 flex items-center justify-between px-6 relative">
+        {/* Empty Spacer (for alignment) */}
+        <div className="w-10"></div>
+
+        {/* Centered Title */}
+        <h1 className="absolute left-1/2 -translate-x-1/2 text-3xl font-bold text-white tracking-wide">
           The Church of Iron
         </h1>
+
+        {/* Dark Mode Toggle (right-aligned) */}
+        <button
+          onClick={toggleTheme}
+          className="p-2 rounded-lg bg-gray-700 dark:bg-gray-600 text-white hover:scale-105 transition-all"
+        >
+          {theme === "light" ? (
+            <MoonIcon className="w-6 h-6" />
+          ) : (
+            <SunIcon className="w-6 h-6" />
+          )}
+        </button>
       </div>
-
-      {/* Dark Mode Toggle */}
-
-      <button
-        onClick={toggleTheme}
-        className="p-2 rounded-lg m-2 bg-gray-700 dark:bg-gray-600 text-white hover:scale-105 transition-all"
-      >
-        {theme === "light" ? (
-          <MoonIcon className="w-6 h-6" />
-        ) : (
-          <SunIcon className="w-6 h-6" />
-        )}
-      </button>
 
       {/* Navigation Menu */}
       {!isLoadingAuth && (
@@ -63,7 +66,7 @@ export default function NavHeader() {
             <li>
               <Link
                 to="/"
-                className="text-gray-700 dark:text-gray-300 text-lg font-medium hover:text-blue-600 dark:hover:text-blue-400 transition-all"
+                className="text-gray-700 dark:text-gray-100 text-lg font-medium hover:text-blue-600 dark:hover:text-blue-400 transition-all"
               >
                 Home
               </Link>
@@ -74,7 +77,7 @@ export default function NavHeader() {
               <li>
                 <Link
                   to="/login"
-                  className="text-gray-700 dark:text-gray-300 text-lg font-medium hover:text-blue-600 dark:hover:text-blue-400 transition-all"
+                  className="text-gray-700 dark:text-gray-100 text-lg font-medium hover:text-blue-600 dark:hover:text-blue-400 transition-all"
                 >
                   Log In
                 </Link>
@@ -82,10 +85,10 @@ export default function NavHeader() {
             ) : (
               <div className="flex gap-6">
                 {/* Dashboard Link */}
-                <li>
+                <li className="flex items-center justify-center">
                   <Link
                     to="/dashboard"
-                    className="text-gray-700 dark:text-gray-300 text-lg font-medium hover:text-blue-600 dark:hover:text-blue-400 transition-all"
+                    className="text-gray-700 dark:text-gray-100 text-lg font-medium hover:text-blue-600 dark:hover:text-blue-400 transition-all"
                   >
                     Dashboard
                   </Link>

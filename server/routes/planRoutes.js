@@ -5,6 +5,7 @@ const router = express.Router();
 
 router.get("/workout_splits", async (req, res) => {
   try {
+    console.log("Request User Object:", req.user); // Log full user object
     const userId = req.user.id;
     const splits = await pool.query(
       "SELECT * FROM workout_splits WHERE user_id = $1",

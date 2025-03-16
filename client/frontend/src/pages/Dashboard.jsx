@@ -16,6 +16,7 @@ export default function Dashboard() {
   const navigate = useNavigate();
 
   const fetchUserSplit = async () => {
+    console.log("Is running");
     try {
       setIsLoading(true);
       const response = await fetch(
@@ -25,9 +26,13 @@ export default function Dashboard() {
           credentials: "include",
         }
       );
+      console.log(response.status);
       if (response.ok) {
         const data = await response.json();
-        setUserSplit(data[0]);
+        console.log("Fetched data:", data); // Log the fetched data
+        setUserSplit(data);
+      } else {
+        console.error("Fetch failed with status:", response.status);
       }
     } catch (err) {
       console.error(err.message);
@@ -43,8 +48,10 @@ export default function Dashboard() {
   }, [isAuthenticated, isLoadingAuth, navigate]);
 
   useEffect(() => {
-    fetchUserSplit();
-  }, []);
+    if (isAuthenticated) {
+      fetchUserSplit();
+    }
+  }, [isAuthenticated]);
 
   if (isLoadingAuth) {
     return (
@@ -53,23 +60,25 @@ export default function Dashboard() {
       </div>
     );
   }
-
+  console.log(userSplit);
   return (
-    <div className="w-full min-h-screen p-6 bg-gray-100 dark:bg-gray-900">
+    <div className="w-full min-h-screen p-6 bg-gray-100 dark:bg-gray-900 pt-[250px]">
       <h1 className="text-3xl font-bold text-center text-gray-800 dark:text-gray-200">
-        Welcome back, {userInformation?.username}!
+        Welcome back, {userInformation?.username}! {userSplit.name}
       </h1>
 
       <div className="grid gap-6 mt-6 md:grid-cols-2 lg:grid-cols-3">
         <DashboardCard>
-          <h2 className="text-lg font-semibold">Upcoming Workout</h2>
+          <h2 className="text-lg font-semibold dark:text-gray-100">
+            Upcoming Workout
+          </h2>
           <p className="text-gray-600 dark:text-gray-300">
             {userSplit?.name ? (
               <button
-                onClick={() => navigate(`/workout/${userSplit.name}`)}
+                onClick={() => navigate(`/workout/${userSplit?.name}`)}
                 className="text-blue-600 dark:text-blue-400 hover:underline"
               >
-                {userSplit.name}
+                {userSplit?.name}
               </button>
             ) : (
               "No upcoming workout"
@@ -78,7 +87,9 @@ export default function Dashboard() {
         </DashboardCard>
 
         <DashboardCard>
-          <h2 className="text-lg font-semibold">Previous Workouts</h2>
+          <h2 className="text-lg font-semibold dark:text-gray-100">
+            Previous Workouts
+          </h2>
           <ul className="space-y-2 text-gray-600 dark:text-gray-300">
             {/* Placeholder: Replace with mapped previous workouts */}
             <li>
@@ -99,40 +110,18 @@ export default function Dashboard() {
         </DashboardCard>
 
         <DashboardCard>
-          <h2 className="text-lg font-semibold">Weekly Summary</h2>
+          <h2 className="text-lg font-semibold dark:text-gray-100">
+            Weekly Summary
+          </h2>
           <p className="text-gray-600 dark:text-gray-300">Coming soon...</p>
+        </DashboardCard>
+        <DashboardCard>
+          <h2 className="text-lg font-semibold dark:text-gray-100">
+            My training splits
+          </h2>
+          <p className="text-gray-600 dark:text-gray-300">{userSplit?.name}</p>
         </DashboardCard>
       </div>
     </div>
   );
-}
-
-{
-  /* <div className="w-full h-full flex flex-col">
-      <h1 className="text-3xl text-center">
-        Welcome back {userInformation?.username}!
-      </h1>
-      <div className="w-full h-full p-4 grid grid-cols-2 items-center">
-        <DashboardCard>
-          <h2>
-            Upcoming workouts in{" "}
-            <span className="font-semibold">{userSplit?.name}</span>
-          </h2>
-
-          <p>Next workout: </p>
-        </DashboardCard>
-        <DashboardCard>
-          <h2>Previous workouts</h2>
-          <p>Exercises</p>
-        </DashboardCard>
-        <DashboardCard>
-          <h2>Weekly summary</h2>
-          <ul>
-            <p>workout 1</p>
-            <p>workout 2</p>
-          </ul>
-        </DashboardCard>
-      </div>
-    </div>
-  ); */
 }

@@ -47,9 +47,9 @@ function App() {
   }, []);
 
   return (
-    <div className="w-screen h-screen">
+    <div className="bg-slate-100 dark:bg-gray-900">
       <NavHeader />
-      <div className="w-screen h-screen bg-slate-100 flex justify-center">
+      <div className="bg-slate-100 dark:bg-gray-900 flex justify-center">
         <Routes>
           <Route exact path="/" element={<Home />} />
           <Route exact path="/login" element={<Login />} />
