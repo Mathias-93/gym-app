@@ -17,13 +17,13 @@ router.post("/register", async (req, res) => {
 
     // Saving new user and info about user to db
     const newUser = await pool.query(
-      "INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING id, username, email",
+      "INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING user_id, username, email",
       [username, email, hashedPassword]
     );
 
     // Generating JWT token for new user
     const token = jwt.sign(
-      { id: newUser.rows[0].id, username: newUser.rows[0].username },
+      { id: newUser.rows[0].user_id, username: newUser.rows[0].username },
       process.env.JWT_SECRET,
       { expiresIn: "12h" }
     );
