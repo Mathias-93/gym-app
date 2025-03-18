@@ -1,0 +1,107 @@
+import React, { useState } from "react";
+
+export default function AddNewSplit() {
+  const [splitName, setSplitName] = useState("");
+  const [days, setDays] = useState(3); // Default to 3 days
+  const [workouts, setWorkouts] = useState({});
+
+  // Dynamically update workouts for each day
+  const handleWorkoutChange = (day, index, value) => {
+    setWorkouts((prev) => ({
+      ...prev,
+      [day]:
+        prev[day]?.map((exercise, i) => (i === index ? value : exercise)) || [],
+    }));
+  };
+
+  // Add a new workout field for a specific day
+  const addWorkout = (day) => {
+    setWorkouts((prev) => ({
+      ...prev,
+      [day]: [...(prev[day] || []), ""], // Add empty input for new exercise
+    }));
+  };
+
+  return (
+    <div className="mt-[200px] flex justify-center">
+      <div className="w-full max-w-lg bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+        <h1 className="text-3xl font-semibold text-gray-900 dark:text-gray-100 mb-6">
+          Add New Split
+        </h1>
+
+        {/* Split Name Input */}
+        <div className="mb-5">
+          <label className="block text-gray-700 dark:text-gray-300 font-medium mb-1">
+            Split Name
+          </label>
+          <input
+            type="text"
+            value={splitName}
+            onChange={(e) => setSplitName(e.target.value)}
+            placeholder="Enter split name"
+            className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          />
+        </div>
+
+        {/* Select Number of Days */}
+        <div className="mb-5">
+          <label className="block text-gray-700 dark:text-gray-300 font-medium mb-1">
+            Number of Workouts per split
+          </label>
+          <input
+            type="number"
+            min="1"
+            max="7"
+            value={days}
+            onChange={(e) => setDays(Number(e.target.value))}
+            className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          />
+        </div>
+
+        {/* Dynamic Workout Sections */}
+        {Array.from({ length: days }, (_, day) => (
+          <div key={day} className="mb-6">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+              Workout {day + 1}
+            </h2>
+            {workouts[day]?.map((exercise, index) => (
+              <input
+                key={index}
+                type="text"
+                value={exercise}
+                onChange={(e) =>
+                  handleWorkoutChange(day, index, e.target.value)
+                }
+                placeholder={`Exercise ${index + 1}`}
+                className="w-full mt-2 p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              />
+            ))}
+            <button
+              type="button"
+              onClick={() => addWorkout(day)}
+              className="mt-3 w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
+            >
+              + Add Exercise
+            </button>
+          </div>
+        ))}
+
+        {/* Buttons */}
+        <div className="flex justify-between mt-6">
+          <button
+            type="button"
+            className="w-1/2 bg-gray-300 dark:bg-gray-700 text-gray-900 dark:text-white py-3 rounded-lg mr-2 hover:bg-gray-400 dark:hover:bg-gray-600 transition"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="w-1/2 bg-green-500 text-white py-3 rounded-lg ml-2 hover:bg-green-600 transition"
+          >
+            Save Split
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from "react";
 import { GlobalContext } from "../Context";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import DashboardCard from "../components/DashboardCard";
 
 export default function Dashboard() {
@@ -16,7 +16,6 @@ export default function Dashboard() {
   const navigate = useNavigate();
 
   const fetchUserSplit = async () => {
-    console.log("Is running");
     try {
       setIsLoading(true);
       const response = await fetch(
@@ -26,7 +25,6 @@ export default function Dashboard() {
           credentials: "include",
         }
       );
-      console.log(response.status);
       if (response.ok) {
         const data = await response.json();
         console.log("Fetched data:", data); // Log the fetched data
@@ -42,17 +40,16 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    console.log("Is running useeffect auth");
     if (!isAuthenticated && !isLoadingAuth) {
       navigate("/login");
     }
   }, [isAuthenticated, isLoadingAuth, navigate]);
 
-  /* useEffect(() => {
+  useEffect(() => {
     if (isAuthenticated) {
       fetchUserSplit();
     }
-  }, [isAuthenticated]); */
+  }, [isAuthenticated]);
 
   if (isLoadingAuth) {
     return (
@@ -61,7 +58,7 @@ export default function Dashboard() {
       </div>
     );
   }
-  console.log(userSplit);
+
   return (
     <div className="w-full min-h-screen p-6 bg-gray-100 dark:bg-gray-900 pt-[250px]">
       <h1 className="text-3xl font-bold text-center text-gray-800 dark:text-gray-200">
@@ -74,12 +71,12 @@ export default function Dashboard() {
             Upcoming Workout
           </h2>
           <p className="text-gray-600 dark:text-gray-300">
-            {userSplit?.name ? (
+            {userSplit[0] ? (
               <button
                 onClick={() => navigate(`/workout/${userSplit?.name}`)}
                 className="text-blue-600 dark:text-blue-400 hover:underline"
               >
-                {userSplit?.name}
+                {userSplit[0].name}
               </button>
             ) : (
               "No upcoming workout"
@@ -120,8 +117,25 @@ export default function Dashboard() {
           <h2 className="text-lg font-semibold dark:text-gray-100">
             My training splits
           </h2>
-          <p className="text-gray-600 dark:text-gray-300">{userSplit?.name}</p>
+          {userSplit?.map((split) => {
+            return (
+              <p
+                key={split.split_id}
+                className="text-gray-600 dark:text-gray-300"
+              >
+                {split.name}
+              </p>
+            );
+          })}
         </DashboardCard>
+        <div className="flex items-center justify-between p-6 bg-green-50 border-green-300 text-green-700 hover:text-green-600 rounded-xl shadow-lg border transition-all hover:shadow-xl hover:-translate-y-0.5 cursor-pointer">
+          <h2 className="text-lg font-semibold text-green-700 dark:text-green-400">
+            Add New Split
+          </h2>
+          <Link to={"/newsplit"}>
+            <i className="fa-solid fa-circle-plus text-4xl text-green-500 hover:text-green-600 transition-colors"></i>
+          </Link>
+        </div>
       </div>
     </div>
   );
