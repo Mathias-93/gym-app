@@ -42,16 +42,17 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
+    console.log("Is running useeffect auth");
     if (!isAuthenticated && !isLoadingAuth) {
       navigate("/login");
     }
   }, [isAuthenticated, isLoadingAuth, navigate]);
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (isAuthenticated) {
       fetchUserSplit();
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated]); */
 
   if (isLoadingAuth) {
     return (

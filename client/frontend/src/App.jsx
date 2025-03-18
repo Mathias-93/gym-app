@@ -21,6 +21,7 @@ function App() {
 
   useEffect(() => {
     const checkAuth = async () => {
+      console.log("Is running checkauth");
       try {
         const response = await fetch("http://localhost:1337/auth/me", {
           method: "GET",
