@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import { GlobalContext } from "../Context";
 
 export default function AddNewSplit() {
+  const { setIsLoading } = useContext(GlobalContext);
   const [splitName, setSplitName] = useState("");
   const [days, setDays] = useState(3); // Default to 3 days
   const [workouts, setWorkouts] = useState({});
@@ -22,12 +24,15 @@ export default function AddNewSplit() {
     }));
   };
 
+  // Remove exercise from form for specific day
   const removeExercise = (day, index) => {
     setWorkouts((prev) => ({
       ...prev,
       [day]: prev[day].filter((_, i) => i !== index),
     }));
   };
+
+  const addCustomSplitToDb = async (days, splitname) => {};
 
   return (
     <div className="mt-[200px] flex justify-center">
@@ -112,6 +117,7 @@ export default function AddNewSplit() {
           <button
             type="submit"
             className="w-1/2 bg-green-500 text-white py-3 rounded-lg ml-2 hover:bg-green-600 transition"
+            onClick={() => addCustomSplitToDb(days, splitName)}
           >
             Save Split
           </button>
