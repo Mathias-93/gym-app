@@ -22,9 +22,16 @@ export default function AddNewSplit() {
     }));
   };
 
+  const removeExercise = (day, index) => {
+    setWorkouts((prev) => ({
+      ...prev,
+      [day]: prev[day].filter((_, i) => i !== index),
+    }));
+  };
+
   return (
     <div className="mt-[200px] flex justify-center">
-      <div className="w-full max-w-lg bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+      <div className="w-full min-w-[500px] max-w-3xl bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
         <h1 className="text-3xl font-semibold text-gray-900 dark:text-gray-100 mb-6">
           Add New Split
         </h1>
@@ -61,20 +68,28 @@ export default function AddNewSplit() {
         {/* Dynamic Workout Sections */}
         {Array.from({ length: days }, (_, day) => (
           <div key={day} className="mb-6">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
               Workout {day + 1}
             </h2>
             {workouts[day]?.map((exercise, index) => (
-              <input
-                key={index}
-                type="text"
-                value={exercise}
-                onChange={(e) =>
-                  handleWorkoutChange(day, index, e.target.value)
-                }
-                placeholder={`Exercise ${index + 1}`}
-                className="w-full mt-2 p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              />
+              <div key={index} className="flex items-center space-x-3">
+                <input
+                  type="text"
+                  value={exercise}
+                  onChange={(e) =>
+                    handleWorkoutChange(day, index, e.target.value)
+                  }
+                  placeholder={`Exercise ${index + 1}`}
+                  className="flex-1 mt-2 p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() => removeExercise(day, index)}
+                  className="mt-2 w-10 h-10 flex items-center justify-center bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-200 dark:hover:bg-red-800 transition"
+                >
+                  <i className="fa-solid fa-xmark text-xl"></i>
+                </button>
+              </div>
             ))}
             <button
               type="button"
