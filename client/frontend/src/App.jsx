@@ -16,37 +16,62 @@ function App() {
     userInformation,
     setIsLoadingAuth,
     isLoadingAuth,
+    isLoading,
+    setIsLoading,
+    exercises,
+    setExercises,
   } = useContext(GlobalContext);
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      console.log("Is running checkauth");
-      try {
-        const response = await fetch("http://localhost:1337/auth/me", {
-          method: "GET",
-          credentials: "include",
-        });
+  const checkAuth = async () => {
+    try {
+      const response = await fetch("http://localhost:1337/auth/me", {
+        method: "GET",
+        credentials: "include",
+      });
 
-        if (response.ok) {
-          const data = await response.json();
-          setUserInformation(data.user);
-          setIsAuthenticated(true);
-          console.log(userInformation);
-        } else {
-          setIsAuthenticated(false);
-        }
-      } catch (err) {
-        console.log(err.message);
+      if (response.ok) {
+        const data = await response.json();
+        setUserInformation(data.user);
+        setIsAuthenticated(true);
+      } else {
         setIsAuthenticated(false);
-      } finally {
-        setIsLoadingAuth(false);
       }
-    };
+    } catch (err) {
+      console.log(err.message);
+      setIsAuthenticated(false);
+    } finally {
+      setIsLoadingAuth(false);
+    }
+  };
 
-    checkAuth();
-  }, []);
+  const fetchExercises = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch("http://localhost:1337/exercises", {
+        method: "GET",
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setExercises(data);
+      }
+    } catch (err) {
+      console.log("Error fetching exercises:", err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    checkAuth().then(() => {
+      if (isAuthenticated) {
+        fetchExercises();
+      }
+    });
+  }, [isAuthenticated]);
 
   return (
     <div className="bg-slate-100 dark:bg-gray-900">

@@ -12,6 +12,7 @@ export default function GlobalState({ children }) {
   });
   const [userSplit, setUserSplit] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [exercises, setExercises] = useState(null);
 
   return (
     <GlobalContext.Provider
@@ -26,6 +27,8 @@ export default function GlobalState({ children }) {
         setUserSplit,
         isLoading,
         setIsLoading,
+        exercises,
+        setExercises,
       }}
     >
       {children}
