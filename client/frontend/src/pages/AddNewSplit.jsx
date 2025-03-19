@@ -1,11 +1,50 @@
 import React, { useContext, useState } from "react";
 import { GlobalContext } from "../Context";
+import SuggestionDropdown from "../components/SuggestionDropdown";
 
 export default function AddNewSplit() {
-  const { setIsLoading } = useContext(GlobalContext);
+  const { setIsLoading, exercises, setExercises } = useContext(GlobalContext);
   const [splitName, setSplitName] = useState("");
   const [days, setDays] = useState(3); // Default to 3 days
   const [workouts, setWorkouts] = useState({});
+  const [searchParam, setSearchParam] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [filteredExercises, setFilteredExercises] = useState([]);
+
+  const handleExercisesFilter = (query) => {
+    const lowerQuery = query.toLowerCase();
+    setSearchParam(lowerQuery);
+
+    if (lowerQuery.length > 1) {
+      const filteredData =
+        exercises?.filter(
+          (exercise) => exercise.name.toLowerCase().includes(lowerQuery) // Only filtering by name
+        ) || [];
+
+      setFilteredExercises(filteredData);
+      setShowDropdown(filteredData.length > 0); // Only show dropdown if results exist
+    } else {
+      setShowDropdown(false);
+    }
+  };
+
+  const handleClickDropdown = (day, index, exerciseName) => {
+    setWorkouts((prev) => ({
+      ...prev,
+      [day]: prev[day].map(
+        (exercise, i) => (i === index ? exerciseName : exercise) // Update the correct field
+      ),
+    }));
+    setShowDropdown(false);
+  };
+
+  // Remove exercise from form for specific day
+  const removeExercise = (day, index) => {
+    setWorkouts((prev) => ({
+      ...prev,
+      [day]: prev[day].filter((_, i) => i !== index),
+    }));
+  };
 
   // Dynamically update workouts for each day
   const handleWorkoutChange = (day, index, value) => {
@@ -24,15 +63,10 @@ export default function AddNewSplit() {
     }));
   };
 
-  // Remove exercise from form for specific day
-  const removeExercise = (day, index) => {
-    setWorkouts((prev) => ({
-      ...prev,
-      [day]: prev[day].filter((_, i) => i !== index),
-    }));
+  const addCustomSplitToDb = async (days, splitname) => {
+    console.log("added.. NOT");
+    console.log("LOOK HERE", filteredExercises);
   };
-
-  const addCustomSplitToDb = async (days, splitname) => {};
 
   return (
     <div className="mt-[200px] flex justify-center">
@@ -81,12 +115,21 @@ export default function AddNewSplit() {
                 <input
                   type="text"
                   value={exercise}
-                  onChange={(e) =>
-                    handleWorkoutChange(day, index, e.target.value)
-                  }
+                  onChange={(e) => {
+                    handleWorkoutChange(day, index, e.target.value);
+                    handleExercisesFilter(e.target.value);
+                  }}
                   placeholder={`Exercise ${index + 1}`}
                   className="flex-1 mt-2 p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 />
+                {showDropdown && (
+                  <SuggestionDropdown
+                    data={filteredExercises}
+                    handleClickDropdown={(exerciseName) =>
+                      handleClickDropdown(day, index, exerciseName)
+                    }
+                  />
+                )}
                 <button
                   type="button"
                   onClick={() => removeExercise(day, index)}
