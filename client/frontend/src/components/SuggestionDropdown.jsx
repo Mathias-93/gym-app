@@ -1,8 +1,11 @@
-import React from "react";
+import React, { forwardRef } from "react";
 
-export default function SuggestionDropdown({ data, handleClickDropdown }) {
+const SuggestionDropdown = forwardRef(({ data, handleClickDropdown }, ref) => {
   return (
-    <ul className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg absolute mt-1 w-full z-10">
+    <ul
+      ref={ref}
+      className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg absolute mt-1 w-full z-10"
+    >
       {data?.length > 0
         ? data.map((exercise, index) => (
             <li
@@ -16,4 +19,6 @@ export default function SuggestionDropdown({ data, handleClickDropdown }) {
         : null}
     </ul>
   );
-}
+});
+
+export default SuggestionDropdown;

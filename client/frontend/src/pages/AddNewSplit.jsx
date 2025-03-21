@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react";
 import { GlobalContext } from "../Context";
 import SuggestionDropdown from "../components/SuggestionDropdown";
+import { useClickOutsideAndEscape } from "../hooks/useClickOutsideAndEscape";
 
 export default function AddNewSplit() {
   const { setIsLoading, exercises, setExercises } = useContext(GlobalContext);
@@ -8,9 +9,13 @@ export default function AddNewSplit() {
   const [days, setDays] = useState(3); // Default to 3 days
   const [workouts, setWorkouts] = useState({});
   const [searchParam, setSearchParam] = useState("");
-  const [showDropdown, setShowDropdown] = useState(false);
   const [filteredExercises, setFilteredExercises] = useState([]);
   const [activeDropdown, setActiveDropdown] = useState(null); // e.g., 'Monday-0'
+
+  const dropdownref = useClickOutsideAndEscape(() => {
+    setActiveDropdown(null);
+    setFilteredExercises([]);
+  });
 
   const handleExercisesFilter = (day, index, query) => {
     const lowerQuery = query.toLowerCase();
@@ -37,6 +42,7 @@ export default function AddNewSplit() {
       ),
     }));
     setActiveDropdown(null);
+    setFilteredExercises([]);
   };
 
   // Remove exercise from form for specific day
@@ -126,6 +132,7 @@ export default function AddNewSplit() {
                 {activeDropdown === `${day}-${index}` &&
                   filteredExercises.length > 0 && (
                     <SuggestionDropdown
+                      ref={dropdownref}
                       data={filteredExercises}
                       handleClickDropdown={(exerciseName) =>
                         handleClickDropdown(day, index, exerciseName)
