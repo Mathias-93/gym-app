@@ -10,8 +10,9 @@ export default function AddNewSplit() {
   const [searchParam, setSearchParam] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
   const [filteredExercises, setFilteredExercises] = useState([]);
+  const [activeDropdown, setActiveDropdown] = useState(null); // e.g., 'Monday-0'
 
-  const handleExercisesFilter = (query) => {
+  const handleExercisesFilter = (day, index, query) => {
     const lowerQuery = query.toLowerCase();
     setSearchParam(lowerQuery);
 
@@ -22,9 +23,9 @@ export default function AddNewSplit() {
         ) || [];
 
       setFilteredExercises(filteredData);
-      setShowDropdown(filteredData.length > 0); // Only show dropdown if results exist
+      setActiveDropdown(`${day}-${index}`);
     } else {
-      setShowDropdown(false);
+      setActiveDropdown(null);
     }
   };
 
@@ -35,7 +36,7 @@ export default function AddNewSplit() {
         (exercise, i) => (i === index ? exerciseName : exercise) // Update the correct field
       ),
     }));
-    setShowDropdown(false);
+    setActiveDropdown(null);
   };
 
   // Remove exercise from form for specific day
@@ -92,7 +93,7 @@ export default function AddNewSplit() {
         {/* Select Number of Days */}
         <div className="mb-5">
           <label className="block text-gray-700 dark:text-gray-300 font-medium mb-1">
-            Number of Workouts per split
+            Number of workout days per split
           </label>
           <input
             type="number"
@@ -117,19 +118,20 @@ export default function AddNewSplit() {
                   value={exercise}
                   onChange={(e) => {
                     handleWorkoutChange(day, index, e.target.value);
-                    handleExercisesFilter(e.target.value);
+                    handleExercisesFilter(day, index, e.target.value);
                   }}
                   placeholder={`Exercise ${index + 1}`}
                   className="flex-1 mt-2 p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 />
-                {showDropdown && (
-                  <SuggestionDropdown
-                    data={filteredExercises}
-                    handleClickDropdown={(exerciseName) =>
-                      handleClickDropdown(day, index, exerciseName)
-                    }
-                  />
-                )}
+                {activeDropdown === `${day}-${index}` &&
+                  filteredExercises.length > 0 && (
+                    <SuggestionDropdown
+                      data={filteredExercises}
+                      handleClickDropdown={(exerciseName) =>
+                        handleClickDropdown(day, index, exerciseName)
+                      }
+                    />
+                  )}
                 <button
                   type="button"
                   onClick={() => removeExercise(day, index)}
