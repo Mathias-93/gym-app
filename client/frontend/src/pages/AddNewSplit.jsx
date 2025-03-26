@@ -1,10 +1,16 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { GlobalContext } from "../Context";
 import SuggestionDropdown from "../components/SuggestionDropdown";
 import { useClickOutsideAndEscape } from "../hooks/useClickOutsideAndEscape";
 
 export default function AddNewSplit() {
-  const { setIsLoading, exercises, setExercises } = useContext(GlobalContext);
+  const {
+    setIsLoading,
+    exercises,
+    setExercises,
+    customUserSplit,
+    setCustomUserSplit,
+  } = useContext(GlobalContext);
   const [splitName, setSplitName] = useState("");
   const [days, setDays] = useState(3); // Default to 3 days
   const [workouts, setWorkouts] = useState({});
@@ -70,15 +76,49 @@ export default function AddNewSplit() {
     }));
   };
 
+  // For making sure the custom split is a valid format
+  const validateSplit = (splitName, days, workouts) => {
+    if (
+      typeof splitName !== "string" ||
+      splitName.length <= 0 ||
+      days < 3 ||
+      days > 12
+    ) {
+      return false;
+    }
+
+    const values = Object.values(workouts);
+
+    const isValidFormat = (exerciseList) => {
+      return (
+        Array.isArray(exerciseList) &&
+        exerciseList.length > 0 &&
+        exerciseList.every(
+          (exercise) =>
+            typeof exercise === "string" && exercise.trim().length > 0
+        )
+      );
+    };
+
+    const allWorkoutsValid = Object.values(workouts).every(isValidFormat);
+
+    return allWorkoutsValid;
+  };
+
   const addCustomSplitToDb = async (days, splitname) => {
     console.log("added.. NOT");
     console.log("LOOK HERE", filteredExercises);
+    console.log(workouts);
   };
+
+  useEffect(() => {
+    console.log(workouts);
+  }, []);
 
   return (
     <div className="mt-[200px] flex justify-center">
       <div className="w-full min-w-[500px] max-w-3xl bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
-        <h1 className="text-3xl font-semibold text-gray-900 dark:text-gray-100 mb-6">
+        <h1 className="text-3xl font-semibold text-gray-900 dark:text-gray-100 mb-6 text-center">
           Add New Split
         </h1>
 
@@ -169,7 +209,7 @@ export default function AddNewSplit() {
           <button
             type="submit"
             className="w-1/2 bg-green-500 text-white py-3 rounded-lg ml-2 hover:bg-green-600 transition"
-            onClick={() => addCustomSplitToDb(days, splitName)}
+            onClick={() => validateSplit(splitName, days, workouts)}
           >
             Save Split
           </button>

@@ -83,8 +83,8 @@ router.post("/login", async (req, res) => {
       secure: true,
       maxAge: 12 * 60 * 60 * 1000, // 12 hours
     });
-    console.log("Generated Token:", token);
-    console.log("Decoded Token:", jwt.decode(token));
+    // console.log("Generated Token:", token);
+    // console.log("Decoded Token:", jwt.decode(token));
 
     res.status(200).json({
       message: "Successfully authenticated.",

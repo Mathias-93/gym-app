@@ -11,6 +11,7 @@ export default function GlobalState({ children }) {
     username: "",
   });
   const [userSplit, setUserSplit] = useState([]);
+  const [customUserSplit, setCustomUserSplit] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [exercises, setExercises] = useState(null);
 
@@ -29,6 +30,8 @@ export default function GlobalState({ children }) {
         setIsLoading,
         exercises,
         setExercises,
+        customUserSplit,
+        setCustomUserSplit,
       }}
     >
       {children}
