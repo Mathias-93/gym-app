@@ -55,7 +55,7 @@ router.post("/save_custom_split", async (req, res) => {
         `,
         [
           newSplit.rows[0].split_id,
-          `${splitName} Day ${parseInt(key)}`,
+          `${splitName} Day ${parseInt(key) + 1}`,
           true,
           userId,
         ]
