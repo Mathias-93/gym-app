@@ -27,4 +27,23 @@ router.get("/workouts", async (req, res) => {
   }
 });
 
+router.post("/save_custom_split", async (req, res) => {
+  try {
+    const { splitName, numberOfDays, workoutsObject } = req.body;
+
+    const newEntry = await pool.query("", [
+      splitName,
+      numberOfDays,
+      workoutsObject,
+    ]);
+
+    res.status(201).json({
+      message: "Split successfully added to database",
+    });
+  } catch (err) {
+    console.log("Error saving split to db:", err.message);
+    res.status(500).json({ message: err.message });
+  }
+});
+
 export default router;

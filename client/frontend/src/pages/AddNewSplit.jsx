@@ -80,14 +80,12 @@ export default function AddNewSplit() {
   const validateSplit = (splitName, days, workouts) => {
     if (
       typeof splitName !== "string" ||
-      splitName.length <= 0 ||
-      days < 3 ||
+      splitName.trim().length === 0 ||
+      days < 2 ||
       days > 12
     ) {
       return false;
     }
-
-    const values = Object.values(workouts);
 
     const isValidFormat = (exerciseList) => {
       return (
@@ -105,10 +103,12 @@ export default function AddNewSplit() {
     return allWorkoutsValid;
   };
 
-  const addCustomSplitToDb = async (days, splitname) => {
-    console.log("added.. NOT");
-    console.log("LOOK HERE", filteredExercises);
-    console.log(workouts);
+  const addCustomSplitToDb = async (splitName, days, workouts) => {
+    if (!validateSplit(splitName, days, workouts)) {
+      alert("Please complete all fields before saving!");
+      return;
+    }
+    alert("Success!");
   };
 
   useEffect(() => {
@@ -209,7 +209,7 @@ export default function AddNewSplit() {
           <button
             type="submit"
             className="w-1/2 bg-green-500 text-white py-3 rounded-lg ml-2 hover:bg-green-600 transition"
-            onClick={() => validateSplit(splitName, days, workouts)}
+            onClick={() => addCustomSplitToDb(splitName, days, workouts)}
           >
             Save Split
           </button>
