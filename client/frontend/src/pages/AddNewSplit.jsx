@@ -108,7 +108,32 @@ export default function AddNewSplit() {
       alert("Please complete all fields before saving!");
       return;
     }
-    alert("Success!");
+    try {
+      setIsLoading(true);
+      const response = await fetch(
+        "http://localhost:1337/plan/save_custom_split",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            splitName: splitName,
+            numberOfDays: days,
+            workoutsObject: workouts,
+          }),
+          credentials: "include",
+        }
+      );
+      if (!response.ok) {
+        throw new Error(`Something went wrong: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      alert("Success!");
+    } catch (err) {
+      console.error("Something went wrong:", err.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
