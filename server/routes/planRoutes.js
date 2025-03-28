@@ -29,6 +29,7 @@ router.get("/workouts", async (req, res) => {
 
 router.post("/save_custom_split", async (req, res) => {
   try {
+    await pool.query("BEGIN");
     const { splitName, numberOfDays, workoutsObject } = req.body;
     const userId = req.user.id;
 
@@ -41,10 +42,28 @@ router.post("/save_custom_split", async (req, res) => {
       [userId, splitName, numberOfDays, true]
     );
 
+    for (const [key, value] of Object.entries(workoutsObject)) {
+      const newWorkout = await pool.query(
+        `
+        INSERT INTO workouts (split_id, name, is_custom, user_id)
+        VALUES ($1, $2, $3, $4)
+        RETURNING workout_id
+        `,
+        [
+          newSplit.rows[0].split_id,
+          `${splitName} Day ${parseInt(key)}`,
+          true,
+          userId,
+        ]
+      );
+    }
+
     res.status(201).json({
       message: "Split successfully added to database",
     });
+    await pool.query("COMMIT");
   } catch (err) {
+    await pool.query("ROLLBACK");
     console.log("Error saving split to db:", err.message);
     res.status(500).json({ message: err.message });
   }
