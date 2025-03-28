@@ -30,12 +30,16 @@ router.get("/workouts", async (req, res) => {
 router.post("/save_custom_split", async (req, res) => {
   try {
     const { splitName, numberOfDays, workoutsObject } = req.body;
+    const userId = req.user.id;
 
-    const newEntry = await pool.query("", [
-      splitName,
-      numberOfDays,
-      workoutsObject,
-    ]);
+    const newSplit = await pool.query(
+      `
+      INSERT INTO workout_splits (user_id, name, days_per_week, is_custom)
+      VALUES ($1, $2, $3, $4)
+      RETURNING split_id
+      `,
+      [userId, splitName, numberOfDays, true]
+    );
 
     res.status(201).json({
       message: "Split successfully added to database",
