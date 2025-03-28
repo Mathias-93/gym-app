@@ -27,12 +27,15 @@ router.get("/workouts", async (req, res) => {
   }
 });
 
+// Saving a custom split to db
+
 router.post("/save_custom_split", async (req, res) => {
   try {
     await pool.query("BEGIN");
     const { splitName, numberOfDays, workoutsObject } = req.body;
     const userId = req.user.id;
 
+    // Adding split to workout_splits table
     const newSplit = await pool.query(
       `
       INSERT INTO workout_splits (user_id, name, days_per_week, is_custom)
@@ -42,6 +45,7 @@ router.post("/save_custom_split", async (req, res) => {
       [userId, splitName, numberOfDays, true]
     );
 
+    // Adding split to workouts table
     for (const [key, value] of Object.entries(workoutsObject)) {
       const newWorkout = await pool.query(
         `
@@ -56,12 +60,41 @@ router.post("/save_custom_split", async (req, res) => {
           userId,
         ]
       );
-    }
+      for (const exerciseName of value) {
+        const existingExercise = await pool.query(
+          `
+          SELECT exercise_id FROM exercises WHERE name=$1
+          `,
+          [exerciseName]
+        );
 
+        let exerciseId;
+
+        if (existingExercise.rows.length > 0) {
+          exerciseId = existingExercise.rows[0].exercise_id;
+        } else {
+          const newExercise = await pool.query(
+            `INSERT INTO exercises (name, is_custom, user_id)
+             VALUES ($1, $2, $3)
+             RETURNING exercise_id`,
+            [exerciseName, true, userId]
+          );
+          exerciseId = newExercise.rows[0].exercise_id;
+        }
+
+        await pool.query(
+          `
+          INSERT INTO workout_exercises_junction_table (workout_id, exercise_id)
+          VALUES ($1, $2)
+          `,
+          [newWorkout.rows[0].workout_id, exerciseId]
+        );
+      }
+    }
+    await pool.query("COMMIT");
     res.status(201).json({
       message: "Split successfully added to database",
     });
-    await pool.query("COMMIT");
   } catch (err) {
     await pool.query("ROLLBACK");
     console.log("Error saving split to db:", err.message);
