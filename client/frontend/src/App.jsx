@@ -7,6 +7,8 @@ import NavHeader from "./components/NavHeader";
 import Dashboard from "./pages/Dashboard";
 import { GlobalContext } from "./Context";
 import AddNewSplit from "./pages/AddNewSplit";
+import LogPage from "./pages/LogPage";
+import SplitPage from "./pages/SplitPage";
 
 function App() {
   const {
@@ -85,7 +87,9 @@ function App() {
           <Route exact path="/" element={<Home />} />
           <Route exact path="/login" element={<Login />} />
           <Route exact path="/dashboard" element={<Dashboard />} />
-          <Route exact path="/newsplit" element={<AddNewSplit />}></Route>
+          <Route exact path="/newsplit" element={<AddNewSplit />} />
+          <Route exact path="/logpage" element={<LogPage />} />
+          <Route exact path="splitpage" element={<SplitPage />} />
         </Routes>
       </div>
     </div>
