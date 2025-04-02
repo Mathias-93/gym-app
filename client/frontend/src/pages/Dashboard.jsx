@@ -68,6 +68,21 @@ export default function Dashboard() {
       <div className="grid gap-6 mt-6 md:grid-cols-2 lg:grid-cols-3">
         <DashboardCard>
           <h2 className="text-lg font-semibold dark:text-gray-100">
+            My training splits
+          </h2>
+          {userSplit?.map((split) => {
+            return (
+              <p
+                key={split.split_id}
+                className="text-gray-600 dark:text-gray-300"
+              >
+                {split.name}
+              </p>
+            );
+          })}
+        </DashboardCard>
+        <DashboardCard>
+          <h2 className="text-lg font-semibold dark:text-gray-100">
             Upcoming Workout
           </h2>
           <p className="text-gray-600 dark:text-gray-300">
@@ -84,12 +99,11 @@ export default function Dashboard() {
           </p>
         </DashboardCard>
 
-        <DashboardCard>
+        {/*  <DashboardCard>
           <h2 className="text-lg font-semibold dark:text-gray-100">
             Previous Workouts
           </h2>
           <ul className="space-y-2 text-gray-600 dark:text-gray-300">
-            {/* Placeholder: Replace with mapped previous workouts */}
             <li>
               <button
                 onClick={() => navigate("/workout/history/1")}
@@ -105,29 +119,15 @@ export default function Dashboard() {
           >
             View full history →
           </button>
-        </DashboardCard>
+        </DashboardCard> */}
 
-        <DashboardCard>
+        {/* <DashboardCard>
           <h2 className="text-lg font-semibold dark:text-gray-100">
             Weekly Summary
           </h2>
           <p className="text-gray-600 dark:text-gray-300">Coming soon...</p>
-        </DashboardCard>
-        <DashboardCard>
-          <h2 className="text-lg font-semibold dark:text-gray-100">
-            My training splits
-          </h2>
-          {userSplit?.map((split) => {
-            return (
-              <p
-                key={split.split_id}
-                className="text-gray-600 dark:text-gray-300"
-              >
-                {split.name}
-              </p>
-            );
-          })}
-        </DashboardCard>
+        </DashboardCard> */}
+
         <div className="flex items-center justify-between p-6 bg-green-50 border-green-300 text-green-700 hover:text-green-600 rounded-xl shadow-lg border transition-all hover:shadow-xl hover:-translate-y-0.5 cursor-pointer">
           <h2 className="text-lg font-semibold text-green-700 dark:text-green-400">
             Add New Split
