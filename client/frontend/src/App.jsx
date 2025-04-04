@@ -89,7 +89,7 @@ function App() {
           <Route exact path="/dashboard" element={<Dashboard />} />
           <Route exact path="/newsplit" element={<AddNewSplit />} />
           <Route exact path="/logpage" element={<LogPage />} />
-          <Route exact path="splitpage" element={<SplitPage />} />
+          <Route path="/split/:splitId" element={<SplitPage />} />
         </Routes>
       </div>
     </div>

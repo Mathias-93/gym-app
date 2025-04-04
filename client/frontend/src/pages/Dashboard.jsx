@@ -74,8 +74,8 @@ export default function Dashboard() {
             return (
               <p
                 key={split.split_id}
-                className="text-gray-600 dark:text-gray-300 cursor-pointer hover:text-gray-400 dark:hover:text-gray-600"
-                onClick={() => navigate("splitpage")}
+                className="text-gray-600 w-fit dark:text-gray-300 cursor-pointer hover:text-gray-400 dark:hover:text-gray-600"
+                onClick={() => navigate(`/split/${split.split_id}`)}
               >
                 {split.name}
               </p>
@@ -129,12 +129,12 @@ export default function Dashboard() {
           <p className="text-gray-600 dark:text-gray-300">Coming soon...</p>
         </DashboardCard> */}
 
-        <div className="flex items-center justify-between p-6 bg-green-50 border-green-300 text-green-700 hover:text-green-600 rounded-xl shadow-lg border transition-all hover:shadow-xl hover:-translate-y-0.5 cursor-pointer">
-          <h2 className="text-lg font-semibold text-green-700 dark:text-green-400">
+        <div className="flex items-center justify-between p-6 dark:bg-green-600 bg-green-50 border-green-300 text-green-700 hover:text-green-600 rounded-xl shadow-lg border transition-all hover:shadow-xl hover:-translate-y-0.5 cursor-pointer">
+          <h2 className="text-lg font-semibold text-green-700 dark:text-green-200">
             Add New Split
           </h2>
           <Link to={"/newsplit"}>
-            <i className="fa-solid fa-circle-plus text-4xl text-green-500 hover:text-green-600 transition-colors"></i>
+            <i className="fa-solid fa-circle-plus text-4xl text-green-500 dark:text-green-200 hover:text-green-600 transition-colors"></i>
           </Link>
         </div>
       </div>
