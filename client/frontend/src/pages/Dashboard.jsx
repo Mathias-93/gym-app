@@ -74,7 +74,8 @@ export default function Dashboard() {
             return (
               <p
                 key={split.split_id}
-                className="text-gray-600 dark:text-gray-300"
+                className="text-gray-600 dark:text-gray-300 cursor-pointer hover:text-gray-400 dark:hover:text-gray-600"
+                onClick={() => navigate("splitpage")}
               >
                 {split.name}
               </p>
