@@ -42,7 +42,7 @@ export default function NavHeader() {
 
         {/* Centered Title */}
         <h1 className="absolute left-1/2 -translate-x-1/2 text-3xl font-bold text-white tracking-wide">
-          The Church of Iron
+          The Iron Archives
         </h1>
 
         {/* Dark Mode Toggle (right-aligned) */}
