@@ -12,32 +12,9 @@ export default function Dashboard() {
     setIsLoading,
     userSplit,
     setUserSplit,
+    fetchUserSplit,
   } = useContext(GlobalContext);
   const navigate = useNavigate();
-
-  const fetchUserSplit = async () => {
-    try {
-      setIsLoading(true);
-      const response = await fetch(
-        "http://localhost:1337/plan/workout_splits",
-        {
-          method: "GET",
-          credentials: "include",
-        }
-      );
-      if (response.ok) {
-        const data = await response.json();
-        console.log("Fetched data:", data); // Log the fetched data
-        setUserSplit(data);
-      } else {
-        console.error("Fetch failed with status:", response.status);
-      }
-    } catch (err) {
-      console.error(err.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   useEffect(() => {
     if (!isAuthenticated && !isLoadingAuth) {

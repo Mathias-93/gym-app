@@ -15,6 +15,30 @@ export default function GlobalState({ children }) {
   const [isLoading, setIsLoading] = useState(false);
   const [exercises, setExercises] = useState(null);
 
+  const fetchUserSplit = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(
+        "http://localhost:1337/plan/workout_splits",
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Fetched data:", data); // Log the fetched data
+        setUserSplit(data);
+      } else {
+        console.error("Fetch failed with status:", response.status);
+      }
+    } catch (err) {
+      console.error(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <GlobalContext.Provider
       value={{
@@ -32,6 +56,7 @@ export default function GlobalState({ children }) {
         setExercises,
         customUserSplit,
         setCustomUserSplit,
+        fetchUserSplit,
       }}
     >
       {children}

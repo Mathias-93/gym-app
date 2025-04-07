@@ -28,6 +28,7 @@ function App() {
 
   const checkAuth = async () => {
     try {
+      setIsLoading(true);
       const response = await fetch("http://localhost:1337/auth/me", {
         method: "GET",
         credentials: "include",
@@ -45,6 +46,7 @@ function App() {
       setIsAuthenticated(false);
     } finally {
       setIsLoadingAuth(false);
+      setIsLoading(false);
     }
   };
 

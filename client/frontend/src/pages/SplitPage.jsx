@@ -14,8 +14,14 @@ export default function SplitPage() {
     console.log(currentSplit);
   }, []);
 
-  if (isLoading) {
-    return <p className="text-center text-gray-500">Loading..</p>;
+  if (isLoading || !currentSplit) {
+    return (
+      <div className="w-full min-h-screen p-6 bg-gray-100 dark:bg-gray-900 pt-[250px] flex justify-center">
+        <p className="flex justify-center text-center text-gray-500 text-4xl">
+          Loading..
+        </p>
+      </div>
+    );
   }
 
   return (
