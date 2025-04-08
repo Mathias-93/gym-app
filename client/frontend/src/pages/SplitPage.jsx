@@ -1,24 +1,31 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { GlobalContext } from "../Context";
 import { useParams } from "react-router";
 
 export default function SplitPage() {
   const { splitId } = useParams();
-  const { userSplit, setUserSplit, isLoading } = useContext(GlobalContext);
-
-  const currentSplit = userSplit.find(
-    (split) => split.split_id.toString() === splitId
-  );
+  const { userSplit, setUserSplit, isLoading, fetchUserSplit } =
+    useContext(GlobalContext);
+  const [localUserSplit, setLocalUserSplit] = useState(null);
 
   useEffect(() => {
-    console.log(currentSplit);
-  }, []);
+    if (!userSplit || userSplit.length === 0) {
+      fetchUserSplit();
+    } else {
+      const match = userSplit.find(
+        (split) => split.split_id.toString() === splitId
+      );
+      setLocalUserSplit(match);
+    }
 
-  if (isLoading || !currentSplit) {
+    console.log(localUserSplit);
+  }, [userSplit, splitId]);
+
+  if (isLoading || !localUserSplit) {
     return (
       <div className="w-full min-h-screen p-6 bg-gray-100 dark:bg-gray-900 pt-[250px] flex justify-center">
         <p className="flex justify-center text-center text-gray-500 text-4xl">
-          Loading..
+          Loading...
         </p>
       </div>
     );
@@ -28,7 +35,7 @@ export default function SplitPage() {
     <div className="w-full min-h-screen p-6 bg-gray-100 dark:bg-gray-900 pt-[250px] flex justify-center">
       <div className="w-full min-w-[500px] max-w-3xl bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
         <h1 className="text-3xl font-bold text-center text-gray-800 dark:text-gray-200">
-          {currentSplit?.name}
+          {localUserSplit?.name}
         </h1>
 
         <div className="mb-5">

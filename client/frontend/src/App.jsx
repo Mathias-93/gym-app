@@ -70,10 +70,6 @@ function App() {
   };
 
   useEffect(() => {
-    console.log(exercises);
-  }, [exercises]);
-
-  useEffect(() => {
     checkAuth().then(() => {
       if (isAuthenticated) {
         fetchExercises();
