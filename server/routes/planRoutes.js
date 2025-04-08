@@ -17,16 +17,6 @@ router.get("/workout_splits", async (req, res) => {
   }
 });
 
-router.get("/workouts", async (req, res) => {
-  try {
-    const allworkouts = await pool.query("SELECT * FROM workouts");
-    res.status(200).json(allworkouts.rows);
-  } catch (err) {
-    console.log(err.message);
-    res.status(500).json({ message: err.message });
-  }
-});
-
 // Saving a custom split to db
 
 router.post("/save_custom_split", async (req, res) => {
@@ -98,6 +88,72 @@ router.post("/save_custom_split", async (req, res) => {
   } catch (err) {
     await pool.query("ROLLBACK");
     console.log("Error saving split to db:", err.message);
+    res.status(500).json({ message: err.message });
+  }
+});
+
+router.get("/workouts", async (req, res) => {
+  try {
+    const allWorkouts = await pool.query("SELECT * FROM workouts");
+    res.status(200).json(allWorkouts.rows);
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ message: err.message });
+  }
+});
+
+router.get("/split/:splitId/full", async (req, res) => {
+  const userId = req.user.id;
+  const splitId = req.params.splitId;
+
+  try {
+    const results = await pool.query(
+      `
+      SELECT
+        w.workout_id,
+        w.name AS workout_name,
+        w.is_custom,
+        wejt.exercise_id,
+        e.name AS exercise_name
+      FROM workouts w
+      JOIN workout_exercises_junction_table wejt ON w.workout_id = wejt.workout_id
+      JOIN exercises e ON wejt.exercise_id = e.exercise_id
+      WHERE w.split_id = $1 AND w.user_id = $2
+      ORDER BY w.workout_id
+      `,
+      [splitId, userId]
+    );
+    const groupedWorkouts = [];
+    const workoutMap = new Map();
+
+    for (const row of results.rows) {
+      const {
+        workout_id,
+        workout_name,
+        is_custom,
+        exercise_id,
+        exercise_name,
+      } = row;
+
+      if (!workoutMap.has(workout_id)) {
+        const newWorkout = {
+          workout_id,
+          name: workout_name,
+          is_custom,
+          exercises: [],
+        };
+        workoutMap.set(workout_id, newWorkout);
+        groupedWorkouts.push(newWorkout);
+      }
+
+      workoutMap.get(workout_id).exercises.push({
+        exercise_id,
+        name: exercise_name,
+      });
+    }
+    res.status(200).json(groupedWorkouts);
+  } catch (error) {
+    console.log(err.message);
     res.status(500).json({ message: err.message });
   }
 });

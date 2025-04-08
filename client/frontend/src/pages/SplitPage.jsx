@@ -4,9 +4,33 @@ import { useParams } from "react-router";
 
 export default function SplitPage() {
   const { splitId } = useParams();
-  const { userSplit, setUserSplit, isLoading, fetchUserSplit } =
+  const { userSplit, setUserSplit, isLoading, fetchUserSplit, setIsLoading } =
     useContext(GlobalContext);
   const [localUserSplit, setLocalUserSplit] = useState(null);
+  const [workouts, setWorkouts] = useState(null);
+
+  const fetchWorkouts = async () => {
+    try {
+      setIsLoading(true);
+      const res = await fetch(
+        `http://localhost:1337/plan/split/${splitId}/full`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      if (res.ok) {
+        const data = await res.json();
+        setWorkouts(data);
+      } else {
+        console.error("Fetch failed with status:", response.status);
+      }
+    } catch (err) {
+      console.log(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (!userSplit || userSplit.length === 0) {
@@ -20,6 +44,11 @@ export default function SplitPage() {
 
     console.log(localUserSplit);
   }, [userSplit, splitId]);
+
+  useEffect(() => {
+    fetchWorkouts();
+    console.log(workouts);
+  }, [localUserSplit]);
 
   if (isLoading || !localUserSplit) {
     return (
