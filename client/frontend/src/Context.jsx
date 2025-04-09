@@ -27,7 +27,7 @@ export default function GlobalState({ children }) {
       );
       if (response.ok) {
         const data = await response.json();
-        console.log("Fetched data:", data); // Log the fetched data
+        // console.log("Fetched data:", data); // Log the fetched data
         setUserSplit(data);
       } else {
         console.error("Fetch failed with status:", response.status);
