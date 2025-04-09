@@ -21,12 +21,20 @@ export default function SplitPage() {
   const [searchParam, setSearchParam] = useState("");
   const [filteredExercises, setFilteredExercises] = useState([]);
   const [activeDropdown, setActiveDropdown] = useState(null);
-  const [activeFieldForEdit, setActiveFieldForEdit] = useState(null);
+  const [splitNameIsEdit, setSplitNameIsEdit] = useState(false);
+  const [editableSplitName, setEditableSplitName] = useState("");
 
   const dropdownref = useClickOutsideAndEscape(() => {
     setActiveDropdown(null);
     setFilteredExercises([]);
   });
+
+  const handleEditSplitName = (newName) => {
+    setLocalUserSplit((prev) => ({
+      ...prev,
+      name: newName,
+    }));
+  };
 
   const handleExercisesFilter = (workoutIndex, exerciseIndex, exerciseName) => {
     const lowerExerciseName = exerciseName.toLowerCase();
@@ -56,6 +64,14 @@ export default function SplitPage() {
     setFilteredExercises([]);
   };
 
+  const handleChangeExercise = (exerciseIndex, workoutIndex, newName) => {
+    setEditableWorkouts((prev) => {
+      const updated = structuredClone(prev);
+      updated[workoutIndex].exercises[exerciseIndex].name = newName;
+      return updated;
+    });
+  };
+
   const fetchWorkouts = async () => {
     try {
       setIsLoading(true);
@@ -83,14 +99,6 @@ export default function SplitPage() {
     }
   };
 
-  const handleChangeExercise = (exerciseIndex, workoutIndex, newName) => {
-    setEditableWorkouts((prev) => {
-      const updated = structuredClone(prev);
-      updated[workoutIndex].exercises[exerciseIndex].name = newName;
-      return updated;
-    });
-  };
-
   useEffect(() => {
     if (!userSplit || userSplit.length === 0) {
       fetchUserSplit();
@@ -101,8 +109,14 @@ export default function SplitPage() {
       setLocalUserSplit(match);
     }
 
-    console.log(localUserSplit);
+    console.log("Local User Split:", localUserSplit);
   }, [userSplit, splitId]);
+
+  useEffect(() => {
+    if (localUserSplit) {
+      setEditableSplitName(localUserSplit.name);
+    }
+  }, [localUserSplit]);
 
   useEffect(() => {
     fetchWorkouts();
@@ -122,11 +136,33 @@ export default function SplitPage() {
   return (
     // Whole thing
     <div className="w-full min-h-screen p-6 bg-gray-100 dark:bg-gray-900 pt-[200px] flex flex-col gap-10 mt-10 justify-center items-center">
-      <h1 className="text-5xl font-bold text-center text-gray-800 dark:text-gray-200 flex gap-5">
-        {localUserSplit?.name}
-        <i className="fa-solid fa-pencil text-2xl"></i>
-      </h1>
-      {/* Form */}
+      {splitNameIsEdit ? (
+        <div className="flex gap-5 items-center justify-center">
+          <input
+            value={editableSplitName}
+            onChange={(e) => setEditableSplitName(e.target.value)}
+            className="flex-1 p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          />
+          <i
+            onClick={() => {
+              setSplitNameIsEdit(false);
+              handleEditSplitName(editableSplitName);
+            }}
+            className="fa-solid fa-circle-check text-3xl cursor-pointer text-green-500 py-3 hover:text-green-600 transition"
+          ></i>
+        </div>
+      ) : (
+        <h1 className="text-5xl font-bold text-center text-gray-800 dark:text-gray-200 flex gap-5">
+          {localUserSplit?.name}
+          <i
+            className="fa-solid fa-pencil text-2xl cursor-pointer"
+            onClick={(e) => {
+              e.preventDefault();
+              setSplitNameIsEdit(true);
+            }}
+          ></i>
+        </h1>
+      )}
       {editableWorkouts.map((workout, workoutIndex) => {
         return (
           <div
@@ -135,7 +171,10 @@ export default function SplitPage() {
           >
             <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-200 flex gap-2 justify-center">
               {workout?.name}
-              <i className="fa-solid fa-pencil text-sm"></i>
+              <i
+                className="fa-solid fa-pencil text-sm cursor-pointer"
+                onClick={() => handleEditWorkoutName()}
+              ></i>
             </h1>
             {workout.exercises.map((exercise, exerciseIndex) => {
               return (
@@ -186,7 +225,7 @@ export default function SplitPage() {
       })}
       <div className="flex justify-center mt-6">
         <button
-          type="submit"
+          type="button"
           className="w-1/2 bg-green-500 text-white py-3 rounded-lg ml-2 hover:bg-green-600 transition"
         >
           Save Split
