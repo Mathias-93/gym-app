@@ -128,7 +128,7 @@ export default function AddNewSplit() {
       }
 
       const data = await response.json();
-      alert("Success!");
+      alert("Split added to db!");
     } catch (err) {
       console.error("Something went wrong:", err.message);
     } finally {
