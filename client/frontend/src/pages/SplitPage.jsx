@@ -23,7 +23,6 @@ export default function SplitPage() {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [splitNameIsEdit, setSplitNameIsEdit] = useState(false);
   const [editableSplitName, setEditableSplitName] = useState("");
-  const [workoutNameIsEdit, setWorkoutNameIsEdit] = useState(false);
   const [editableWorkoutNamesAndIsEdit, setEditableWorkoutNamesAndIsEdit] =
     useState([{ name: "", isEdit: false }]);
 
@@ -31,10 +30,6 @@ export default function SplitPage() {
     setActiveDropdown(null);
     setFilteredExercises([]);
   });
-
-  /* const handleEditSplitName = (newName) => {
-    setEditableSplitName(newName);
-  }; */
 
   const applyWorkoutChanges = () => {
     setEditableWorkouts((prev) =>
@@ -44,14 +39,6 @@ export default function SplitPage() {
       }))
     );
   };
-
-  /* const handleEditWorkoutName = (workoutIndex, newName) => {
-    setEditableWorkouts((prev) => {
-      const updated = structuredClone(prev);
-      updated[workoutIndex].name = newName;
-      return updated;
-    });
-  }; */
 
   const handleExercisesFilter = (workoutIndex, exerciseIndex, exerciseName) => {
     const lowerExerciseName = exerciseName.toLowerCase();
@@ -188,7 +175,7 @@ export default function SplitPage() {
 
       {/* Mapping out workouts */}
 
-      {editableWorkouts.map((workout, workoutIndex) => {
+      {editableWorkouts?.map((workout, workoutIndex) => {
         return (
           <div
             key={workout.workout_id}
