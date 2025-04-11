@@ -32,12 +32,9 @@ export default function SplitPage() {
     setFilteredExercises([]);
   });
 
-  const handleEditSplitName = (newName) => {
-    setLocalUserSplit((prev) => ({
-      ...prev,
-      name: newName,
-    }));
-  };
+  /* const handleEditSplitName = (newName) => {
+    setEditableSplitName(newName);
+  }; */
 
   const applyWorkoutChanges = () => {
     setEditableWorkouts((prev) =>
@@ -172,14 +169,14 @@ export default function SplitPage() {
           <i
             onClick={() => {
               setSplitNameIsEdit(false);
-              handleEditSplitName(editableSplitName);
+              setEditableSplitName(editableSplitName);
             }}
             className="fa-solid fa-circle-check text-3xl cursor-pointer text-green-500 py-3 hover:text-green-600 transition"
           ></i>
         </div>
       ) : (
         <h1 className="text-5xl font-bold text-center text-gray-800 dark:text-gray-200 flex gap-5">
-          {localUserSplit?.name}
+          {editableSplitName}
           <i
             className="fa-solid fa-pencil text-2xl cursor-pointer"
             onClick={() => {
