@@ -24,7 +24,8 @@ export default function SplitPage() {
   const [splitNameIsEdit, setSplitNameIsEdit] = useState(false);
   const [editableSplitName, setEditableSplitName] = useState("");
   const [workoutNameIsEdit, setWorkoutNameIsEdit] = useState(false);
-  const [editableWorkoutNames, setEditableWorkoutNames] = useState([]);
+  const [editableWorkoutNamesAndIsEdit, setEditableWorkoutNamesAndIsEdit] =
+    useState([{ name: "", isEdit: false }]);
 
   const dropdownref = useClickOutsideAndEscape(() => {
     setActiveDropdown(null);
@@ -38,13 +39,22 @@ export default function SplitPage() {
     }));
   };
 
-  const handleEditWorkoutName = (workoutIndex, newName) => {
+  const applyWorkoutChanges = () => {
+    setEditableWorkouts((prev) =>
+      prev.map((workout, i) => ({
+        ...workout,
+        name: editableWorkoutNamesAndIsEdit[i].name,
+      }))
+    );
+  };
+
+  /* const handleEditWorkoutName = (workoutIndex, newName) => {
     setEditableWorkouts((prev) => {
       const updated = structuredClone(prev);
       updated[workoutIndex].name = newName;
       return updated;
     });
-  };
+  }; */
 
   const handleExercisesFilter = (workoutIndex, exerciseIndex, exerciseName) => {
     const lowerExerciseName = exerciseName.toLowerCase();
@@ -109,15 +119,6 @@ export default function SplitPage() {
     }
   };
 
-  const applyWorkoutNameChanges = () => {
-    setEditableWorkouts((prev) =>
-      prev.map((workout, i) => ({
-        ...workout,
-        name: editableWorkoutNames[i],
-      }))
-    );
-  };
-
   useEffect(() => {
     if (!userSplit || userSplit.length === 0) {
       fetchUserSplit();
@@ -140,8 +141,11 @@ export default function SplitPage() {
 
   useEffect(() => {
     if (editableWorkouts.length > 0) {
-      const names = editableWorkouts.map((w) => w.name);
-      setEditableWorkoutNames(names);
+      const newValues = editableWorkouts.map((w) => ({
+        name: w.name,
+        isEdit: false,
+      }));
+      setEditableWorkoutNamesAndIsEdit(newValues);
     }
   }, [editableWorkouts]);
 
@@ -193,31 +197,39 @@ export default function SplitPage() {
             key={workout.workout_id}
             className="w-full min-w-[500px] max-w-3xl bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700"
           >
-            {workoutNameIsEdit ? (
+            {editableWorkoutNamesAndIsEdit[workoutIndex]?.isEdit ? (
               <div className="flex gap-5 items-center justify-center">
                 <input
-                  value={editableWorkoutNames[workoutIndex] || ""}
+                  value={
+                    editableWorkoutNamesAndIsEdit[workoutIndex]?.name || ""
+                  }
                   onChange={(e) => {
-                    const newNames = [...editableWorkoutNames];
-                    newNames[workoutIndex] = e.target.value;
-                    setEditableWorkoutNames(newNames);
+                    const newNames = [...editableWorkoutNamesAndIsEdit];
+                    newNames[workoutIndex].name = e.target.value;
+                    setEditableWorkoutNamesAndIsEdit(newNames);
                   }}
                   className="flex-1 p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 />
                 <i
                   onClick={() => {
-                    setWorkoutNameIsEdit(false);
-                    applyWorkoutNameChanges();
+                    const newArray = [...editableWorkoutNamesAndIsEdit];
+                    newArray[workoutIndex].isEdit = false;
+                    setEditableWorkoutNamesAndIsEdit(newArray);
+                    applyWorkoutChanges();
                   }}
                   className="fa-solid fa-circle-check text-3xl cursor-pointer text-green-500 py-3 hover:text-green-600 transition"
                 ></i>
               </div>
             ) : (
               <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-200 flex gap-2 justify-center">
-                {editableWorkoutNames[workoutIndex] || ""}
+                {editableWorkoutNamesAndIsEdit[workoutIndex]?.name || ""}
                 <i
                   className="fa-solid fa-pencil text-sm cursor-pointer"
-                  onClick={() => setWorkoutNameIsEdit(true)}
+                  onClick={() => {
+                    const newArray = [...editableWorkoutNamesAndIsEdit];
+                    newArray[workoutIndex].isEdit = true;
+                    setEditableWorkoutNamesAndIsEdit(newArray);
+                  }}
                 ></i>
               </h1>
             )}

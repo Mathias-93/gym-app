@@ -11,7 +11,7 @@ const SuggestionDropdown = forwardRef(({ data, handleClickDropdown }, ref) => {
             <li
               key={exercise.exercise_id || index}
               onClick={() => handleClickDropdown(exercise.name)}
-              className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer"
+              className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-900 dark:text-white cursor-pointer"
             >
               {exercise.name} {/* Extract only the name */}
             </li>
