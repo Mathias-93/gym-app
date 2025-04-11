@@ -23,6 +23,8 @@ export default function SplitPage() {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [splitNameIsEdit, setSplitNameIsEdit] = useState(false);
   const [editableSplitName, setEditableSplitName] = useState("");
+  const [workoutNameIsEdit, setWorkoutNameIsEdit] = useState(false);
+  const [editableWorkoutNames, setEditableWorkoutNames] = useState([]);
 
   const dropdownref = useClickOutsideAndEscape(() => {
     setActiveDropdown(null);
@@ -34,6 +36,14 @@ export default function SplitPage() {
       ...prev,
       name: newName,
     }));
+  };
+
+  const handleEditWorkoutName = (workoutIndex, newName) => {
+    setEditableWorkouts((prev) => {
+      const updated = structuredClone(prev);
+      updated[workoutIndex].name = newName;
+      return updated;
+    });
   };
 
   const handleExercisesFilter = (workoutIndex, exerciseIndex, exerciseName) => {
@@ -99,6 +109,15 @@ export default function SplitPage() {
     }
   };
 
+  const applyWorkoutNameChanges = () => {
+    setEditableWorkouts((prev) =>
+      prev.map((workout, i) => ({
+        ...workout,
+        name: editableWorkoutNames[i],
+      }))
+    );
+  };
+
   useEffect(() => {
     if (!userSplit || userSplit.length === 0) {
       fetchUserSplit();
@@ -108,20 +127,23 @@ export default function SplitPage() {
       );
       setLocalUserSplit(match);
     }
-
     console.log("Local User Split:", localUserSplit);
   }, [userSplit, splitId]);
 
   useEffect(() => {
+    fetchWorkouts();
+    console.log(workouts);
     if (localUserSplit) {
       setEditableSplitName(localUserSplit.name);
     }
   }, [localUserSplit]);
 
   useEffect(() => {
-    fetchWorkouts();
-    console.log(workouts);
-  }, [localUserSplit]);
+    if (editableWorkouts.length > 0) {
+      const names = editableWorkouts.map((w) => w.name);
+      setEditableWorkoutNames(names);
+    }
+  }, [editableWorkouts]);
 
   if (isLoading || !localUserSplit) {
     return (
@@ -134,14 +156,14 @@ export default function SplitPage() {
   }
 
   return (
-    // Whole thing
+    /* Displaying split name */
     <div className="w-full min-h-screen p-6 bg-gray-100 dark:bg-gray-900 pt-[200px] flex flex-col gap-10 mt-10 justify-center items-center">
       {splitNameIsEdit ? (
         <div className="flex gap-5 items-center justify-center">
           <input
             value={editableSplitName}
             onChange={(e) => setEditableSplitName(e.target.value)}
-            className="flex-1 p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            className="flex-1 text-center p-3 border text-3xl border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
           />
           <i
             onClick={() => {
@@ -156,26 +178,51 @@ export default function SplitPage() {
           {localUserSplit?.name}
           <i
             className="fa-solid fa-pencil text-2xl cursor-pointer"
-            onClick={(e) => {
-              e.preventDefault();
+            onClick={() => {
               setSplitNameIsEdit(true);
             }}
           ></i>
         </h1>
       )}
+
+      {/* Mapping out workouts */}
+
       {editableWorkouts.map((workout, workoutIndex) => {
         return (
           <div
             key={workout.workout_id}
             className="w-full min-w-[500px] max-w-3xl bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700"
           >
-            <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-200 flex gap-2 justify-center">
-              {workout?.name}
-              <i
-                className="fa-solid fa-pencil text-sm cursor-pointer"
-                onClick={() => handleEditWorkoutName()}
-              ></i>
-            </h1>
+            {workoutNameIsEdit ? (
+              <div className="flex gap-5 items-center justify-center">
+                <input
+                  value={editableWorkoutNames[workoutIndex] || ""}
+                  onChange={(e) => {
+                    const newNames = [...editableWorkoutNames];
+                    newNames[workoutIndex] = e.target.value;
+                    setEditableWorkoutNames(newNames);
+                  }}
+                  className="flex-1 p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                />
+                <i
+                  onClick={() => {
+                    setWorkoutNameIsEdit(false);
+                    applyWorkoutNameChanges();
+                  }}
+                  className="fa-solid fa-circle-check text-3xl cursor-pointer text-green-500 py-3 hover:text-green-600 transition"
+                ></i>
+              </div>
+            ) : (
+              <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-200 flex gap-2 justify-center">
+                {editableWorkoutNames[workoutIndex] || ""}
+                <i
+                  className="fa-solid fa-pencil text-sm cursor-pointer"
+                  onClick={() => setWorkoutNameIsEdit(true)}
+                ></i>
+              </h1>
+            )}
+
+            {/* Mapping out exercises */}
             {workout.exercises.map((exercise, exerciseIndex) => {
               return (
                 <div key={exerciseIndex}>
