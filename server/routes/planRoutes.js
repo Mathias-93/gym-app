@@ -102,6 +102,14 @@ router.get("/workouts", async (req, res) => {
   }
 });
 
+router.put("/update_split/:splitId", async (req, res) => {
+  try {
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({ message: err.message });
+  }
+});
+
 router.get("/split/:splitId/full", async (req, res) => {
   const userId = req.user.id;
   const splitId = req.params.splitId;
