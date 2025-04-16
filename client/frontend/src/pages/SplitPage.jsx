@@ -76,6 +76,24 @@ export default function SplitPage() {
     });
   };
 
+  const addExercise = (workoutIndex) => {
+    setEditableWorkouts((prev) =>
+      prev.map((workout, i) => {
+        if (workoutIndex === i) {
+          return {
+            ...workout,
+            exercises: [...workout.exercises, { name: "" }],
+          };
+        }
+        return workout;
+      })
+    );
+  };
+
+  const removeExercise = (workoutIndex, exerciseIndex) => {
+    setEditableWorkouts((prev) => {});
+  };
+
   const fetchWorkouts = async () => {
     try {
       setIsLoading(true);
@@ -117,7 +135,7 @@ export default function SplitPage() {
 
   useEffect(() => {
     fetchWorkouts();
-    console.log(workouts);
+
     if (localUserSplit) {
       setEditableSplitName(localUserSplit.name);
     }
@@ -131,6 +149,7 @@ export default function SplitPage() {
       }));
       setEditableWorkoutNamesAndIsEdit(newValues);
     }
+    console.log("editable workouts:", editableWorkouts);
   }, [editableWorkouts]);
 
   if (isLoading || !localUserSplit) {
@@ -263,18 +282,34 @@ export default function SplitPage() {
                             }
                           />
                         )}
+                      <button
+                        type="button"
+                        onClick={() =>
+                          removeExercise(workoutIndex, exerciseIndex)
+                        }
+                        className="mt-2 w-10 h-10 flex items-center justify-center bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-200 dark:hover:bg-red-800 transition"
+                      >
+                        <i className="fa-solid fa-xmark text-xl"></i>
+                      </button>
                     </div>
                   </div>
                 </div>
               );
             })}
+            <button
+              type="button"
+              onClick={() => addExercise(workoutIndex)} // <-- you'll hook this up
+              className="w-full mt-3 bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
+            >
+              + Add Exercise
+            </button>
           </div>
         );
       })}
       <div className="flex justify-center mt-6">
         <button
           type="button"
-          className="w-1/2 bg-green-500 text-white py-3 rounded-lg ml-2 hover:bg-green-600 transition"
+          className=" bg-green-500 text-white p-4 rounded-lg ml-2 hover:bg-green-600 transition"
         >
           Save Split
         </button>
