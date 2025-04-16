@@ -183,7 +183,7 @@ export default function AddNewSplit() {
               Workout {day + 1}
             </h2>
             {workouts[day]?.map((exercise, index) => (
-              <div key={index} className="flex items-center space-x-3">
+              <div key={index} className="flex items-center space-x-3 relative">
                 <input
                   type="text"
                   value={exercise}

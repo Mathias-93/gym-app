@@ -4,7 +4,7 @@ const SuggestionDropdown = forwardRef(({ data, handleClickDropdown }, ref) => {
   return (
     <ul
       ref={ref}
-      className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg absolute mt-1 w-full z-10"
+      className="absolute left-0 top-full z-50 mt-1 w-full bg-white dark:bg-gray-800 shadow-md border border-gray-300 dark:border-gray-700 rounded-md"
     >
       {data?.length > 0
         ? data.map((exercise, index) => (

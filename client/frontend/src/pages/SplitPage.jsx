@@ -226,14 +226,14 @@ export default function SplitPage() {
                     <h2 className="text-md font-semibold text-gray-900 dark:text-gray-100 mb-2">
                       Exercise {exerciseIndex + 1}
                     </h2>
-                    <div className="flex items-center space-x-3">
+                    <div className="flex items-center space-x-3 relative">
                       <input
                         type="text"
                         value={exercise.name}
                         onChange={(e) => {
                           handleExercisesFilter(
-                            exerciseIndex,
                             workoutIndex,
+                            exerciseIndex,
                             e.target.value
                           );
                           handleChangeExercise(
@@ -247,7 +247,12 @@ export default function SplitPage() {
                       {activeDropdown === `${workoutIndex}-${exerciseIndex}` &&
                         filteredExercises.length > 0 && (
                           <SuggestionDropdown
-                            ref={dropdownref}
+                            ref={
+                              activeDropdown ===
+                              `${workoutIndex}-${exerciseIndex}`
+                                ? dropdownref
+                                : null
+                            }
                             data={filteredExercises}
                             handleClickDropdown={(exerciseName) =>
                               handleClickDropdown(
