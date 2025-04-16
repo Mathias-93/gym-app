@@ -91,7 +91,18 @@ export default function SplitPage() {
   };
 
   const removeExercise = (workoutIndex, exerciseIndex) => {
-    setEditableWorkouts((prev) => {});
+    setEditableWorkouts((prev) =>
+      prev.map((workout, index) => {
+        if (index === workoutIndex) {
+          return {
+            ...workout,
+            exercises: workout.exercises.filter((_, i) => i !== exerciseIndex),
+          };
+        } else {
+          return workout;
+        }
+      })
+    );
   };
 
   const fetchWorkouts = async () => {
