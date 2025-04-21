@@ -182,24 +182,13 @@ export default function SplitPage() {
   useEffect(() => {
     if (editableWorkouts.length > 0) {
       setEditableWorkoutNamesAndIsEdit((prev) => {
-        return editableWorkouts.map((w, i) => ({
+        return editableWorkouts.map((w, index) => ({
           name: w.name,
-          isEdit: prev[i]?.isEdit ?? false, // preserve existing isEdit state if possible
+          isEdit: prev[index]?.isEdit ?? false,
         }));
       });
     }
   }, [editableWorkouts]);
-
-  /* useEffect(() => {
-    if (editableWorkouts.length > 0) {
-      const newValues = editableWorkouts.map((w) => ({
-        name: w.name,
-        isEdit: false,
-      }));
-      setEditableWorkoutNamesAndIsEdit(newValues);
-    }
-    console.log("editable workouts:", editableWorkouts);
-  }, [editableWorkouts, editableWorkoutNamesAndIsEdit.length]); */
 
   if (isLoading || !localUserSplit) {
     return (
@@ -252,7 +241,7 @@ export default function SplitPage() {
             <div className="relative mb-6">
               <button
                 onClick={() => removeWorkout(workoutIndex)}
-                className="absolute top-0 right-0 m-1 w-6 h-6 flex items-center justify-center bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-400 rounded hover:bg-red-200 dark:hover:bg-red-800 transition"
+                className="absolute top-0 right-0 m-1 w-6 h-6 flex items-center justify-center bg-red-500 dark:bg-red-900 text-red-100 dark:text-red-400 rounded hover:bg-red-200 dark:hover:bg-red-800 transition"
               >
                 <i className="fa-solid fa-xmark text-xs"></i>
               </button>
@@ -347,7 +336,7 @@ export default function SplitPage() {
                         onClick={() =>
                           removeExercise(workoutIndex, exerciseIndex)
                         }
-                        className="mt-2 w-10 h-10 flex items-center justify-center bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-200 dark:hover:bg-red-800 transition"
+                        className="mt-2 w-10 h-10 flex items-center justify-center bg-red-500 dark:bg-red-900 text-red-100 dark:text-red-400 rounded-lg hover:bg-red-200 dark:hover:bg-red-800 transition"
                       >
                         <i className="fa-solid fa-xmark text-xl"></i>
                       </button>
@@ -366,13 +355,30 @@ export default function SplitPage() {
           </div>
         );
       })}
-      <div className="flex justify-center mt-6">
-        <button
-          type="button"
-          className=" bg-green-500 text-white p-4 rounded-lg ml-2 hover:bg-green-600 transition"
-        >
-          Save Split
-        </button>
+      <div className="flex flex-col justify-center mt-8 gap-8 w-full max-w-3xl">
+        <div className="w-full">
+          <button
+            type="button"
+            className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition"
+          >
+            + Add Workout
+          </button>
+        </div>
+
+        <div className="flex flex-col sm:flex-row justify-between gap-4 w-full">
+          <button
+            type="button"
+            className="w-full sm:w-1/2 bg-green-500 text-white py-3 rounded-lg hover:bg-green-600 transition"
+          >
+            Save Split
+          </button>
+          <button
+            type="button"
+            className="w-full sm:w-1/2 bg-red-500 dark:bg-red-800 text-white py-3 rounded-lg hover:bg-red-400 dark:hover:bg-red-700 transition"
+          >
+            Delete Split
+          </button>
+        </div>
       </div>
     </div>
   );
