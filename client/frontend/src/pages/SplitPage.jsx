@@ -78,8 +78,8 @@ export default function SplitPage() {
 
   const addExercise = (workoutIndex) => {
     setEditableWorkouts((prev) =>
-      prev.map((workout, i) => {
-        if (workoutIndex === i) {
+      prev.map((workout, index) => {
+        if (workoutIndex === index) {
           return {
             ...workout,
             exercises: [...workout.exercises, { name: "" }],
@@ -96,13 +96,21 @@ export default function SplitPage() {
         if (index === workoutIndex) {
           return {
             ...workout,
-            exercises: workout.exercises.filter((_, i) => i !== exerciseIndex),
+            exercises: workout.exercises.filter(
+              (_, index) => index !== exerciseIndex
+            ),
           };
         } else {
           return workout;
         }
       })
     );
+  };
+
+  const removeWorkout = (workoutIndex) => {
+    setEditableWorkouts((prev) => {
+      return prev.filter((_, index) => index !== workoutIndex);
+    });
   };
 
   const fetchWorkouts = async () => {
@@ -211,6 +219,14 @@ export default function SplitPage() {
             key={workout.workout_id}
             className="w-full min-w-[500px] max-w-3xl bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700"
           >
+            <div className="relative">
+              <button
+                onClick={() => removeWorkout(workoutIndex)}
+                className="absolute top-0 right-0 m-1 w-6 h-6 flex items-center justify-center bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-400 rounded hover:bg-red-200 dark:hover:bg-red-800 transition"
+              >
+                <i className="fa-solid fa-xmark text-xs"></i>
+              </button>
+            </div>
             {editableWorkoutNamesAndIsEdit[workoutIndex]?.isEdit ? (
               <div className="flex gap-5 items-center justify-center">
                 <input
