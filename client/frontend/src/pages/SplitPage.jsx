@@ -31,15 +31,6 @@ export default function SplitPage() {
     setFilteredExercises([]);
   });
 
-  /* const applyWorkoutChanges = (indexToUpdate) => {
-    setEditableWorkouts((prev) =>
-      prev.map((workout, index) => ({
-        ...workout,
-        name: editableWorkoutNamesAndIsEdit[index].name,
-      }))
-    );
-  }; */
-
   const applyWorkoutChanges = (indexToUpdate, updatedName) => {
     setEditableWorkouts((prev) =>
       prev.map((workout, index) =>
@@ -126,9 +117,17 @@ export default function SplitPage() {
   };
 
   const addWorkout = () => {
-    setEditableWorkoutNamesAndIsEdit((prev) => [
+    setEditableWorkouts((prev) => [
       ...prev,
-      { name: "", isEdit: false },
+      {
+        is_custom: true,
+        name: "New Workout",
+        exercises: [
+          { name: "Example exercise" },
+          { name: "Example exercise" },
+          { name: "Example exercise" },
+        ],
+      },
     ]);
   };
 
@@ -188,6 +187,7 @@ export default function SplitPage() {
         }));
       });
     }
+    console.log("EDITABLE:", editableWorkouts);
   }, [editableWorkouts]);
 
   if (isLoading || !localUserSplit) {
@@ -360,6 +360,7 @@ export default function SplitPage() {
           <button
             type="button"
             className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition"
+            onClick={addWorkout}
           >
             + Add Workout
           </button>
