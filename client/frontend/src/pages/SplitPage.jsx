@@ -158,6 +158,51 @@ export default function SplitPage() {
     }
   };
 
+  const validateSplitBeforeSaving = () => {
+    // Split name is not empty
+    if (editableSplitName.trim().length === 0) {
+      console.log("split name too short");
+      return false;
+    }
+    // Split has no more than 12 workouts
+    // Split has at least one workout
+    if (editableWorkouts.length === 0 || editableWorkouts.length > 12) {
+      console.log(
+        "must have at least one workout and no more than 12 workouts"
+      );
+      return false;
+    }
+
+    // Each workout has a name
+
+    const isValidWorkout = (workout) => {
+      return (
+        typeof workout.name === "string" &&
+        workout.name.trim().length > 0 &&
+        Array.isArray(workout.exercises) &&
+        workout.exercises.length > 0 &&
+        workout.exercises.every(
+          (exercise) =>
+            typeof exercise.name === "string" && exercise.name.trim().length > 0
+        )
+      );
+    };
+
+    const workoutNamesAreValid = editableWorkouts.every(isValidWorkout);
+
+    if (!workoutNamesAreValid) {
+      console.log(
+        "Each workout must have a name and at least one exercise with a valid name."
+      );
+      return false;
+    }
+
+    // Each workout has at least one exercise
+    // All exercises have non-empty names
+    console.log("All checks pass");
+    return true;
+  };
+
   useEffect(() => {
     if (!userSplit || userSplit.length === 0) {
       fetchUserSplit();
@@ -370,6 +415,7 @@ export default function SplitPage() {
           <button
             type="button"
             className="w-full sm:w-1/2 bg-green-500 text-white py-3 rounded-lg hover:bg-green-600 transition"
+            onClick={() => validateSplitBeforeSaving()}
           >
             Save Split
           </button>
