@@ -45,7 +45,7 @@ export default function Dashboard() {
       <div className="grid gap-6 mt-6 md:grid-cols-2 lg:grid-cols-3">
         <DashboardCard>
           <h2 className="text-lg font-semibold dark:text-gray-100">
-            My training splits
+            Edit my training splits
           </h2>
           {userSplit?.map((split) => {
             return (
@@ -61,23 +61,36 @@ export default function Dashboard() {
         </DashboardCard>
         <DashboardCard>
           <h2 className="text-lg font-semibold dark:text-gray-100">
-            Upcoming Workout
+            Log workout from training split
           </h2>
-          <p className="text-gray-600 dark:text-gray-300">
-            {userSplit[0] ? (
-              <button
-                onClick={() => navigate(`/workout/${userSplit?.name}`)}
-                className="text-blue-600 dark:text-blue-400 hover:underline"
+          {userSplit?.map((split) => {
+            return (
+              <p
+                key={split.split_id}
+                className="text-gray-600 w-fit dark:text-gray-300 cursor-pointer hover:text-gray-400 dark:hover:text-gray-600"
+                onClick={() => navigate(`/split/${split.split_id}`)}
               >
-                {userSplit[0].name}
-              </button>
-            ) : (
-              "No upcoming workout"
-            )}
-          </p>
+                {split.name}
+              </p>
+            );
+          })}
         </DashboardCard>
 
-        {/*  <DashboardCard>
+        <div className="flex items-center justify-between p-6 dark:bg-green-700 bg-green-50 border-green-300 text-green-700 hover:text-green-600 rounded-xl shadow-lg border transition-all hover:shadow-xl hover:-translate-y-0.5 cursor-pointer">
+          <h2 className="text-lg font-semibold text-green-700 dark:text-green-200">
+            Add New Split
+          </h2>
+          <Link to={"/newsplit"}>
+            <i className="fa-solid fa-circle-plus text-4xl text-green-500 dark:text-green-200 hover:text-green-600 transition-colors"></i>
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+{
+  /*  <DashboardCard>
           <h2 className="text-lg font-semibold dark:text-gray-100">
             Previous Workouts
           </h2>
@@ -97,24 +110,14 @@ export default function Dashboard() {
           >
             View full history →
           </button>
-        </DashboardCard> */}
+        </DashboardCard> */
+}
 
-        {/* <DashboardCard>
+{
+  /* <DashboardCard>
           <h2 className="text-lg font-semibold dark:text-gray-100">
             Weekly Summary
           </h2>
           <p className="text-gray-600 dark:text-gray-300">Coming soon...</p>
-        </DashboardCard> */}
-
-        <div className="flex items-center justify-between p-6 dark:bg-green-700 bg-green-50 border-green-300 text-green-700 hover:text-green-600 rounded-xl shadow-lg border transition-all hover:shadow-xl hover:-translate-y-0.5 cursor-pointer">
-          <h2 className="text-lg font-semibold text-green-700 dark:text-green-200">
-            Add New Split
-          </h2>
-          <Link to={"/newsplit"}>
-            <i className="fa-solid fa-circle-plus text-4xl text-green-500 dark:text-green-200 hover:text-green-600 transition-colors"></i>
-          </Link>
-        </div>
-      </div>
-    </div>
-  );
+        </DashboardCard> */
 }
