@@ -11,3 +11,44 @@
     background: var(--blue-gradient)
 }
 
+@keyframes progress {
+    from {
+      width: 100%;
+    }
+    to {
+      width: 0%;
+    }
+  }
+  
+  .animate-progress {
+    animation: progress 4.7s linear forwards;
+  }
+  
+  .animate-enter {
+    animation: fadeIn 0.3s ease-out;
+  }
+  .animate-leave {
+    animation: fadeOut 0.3s ease-in;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10%);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes fadeOut {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(-10%);
+    }
+  }

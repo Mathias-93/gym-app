@@ -3,7 +3,8 @@ import { GlobalContext } from "../Context";
 import { useParams } from "react-router";
 import { useClickOutsideAndEscape } from "../hooks/useClickOutsideAndEscape";
 import SuggestionDropdown from "../components/SuggestionDropdown";
-import toast from "react-hot-toast";
+import { toast } from "react-hot-toast";
+import CustomToast from "../components/CustomToast";
 
 export default function SplitPage() {
   const { splitId } = useParams();
@@ -162,21 +163,39 @@ export default function SplitPage() {
   const validateSplitBeforeSaving = () => {
     // Split name is not empty
     if (editableSplitName.trim().length === 0) {
-      toast.error("Split must have a name");
+      toast.custom(
+        (t) =>
+          t.visible && (
+            <CustomToast
+              t={t}
+              message="You must give your split a name!"
+              type="error"
+            />
+          ),
+        { duration: 5000, position: "top-center" }
+      );
       return false;
     }
     // Split has no more than 12 workouts
     // Split has at least one workout
     if (editableWorkouts.length === 0 || editableWorkouts.length > 12) {
-      toast.error(
-        "Split must have at least one workout and no more than 12 workouts."
+      toast.custom(
+        (t) =>
+          t.visible && (
+            <CustomToast
+              t={t}
+              message="Split must have at least one workout and no more than 12 workouts."
+              type="error"
+            />
+          ),
+        { duration: 5000, position: "top-center" }
       );
       return false;
     }
 
     // Each workout has a name
     // Each workout has at least one exercise
-    // All exercises have non-empty names
+    // All exercises have non-empty names and the name isn't the example name (it's been edited)
     const isValidWorkout = (workout) => {
       return (
         typeof workout.name === "string" &&
@@ -195,14 +214,51 @@ export default function SplitPage() {
     const workoutIsValid = editableWorkouts.every(isValidWorkout);
 
     if (!workoutIsValid) {
-      toast.error(
-        "Each workout must have a name and at least one exercise with a valid name."
+      toast.custom(
+        (t) =>
+          t.visible && (
+            <CustomToast
+              t={t}
+              message="Each workout must have a name and at least one exercise with a valid name."
+              type="success"
+            />
+          ),
+        { duration: 5000, position: "top-center" }
       );
       return false;
     }
-
-    console.log("All checks pass");
+    toast.custom(
+      (t) =>
+        t.visible && (
+          <CustomToast t={t} message="Split saved!" type="success" />
+        ),
+      { duration: 5000, position: "top-center" }
+    );
     return true;
+  };
+
+  const handleSaveSplitToDb = async (editableWorkouts) => {
+    if (!validateSplitBeforeSaving()) return;
+
+    try {
+      const response = await fetch(``, {
+        method: "PUT",
+        headers: { "Context-type": "application/json" },
+        body: JSON.stringify({
+          splitData: editableWorkouts,
+        }),
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        throw new Error(`Something went wrong: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      alert("Split added to db!");
+    } catch (err) {
+      console.error("Couldn't save to db:", err.message);
+    }
   };
 
   useEffect(() => {
@@ -417,7 +473,7 @@ export default function SplitPage() {
           <button
             type="button"
             className="w-full sm:w-1/2 bg-green-500 text-white py-3 rounded-lg hover:bg-green-600 transition"
-            onClick={() => validateSplitBeforeSaving()}
+            onClick={() => handleSaveSplitToDb(editableWorkouts)}
           >
             Save Split
           </button>
