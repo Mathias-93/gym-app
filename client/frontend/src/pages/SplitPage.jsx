@@ -3,6 +3,7 @@ import { GlobalContext } from "../Context";
 import { useParams } from "react-router";
 import { useClickOutsideAndEscape } from "../hooks/useClickOutsideAndEscape";
 import SuggestionDropdown from "../components/SuggestionDropdown";
+import toast from "react-hot-toast";
 
 export default function SplitPage() {
   const { splitId } = useParams();
@@ -161,20 +162,21 @@ export default function SplitPage() {
   const validateSplitBeforeSaving = () => {
     // Split name is not empty
     if (editableSplitName.trim().length === 0) {
-      console.log("split name too short");
+      toast.error("Split must have a name");
       return false;
     }
     // Split has no more than 12 workouts
     // Split has at least one workout
     if (editableWorkouts.length === 0 || editableWorkouts.length > 12) {
-      console.log(
-        "must have at least one workout and no more than 12 workouts"
+      toast.error(
+        "Split must have at least one workout and no more than 12 workouts."
       );
       return false;
     }
 
     // Each workout has a name
-
+    // Each workout has at least one exercise
+    // All exercises have non-empty names
     const isValidWorkout = (workout) => {
       return (
         typeof workout.name === "string" &&
@@ -183,22 +185,22 @@ export default function SplitPage() {
         workout.exercises.length > 0 &&
         workout.exercises.every(
           (exercise) =>
-            typeof exercise.name === "string" && exercise.name.trim().length > 0
+            typeof exercise.name === "string" &&
+            exercise.name.trim().length > 0 &&
+            exercise.name.trim() !== "Example exercise"
         )
       );
     };
 
-    const workoutNamesAreValid = editableWorkouts.every(isValidWorkout);
+    const workoutIsValid = editableWorkouts.every(isValidWorkout);
 
-    if (!workoutNamesAreValid) {
-      console.log(
+    if (!workoutIsValid) {
+      toast.error(
         "Each workout must have a name and at least one exercise with a valid name."
       );
       return false;
     }
 
-    // Each workout has at least one exercise
-    // All exercises have non-empty names
     console.log("All checks pass");
     return true;
   };

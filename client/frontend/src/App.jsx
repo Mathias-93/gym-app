@@ -9,6 +9,7 @@ import { GlobalContext } from "./Context";
 import AddNewSplit from "./pages/AddNewSplit";
 import LogPage from "./pages/LogPage";
 import SplitPage from "./pages/SplitPage";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   const {
@@ -79,6 +80,9 @@ function App() {
 
   return (
     <div className="bg-slate-100 dark:bg-gray-900">
+      {/* Toast container */}
+      <Toaster position="top-center" reverseOrder={false} />
+
       <NavHeader />
       <div className="bg-slate-100 dark:bg-gray-900 flex justify-center">
         <Routes>
