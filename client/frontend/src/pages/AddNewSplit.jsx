@@ -118,7 +118,7 @@ export default function AddNewSplit() {
           body: JSON.stringify({
             splitName: splitName,
             numberOfDays: days,
-            workoutsObject: workouts,
+            workouts: workouts,
           }),
           credentials: "include",
         }

@@ -244,6 +244,7 @@ export default function SplitPage() {
           body: JSON.stringify({
             name: editableSplitName,
             workouts: editableWorkouts,
+            numberOfDays: editableWorkouts.length,
           }),
           credentials: "include",
         }

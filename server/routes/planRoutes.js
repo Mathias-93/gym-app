@@ -22,7 +22,7 @@ router.get("/workout_splits", async (req, res) => {
 router.post("/save_custom_split", async (req, res) => {
   try {
     await pool.query("BEGIN");
-    const { splitName, numberOfDays, workoutsObject } = req.body;
+    const { splitName, numberOfDays, workouts } = req.body;
     const userId = req.user.id;
 
     // Adding split to workout_splits table
@@ -36,7 +36,7 @@ router.post("/save_custom_split", async (req, res) => {
     );
 
     // Adding split to workouts table
-    for (const [key, value] of Object.entries(workoutsObject)) {
+    for (const [key, value] of Object.entries(workouts)) {
       const newWorkout = await pool.query(
         `
         INSERT INTO workouts (split_id, name, is_custom, user_id)
@@ -92,22 +92,16 @@ router.post("/save_custom_split", async (req, res) => {
   }
 });
 
-router.get("/workouts", async (req, res) => {
-  try {
-    const allWorkouts = await pool.query("SELECT * FROM workouts");
-    res.status(200).json(allWorkouts.rows);
-  } catch (err) {
-    console.log(err.message);
-    res.status(500).json({ message: err.message });
-  }
-});
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 router.put("/update_split/:splitId", async (req, res) => {
   const userId = req.user.id;
   const splitId = req.params.splitId;
-  const { name, workouts } = req.body;
+  const { name, workouts, numberOfDays } = req.body;
 
   try {
+    await pool.query("BEGIN");
+    // Ownership check
     const check = await pool.query(
       `
         SELECT * FROM workout_splits WHERE split_id = $1 AND user_id = $2
@@ -119,6 +113,89 @@ router.put("/update_split/:splitId", async (req, res) => {
         .status(403)
         .json({ message: "Unauthorized to edit this split." });
     }
+
+    // UPDATE split name and days per week
+    const updateSplit = await pool.query(
+      `
+        UPDATE workout_splits 
+        SET name = $1, days_per_week = $2 , is_custom = $3
+        WHERE split_id = $4;
+      `,
+      [name, numberOfDays, true, splitId]
+    );
+
+    // DELETE the old workouts for that split
+    const removeOldWorkouts = await pool.query(
+      `
+        DELETE FROM workouts WHERE split_id = $1;
+      `,
+      [splitId]
+    );
+
+    // Re-insert all workouts and exercises
+    for (const workout of workouts) {
+      const newWorkout = await pool.query(
+        `
+        INSERT INTO workouts (split_id, name, is_custom, user_id)
+        VALUES ($1, $2, $3, $4)
+        RETURNING workout_id
+        `,
+        [splitId, workout.name, true, userId]
+      );
+
+      for (const exercise of workout.exercises) {
+        const exerciseName = exercise.name.trim();
+
+        if (!exerciseName) continue;
+
+        const existingExercise = await pool.query(
+          `
+          SELECT exercise_id FROM exercises WHERE name=$1
+          `,
+          [exerciseName]
+        );
+
+        let exerciseId;
+
+        if (existingExercise.rows.length > 0) {
+          exerciseId = existingExercise.rows[0].exercise_id;
+        } else {
+          const newExercise = await pool.query(
+            `INSERT INTO exercises (name, is_custom, user_id)
+             VALUES ($1, $2, $3)
+             RETURNING exercise_id`,
+            [exerciseName, true, userId]
+          );
+          exerciseId = newExercise.rows[0].exercise_id;
+        }
+
+        await pool.query(
+          `
+          INSERT INTO workout_exercises_junction_table (workout_id, exercise_id)
+          VALUES ($1, $2)
+          `,
+          [newWorkout.rows[0].workout_id, exerciseId]
+        );
+      }
+    }
+
+    await pool.query("COMMIT");
+    res.status(200).json({
+      message: "Split successfully updated",
+    });
+  } catch (err) {
+    await pool.query("ROLLBACK");
+    console.error("Update split error:", { splitId, userId, err: err.message });
+    res.status(500).json({ message: err.message });
+  }
+});
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+router.get("/workouts", async (req, res) => {
+  try {
+    const allWorkouts = await pool.query("SELECT * FROM workouts");
+    res.status(200).json(allWorkouts.rows);
   } catch (err) {
     console.log(err.message);
     res.status(500).json({ message: err.message });
