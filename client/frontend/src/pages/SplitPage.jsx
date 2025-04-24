@@ -227,13 +227,7 @@ export default function SplitPage() {
       );
       return false;
     }
-    toast.custom(
-      (t) =>
-        t.visible && (
-          <CustomToast t={t} message="Split saved!" type="success" />
-        ),
-      { duration: 5000, position: "top-center" }
-    );
+
     return true;
   };
 
@@ -241,23 +235,43 @@ export default function SplitPage() {
     if (!validateSplitBeforeSaving()) return;
 
     try {
-      const response = await fetch(``, {
-        method: "PUT",
-        headers: { "Context-type": "application/json" },
-        body: JSON.stringify({
-          splitData: editableWorkouts,
-        }),
-        credentials: "include",
-      });
+      setIsLoading(true);
+      const response = await fetch(
+        `http://localhost:1337/plan/update_split/${splitId}`,
+        {
+          method: "PUT",
+          headers: { "Content-type": "application/json" },
+          body: JSON.stringify({
+            name: editableSplitName,
+            workouts: editableWorkouts,
+          }),
+          credentials: "include",
+        }
+      );
 
       if (!response.ok) {
+        toast.custom(
+          (t) =>
+            t.visible && (
+              <CustomToast t={t} message="Something went wrong." type="error" />
+            ),
+          { duration: 5000, position: "top-center" }
+        );
         throw new Error(`Something went wrong: ${response.statusText}`);
       }
 
       const data = await response.json();
-      alert("Split added to db!");
+      toast.custom(
+        (t) =>
+          t.visible && (
+            <CustomToast t={t} message="Split saved!" type="success" />
+          ),
+        { duration: 5000, position: "top-center" }
+      );
     } catch (err) {
       console.error("Couldn't save to db:", err.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 

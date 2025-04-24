@@ -108,6 +108,17 @@ router.put("/update_split/:splitId", async (req, res) => {
   const { name, workouts } = req.body;
 
   try {
+    const check = await pool.query(
+      `
+        SELECT * FROM workout_splits WHERE split_id = $1 AND user_id = $2
+      `,
+      [splitId, userId]
+    );
+    if (check.rows.length === 0) {
+      return res
+        .status(403)
+        .json({ message: "Unauthorized to edit this split." });
+    }
   } catch (err) {
     console.log(err.message);
     res.status(500).json({ message: err.message });
