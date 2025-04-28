@@ -5,6 +5,7 @@ import { useClickOutsideAndEscape } from "../hooks/useClickOutsideAndEscape";
 import SuggestionDropdown from "../components/SuggestionDropdown";
 import { toast } from "react-hot-toast";
 import CustomToast from "../components/CustomToast";
+import CustomModal from "../components/CustomModal";
 
 export default function SplitPage() {
   const { splitId } = useParams();
@@ -16,6 +17,8 @@ export default function SplitPage() {
     setIsLoading,
     exercises,
     setExercises,
+    showModal,
+    setShowModal,
   } = useContext(GlobalContext);
   const [localUserSplit, setLocalUserSplit] = useState(null);
   const [workouts, setWorkouts] = useState([]);
@@ -276,6 +279,14 @@ export default function SplitPage() {
     }
   };
 
+  const handleDeleteSplit = async () => {
+    deleteSplit();
+  };
+
+  const deleteSplit = async () => {
+    console.log("HEllo");
+  };
+
   useEffect(() => {
     if (!userSplit || userSplit.length === 0) {
       fetchUserSplit();
@@ -321,6 +332,11 @@ export default function SplitPage() {
   return (
     /* Displaying split name */
     <div className="w-full min-h-screen p-6 bg-gray-100 dark:bg-gray-900 pt-[200px] flex flex-col gap-10 mt-10 justify-center items-center">
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-40">
+          <CustomModal />
+        </div>
+      )}
       {splitNameIsEdit ? (
         <div className="flex gap-5 items-center justify-center">
           <input
@@ -495,6 +511,10 @@ export default function SplitPage() {
           <button
             type="button"
             className="w-full sm:w-1/2 bg-red-500 dark:bg-red-800 text-white py-3 rounded-lg hover:bg-red-400 dark:hover:bg-red-700 transition"
+            onClick={() => {
+              handleDeleteSplit();
+              setShowModal(!showModal);
+            }}
           >
             Delete Split
           </button>

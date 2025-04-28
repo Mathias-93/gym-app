@@ -3,6 +3,8 @@ import pool from "../db.js";
 
 const router = express.Router();
 
+// Route for fetching all splits
+
 router.get("/workout_splits", async (req, res) => {
   try {
     const userId = req.user.id;
@@ -17,7 +19,7 @@ router.get("/workout_splits", async (req, res) => {
   }
 });
 
-// Saving a custom split to db
+// Route for saving a custom split to db
 
 router.post("/save_custom_split", async (req, res) => {
   try {
@@ -92,7 +94,7 @@ router.post("/save_custom_split", async (req, res) => {
   }
 });
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Route for updating a split when edited
 
 router.put("/update_split/:splitId", async (req, res) => {
   const userId = req.user.id;
@@ -190,7 +192,7 @@ router.put("/update_split/:splitId", async (req, res) => {
   }
 });
 
-////////////////////////////////////////////////////////////////////////////////////////////////
+// Route for fetching workouts
 
 router.get("/workouts", async (req, res) => {
   try {
@@ -201,6 +203,8 @@ router.get("/workouts", async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+
+// Fetching a user specific split
 
 router.get("/split/:splitId/full", async (req, res) => {
   const userId = req.user.id;

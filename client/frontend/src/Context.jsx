@@ -14,6 +14,7 @@ export default function GlobalState({ children }) {
   const [customUserSplit, setCustomUserSplit] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [exercises, setExercises] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   const fetchUserSplit = async () => {
     try {
@@ -57,6 +58,8 @@ export default function GlobalState({ children }) {
         customUserSplit,
         setCustomUserSplit,
         fetchUserSplit,
+        showModal,
+        setShowModal,
       }}
     >
       {children}
