@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { GlobalContext } from "../Context";
 
-export default function CustomModal() {
+export default function CustomModal({ onCancel, onConfirm }) {
   const { showModal, setShowModal } = useContext(GlobalContext);
 
   return (
@@ -14,13 +14,13 @@ export default function CustomModal() {
         <div className="flex justify-end gap-4">
           <button
             className="px-4 py-2 bg-gray-200 dark:text-gray-800 hover:bg-gray-300 rounded"
-            onClick={() => setShowModal(!showModal)}
+            onClick={onCancel}
           >
             Cancel
           </button>
           <button
             className="px-4 py-2 bg-red-500 text-white hover:bg-red-600 rounded"
-            onClick={() => setShowModal(!showModal)}
+            onClick={onConfirm}
           >
             Delete
           </button>

@@ -279,12 +279,53 @@ export default function SplitPage() {
     }
   };
 
-  const handleDeleteSplit = async () => {
-    deleteSplit();
-  };
+  const handleDeleteSplit = async (splitId) => {
+    console.log("SPLITID:", splitId);
 
-  const deleteSplit = async () => {
-    console.log("HEllo");
+    try {
+      setIsLoading(true);
+      const response = await fetch(
+        `http://localhost:1337/plan/delete_split/${splitId}`,
+        {
+          method: "DELETE",
+          headers: { "Context-Type": "application/json" },
+          body: JSON.stringify({ splitId: splitId }),
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        toast.custom(
+          (t) =>
+            t.visible && (
+              <CustomToast
+                t={t}
+                message="Error, could not delete split."
+                type="error"
+              />
+            ),
+          { duration: 5000, position: "top-center" }
+        );
+        throw new Error(`Something went wrong: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      toast.custom(
+        (t) =>
+          t.visible && (
+            <CustomToast
+              t={t}
+              message="Split successfully deleted!"
+              type="success"
+            />
+          ),
+        { duration: 5000, position: "top-center" }
+      );
+    } catch (err) {
+      console.log("Could not delete split:", err.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -334,7 +375,10 @@ export default function SplitPage() {
     <div className="w-full min-h-screen p-6 bg-gray-100 dark:bg-gray-900 pt-[200px] flex flex-col gap-10 mt-10 justify-center items-center">
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-40">
-          <CustomModal />
+          <CustomModal
+            onCancel={() => setShowModal(false)}
+            onConfirm={() => handleDeleteSplit(splitId)}
+          />
         </div>
       )}
       {splitNameIsEdit ? (
@@ -512,7 +556,6 @@ export default function SplitPage() {
             type="button"
             className="w-full sm:w-1/2 bg-red-500 dark:bg-red-800 text-white py-3 rounded-lg hover:bg-red-400 dark:hover:bg-red-700 transition"
             onClick={() => {
-              handleDeleteSplit();
               setShowModal(!showModal);
             }}
           >
