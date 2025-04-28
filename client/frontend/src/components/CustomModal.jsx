@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { GlobalContext } from "../Context";
 
 export default function CustomModal({ onCancel, onConfirm }) {
-  const { showModal, setShowModal } = useContext(GlobalContext);
+  const { showModal, setShowModal, isLoading } = useContext(GlobalContext);
 
   return (
     <div className="fixed z-50 inset-0 flex items-center justify-center">
@@ -13,14 +13,15 @@ export default function CustomModal({ onCancel, onConfirm }) {
         <p className="mb-6">This action cannot be undone.</p>
         <div className="flex justify-end gap-4">
           <button
-            className="px-4 py-2 bg-gray-200 dark:text-gray-800 hover:bg-gray-300 rounded"
+            className="w-full sm:w-1/2 bg-gray-200 dark:text-gray-800 text-black py-3 rounded-lg hover:bg-gray-300 transition"
             onClick={onCancel}
           >
             Cancel
           </button>
           <button
-            className="px-4 py-2 bg-red-500 text-white hover:bg-red-600 rounded"
+            className="w-full sm:w-1/2 bg-red-500 dark:bg-red-800 text-white py-3 rounded-lg hover:bg-red-400 dark:hover:bg-red-700 transition"
             onClick={onConfirm}
+            disabled={isLoading}
           >
             Delete
           </button>

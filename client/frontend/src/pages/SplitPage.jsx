@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { GlobalContext } from "../Context";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { useClickOutsideAndEscape } from "../hooks/useClickOutsideAndEscape";
 import SuggestionDropdown from "../components/SuggestionDropdown";
 import { toast } from "react-hot-toast";
@@ -35,6 +35,8 @@ export default function SplitPage() {
     setActiveDropdown(null);
     setFilteredExercises([]);
   });
+
+  const navigate = useNavigate();
 
   const applyWorkoutChanges = (indexToUpdate, updatedName) => {
     setEditableWorkouts((prev) =>
@@ -288,8 +290,7 @@ export default function SplitPage() {
         `http://localhost:1337/plan/delete_split/${splitId}`,
         {
           method: "DELETE",
-          headers: { "Context-Type": "application/json" },
-          body: JSON.stringify({ splitId: splitId }),
+          headers: { "Content-Type": "application/json" },
           credentials: "include",
         }
       );
@@ -321,6 +322,7 @@ export default function SplitPage() {
           ),
         { duration: 5000, position: "top-center" }
       );
+      navigate("/dashboard");
     } catch (err) {
       console.log("Could not delete split:", err.message);
     } finally {
@@ -363,9 +365,32 @@ export default function SplitPage() {
   if (isLoading || !localUserSplit) {
     return (
       <div className="w-full min-h-screen p-6 bg-gray-100 dark:bg-gray-900 pt-[250px] flex justify-center">
-        <p className="flex justify-center text-center text-gray-500 text-4xl">
-          Loading...
-        </p>
+        <svg
+          className="animate-spin h-16 w-16 text-gray-400"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            className="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="4"
+            fill="none"
+          />
+          <circle
+            className="opacity-75"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="4"
+            strokeDasharray="60"
+            strokeDashoffset="20"
+            strokeLinecap="round"
+            fill="none"
+          />
+        </svg>
       </div>
     );
   }
@@ -377,7 +402,9 @@ export default function SplitPage() {
         <div className="fixed inset-0 bg-black bg-opacity-50 z-40">
           <CustomModal
             onCancel={() => setShowModal(false)}
-            onConfirm={() => handleDeleteSplit(splitId)}
+            onConfirm={() => {
+              handleDeleteSplit(splitId);
+            }}
           />
         </div>
       )}
@@ -525,7 +552,7 @@ export default function SplitPage() {
             })}
             <button
               type="button"
-              onClick={() => addExercise(workoutIndex)} // <-- you'll hook this up
+              onClick={() => addExercise(workoutIndex)}
               className="w-full mt-3 bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
             >
               + Add Exercise

@@ -192,6 +192,15 @@ router.put("/update_split/:splitId", async (req, res) => {
   }
 });
 
+// Route for deleting a split
+router.delete("/update_split/:splitId", async (req, res) => {
+  try {
+    res.status(200).json({ message: "Split successfully deleted!" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 // Route for fetching workouts
 
 router.get("/workouts", async (req, res) => {

@@ -5,6 +5,7 @@ import { useClickOutsideAndEscape } from "../hooks/useClickOutsideAndEscape";
 
 export default function AddNewSplit() {
   const {
+    isLoading,
     setIsLoading,
     exercises,
     setExercises,
@@ -139,6 +140,39 @@ export default function AddNewSplit() {
   useEffect(() => {
     console.log(workouts);
   }, []);
+
+  if (isLoading) {
+    return (
+      <div className="w-full min-h-screen p-6 bg-gray-100 dark:bg-gray-900 pt-[250px] flex justify-center">
+        <svg
+          className="animate-spin h-16 w-16 text-gray-400"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            className="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="4"
+            fill="none"
+          />
+          <circle
+            className="opacity-75"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="4"
+            strokeDasharray="60"
+            strokeDashoffset="20"
+            strokeLinecap="round"
+            fill="none"
+          />
+        </svg>
+      </div>
+    );
+  }
 
   return (
     <div className="mt-[200px] flex justify-center">
