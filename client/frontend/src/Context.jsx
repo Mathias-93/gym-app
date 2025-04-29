@@ -43,11 +43,11 @@ export default function GlobalState({ children }) {
 
   useEffect(() => {
     let timer;
-
+    console.log("TIME");
     if (isLoading) {
       timer = setTimeout(() => {
         setShowSpinner(true);
-      }, 700);
+      }, 1000);
     } else {
       setShowSpinner(false);
     }

@@ -193,11 +193,38 @@ router.put("/update_split/:splitId", async (req, res) => {
 });
 
 // Route for deleting a split
-router.delete("/update_split/:splitId", async (req, res) => {
+router.delete("/delete_split/:splitId", async (req, res) => {
+  const userId = req.user.id;
+  const splitId = req.params.splitId;
   try {
+    // Check ownership
+    const check = await pool.query(
+      `
+        SELECT * FROM workout_splits WHERE user_id = $1
+      `,
+      [userId]
+    );
+    if (check.rows.length === 0) {
+      return res
+        .status(403)
+        .json({ message: "Unauthorized to edit this split." });
+    }
+
+    // Perform deletion
+    const deletedSplit = await pool.query(
+      "DELETE FROM workout_splits WHERE split_id = $1",
+      [splitId]
+    );
+
+    // Check if split exists
+    if (deletedSplit.rowCount === 0) {
+      res.status(404).json({ message: "User split not found" });
+    }
+
     res.status(200).json({ message: "Split successfully deleted!" });
   } catch (err) {
     res.status(500).json({ message: err.message });
+    console.error(err.message);
   }
 });
 

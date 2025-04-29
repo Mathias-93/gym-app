@@ -79,7 +79,7 @@ export default function Dashboard() {
           <h2 className="text-lg font-semibold text-green-700 dark:text-green-200">
             Add New Split
           </h2>
-          <Link to={"/newsplit"}>
+          <Link to={"/newsplit"} onClick={() => setIsLoading(true)}>
             <i className="fa-solid fa-circle-plus text-4xl text-green-500 dark:text-green-200 hover:text-green-600 transition-colors"></i>
           </Link>
         </div>

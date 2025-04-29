@@ -334,6 +334,12 @@ export default function SplitPage() {
   };
 
   useEffect(() => {
+    if (localUserSplit === null) {
+      setIsLoading(true);
+    }
+  }, []);
+
+  useEffect(() => {
     if (!userSplit || userSplit.length === 0) {
       fetchUserSplit();
     } else {
@@ -376,11 +382,11 @@ export default function SplitPage() {
             onCancel={() => setShowModal(false)}
             onConfirm={() => {
               handleDeleteSplit(splitId);
+              setShowModal(!showModal);
             }}
           />
         </div>
       )}
-      /* Displaying split name */
       {splitNameIsEdit ? (
         <div className="flex gap-5 items-center justify-center">
           <input

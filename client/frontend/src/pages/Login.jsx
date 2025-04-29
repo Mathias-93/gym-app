@@ -9,6 +9,7 @@ export default function Login() {
     setUserInformation,
     isAuthenticated,
     setIsAuthenticated,
+    showSpinner,
   } = useContext(GlobalContext);
 
   const navigate = useNavigate();
@@ -79,6 +80,10 @@ export default function Login() {
     e.preventDefault();
     isRegistered ? handleLoginUser() : handleRegisterUser();
   };
+
+  if (showSpinner) {
+    return <Spinner />;
+  }
 
   return (
     <div className="flex justify-center items-start min-h-screen bg-gray-100 dark:bg-gray-900 pt-[250px]">
