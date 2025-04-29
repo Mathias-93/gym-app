@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 
 export const GlobalContext = createContext(null);
 
@@ -15,6 +15,7 @@ export default function GlobalState({ children }) {
   const [isLoading, setIsLoading] = useState(false);
   const [exercises, setExercises] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [showSpinner, setShowSpinner] = useState(false);
 
   const fetchUserSplit = async () => {
     try {
@@ -40,6 +41,20 @@ export default function GlobalState({ children }) {
     }
   };
 
+  useEffect(() => {
+    let timer;
+
+    if (isLoading) {
+      timer = setTimeout(() => {
+        setShowSpinner(true);
+      }, 500);
+    } else {
+      setShowSpinner(false);
+    }
+
+    return () => clearTimeout(timer);
+  }, [isLoading, isLoadingAuth]);
+
   return (
     <GlobalContext.Provider
       value={{
@@ -60,6 +75,8 @@ export default function GlobalState({ children }) {
         fetchUserSplit,
         showModal,
         setShowModal,
+        showSpinner,
+        setShowSpinner,
       }}
     >
       {children}

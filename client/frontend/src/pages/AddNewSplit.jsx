@@ -11,6 +11,8 @@ export default function AddNewSplit() {
     setExercises,
     customUserSplit,
     setCustomUserSplit,
+    showSpinner,
+    setShowSpinner,
   } = useContext(GlobalContext);
   const [splitName, setSplitName] = useState("");
   const [days, setDays] = useState(3); // Default to 3 days
@@ -141,7 +143,7 @@ export default function AddNewSplit() {
     console.log(workouts);
   }, []);
 
-  if (isLoading) {
+  if (isLoading && showSpinner) {
     return (
       <div className="w-full min-h-screen p-6 bg-gray-100 dark:bg-gray-900 pt-[250px] flex justify-center">
         <svg

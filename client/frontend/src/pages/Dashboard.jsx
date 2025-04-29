@@ -13,6 +13,8 @@ export default function Dashboard() {
     userSplit,
     setUserSplit,
     fetchUserSplit,
+    showSpinner,
+    setShowSpinner,
   } = useContext(GlobalContext);
   const navigate = useNavigate();
 
@@ -28,7 +30,7 @@ export default function Dashboard() {
     }
   }, [isAuthenticated]);
 
-  if (isLoadingAuth || isLoading) {
+  if (isLoadingAuth || (isLoading && showSpinner)) {
     return (
       <div className="w-full min-h-screen p-6 bg-gray-100 dark:bg-gray-900 pt-[250px] flex justify-center">
         <svg

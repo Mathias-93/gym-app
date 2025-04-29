@@ -19,6 +19,8 @@ export default function SplitPage() {
     setExercises,
     showModal,
     setShowModal,
+    showSpinner,
+    setShowSpinner,
   } = useContext(GlobalContext);
   const [localUserSplit, setLocalUserSplit] = useState(null);
   const [workouts, setWorkouts] = useState([]);
@@ -359,10 +361,9 @@ export default function SplitPage() {
         }));
       });
     }
-    console.log("EDITABLE:", editableWorkouts);
   }, [editableWorkouts]);
 
-  if (isLoading || !localUserSplit) {
+  if ((isLoading && showSpinner) || !localUserSplit) {
     return (
       <div className="w-full min-h-screen p-6 bg-gray-100 dark:bg-gray-900 pt-[250px] flex justify-center">
         <svg
@@ -396,7 +397,6 @@ export default function SplitPage() {
   }
 
   return (
-    /* Displaying split name */
     <div className="w-full min-h-screen p-6 bg-gray-100 dark:bg-gray-900 pt-[200px] flex flex-col gap-10 mt-10 justify-center items-center">
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-40">
@@ -408,6 +408,7 @@ export default function SplitPage() {
           />
         </div>
       )}
+      /* Displaying split name */
       {splitNameIsEdit ? (
         <div className="flex gap-5 items-center justify-center">
           <input
@@ -434,9 +435,7 @@ export default function SplitPage() {
           ></i>
         </h1>
       )}
-
       {/* Mapping out workouts */}
-
       {editableWorkouts?.map((workout, workoutIndex) => {
         return (
           <div
