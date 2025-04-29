@@ -2,6 +2,7 @@ import React, { useContext, useEffect } from "react";
 import { GlobalContext } from "../Context";
 import { Link, useNavigate } from "react-router";
 import DashboardCard from "../components/DashboardCard";
+import Spinner from "../components/Spinner";
 
 export default function Dashboard() {
   const {
@@ -30,37 +31,8 @@ export default function Dashboard() {
     }
   }, [isAuthenticated]);
 
-  if (isLoadingAuth || (isLoading && showSpinner)) {
-    return (
-      <div className="w-full min-h-screen p-6 bg-gray-100 dark:bg-gray-900 pt-[250px] flex justify-center">
-        <svg
-          className="animate-spin h-16 w-16 text-gray-400"
-          viewBox="0 0 24 24"
-        >
-          <circle
-            className="opacity-25"
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            strokeWidth="4"
-            fill="none"
-          />
-          <circle
-            className="opacity-75"
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            strokeWidth="4"
-            strokeDasharray="60"
-            strokeDashoffset="20"
-            strokeLinecap="round"
-            fill="none"
-          />
-        </svg>
-      </div>
-    );
+  if (showSpinner) {
+    return <Spinner />;
   }
 
   return (

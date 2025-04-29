@@ -47,7 +47,7 @@ export default function GlobalState({ children }) {
     if (isLoading) {
       timer = setTimeout(() => {
         setShowSpinner(true);
-      }, 500);
+      }, 700);
     } else {
       setShowSpinner(false);
     }
