@@ -37,13 +37,22 @@ export default function Dashboard() {
 
   return (
     <div className="w-full min-h-screen p-6 bg-gray-100 dark:bg-gray-900 pt-[250px]">
-      <h1 className="text-3xl font-bold text-center text-gray-800 dark:text-gray-200">
-        Welcome back, {userInformation?.username}! {userSplit.name}
+      <h1 className="text-4xl font-bold text-center text-gray-800 dark:text-gray-100 tracking-tight">
+        Welcome back,{" "}
+        <span className="text-blue-600 dark:text-blue-400">
+          {userInformation?.username}
+        </span>
+        !
       </h1>
+      {userSplit?.name && (
+        <p className="text-center text-lg text-gray-500 dark:text-gray-400 mt-2">
+          Active split: <span className="font-semibold">{userSplit.name}</span>
+        </p>
+      )}
 
       <div className="grid gap-6 mt-6 md:grid-cols-2 lg:grid-cols-3">
-        <DashboardCard>
-          <h2 className="text-lg font-semibold dark:text-gray-100">
+        <DashboardCard className="bg-white dark:bg-gray-800 border-blue-200 dark:border-blue-700 border shadow-blue-500/20 dark:shadow-blue-500/20 hover:shadow-blue-500/40 dark:hover:shadow-blue-500/40">
+          <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 tracking-tight">
             Edit my training splits
           </h2>
           {userSplit?.map((split) => {
@@ -58,8 +67,8 @@ export default function Dashboard() {
             );
           })}
         </DashboardCard>
-        <DashboardCard className="border-blue-200 dark:border-blue-700 border shadow-blue-500/20 dark:shadow-blue-500/20 hover:shadow-blue-500/40 dark:hover:shadow-blue-500/40">
-          <h2 className="text-lg font-semibold dark:text-gray-100">
+        <DashboardCard className="bg-white dark:bg-gray-800 border-blue-200 dark:border-blue-700 border shadow-blue-500/20 dark:shadow-blue-500/20 hover:shadow-blue-500/40 dark:hover:shadow-blue-500/40">
+          <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 tracking-tight">
             Log workout from training split
           </h2>
           {userSplit?.map((split) => (
@@ -72,15 +81,18 @@ export default function Dashboard() {
             </p>
           ))}
         </DashboardCard>
-
-        <div className="flex items-center justify-between p-6 dark:bg-green-700 bg-green-50 border-green-300 text-green-700 hover:text-green-600 rounded-xl shadow-lg border transition-all hover:shadow-xl hover:-translate-y-0.5">
-          <h2 className="text-lg font-semibold text-green-700 dark:text-green-200">
-            Add New Split
-          </h2>
-          <Link to={"/newsplit"} onClick={() => setIsLoading(true)}>
-            <i className="fa-solid fa-circle-plus text-5xl text-green-500 dark:text-green-200 hover:text-green-600 transition-colors"></i>
-          </Link>
-        </div>
+        <DashboardCard className="hover:scale-[1.02] transform bg-gradient-to-br from-blue-100 via-blue-200 to-blue-300 dark:from-blue-900 dark:via-blue-800 dark:to-blue-700 border-blue-300 dark:border-blue-700 border shadow-blue-400/30 dark:shadow-blue-500/20 hover:shadow-blue-500/40 dark:hover:shadow-blue-500/40 transition-all duration-300">
+          <div className="flex w-full h-full">
+            <div className="flex items-center justify-between w-full">
+              <h2 className="text-lg font-semibold text-black dark:text-blue-100">
+                Add New Split
+              </h2>
+              <Link to={"/newsplit"}>
+                <i className="fa-solid fa-circle-plus text-5xl text-blue-600 dark:text-blue-300 hover:text-blue-700 dark:hover:text-blue-400 transition-colors drop-shadow-md"></i>
+              </Link>
+            </div>
+          </div>
+        </DashboardCard>
       </div>
     </div>
   );

@@ -41,7 +41,7 @@ export default function NavHeader() {
         <div className="w-10"></div>
 
         {/* Centered Title */}
-        <h1 className="absolute left-1/2 -translate-x-1/2 text-3xl font-bold text-white tracking-wide">
+        <h1 className="absolute left-1/2 -translate-x-1/2 text-4xl md:text-5xl font-extrabold text-white tracking-wider drop-shadow-xl">
           The Iron Archives
         </h1>
 
@@ -100,7 +100,7 @@ export default function NavHeader() {
                 <li>
                   <button
                     onClick={logoutUser}
-                    className="bg-red-600 text-white text-lg px-4 py-1 rounded-lg hover:bg-red-700 transition-all"
+                    className="bg-red-800 text-white text-lg px-4 py-1 rounded-lg hover:bg-red-700 transition-all"
                   >
                     Log Out
                   </button>
