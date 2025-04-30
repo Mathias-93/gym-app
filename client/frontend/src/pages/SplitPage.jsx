@@ -9,7 +9,6 @@ import CustomModal from "../components/CustomModal";
 import Spinner from "../components/Spinner";
 
 export default function SplitPage() {
-  const { splitId } = useParams();
   const {
     userSplit,
     setUserSplit,
@@ -22,10 +21,13 @@ export default function SplitPage() {
     setShowModal,
     showSpinner,
     setShowSpinner,
+    workouts,
+    setWorkouts,
+    editableWorkouts,
+    setEditableWorkouts,
+    fetchWorkouts,
   } = useContext(GlobalContext);
   const [localUserSplit, setLocalUserSplit] = useState(null);
-  const [workouts, setWorkouts] = useState([]);
-  const [editableWorkouts, setEditableWorkouts] = useState([]);
   const [searchParam, setSearchParam] = useState("");
   const [filteredExercises, setFilteredExercises] = useState([]);
   const [activeDropdown, setActiveDropdown] = useState(null);
@@ -33,6 +35,8 @@ export default function SplitPage() {
   const [editableSplitName, setEditableSplitName] = useState("");
   const [editableWorkoutNamesAndIsEdit, setEditableWorkoutNamesAndIsEdit] =
     useState([{ name: "", isEdit: false }]);
+
+  const { splitId } = useParams();
 
   const dropdownref = useClickOutsideAndEscape(() => {
     setActiveDropdown(null);
@@ -139,33 +143,6 @@ export default function SplitPage() {
         ],
       },
     ]);
-  };
-
-  const fetchWorkouts = async () => {
-    try {
-      setIsLoading(true);
-      const res = await fetch(
-        `http://localhost:1337/plan/split/${splitId}/full`,
-        {
-          method: "GET",
-          credentials: "include",
-        }
-      );
-
-      if (res.ok) {
-        const data = await res.json();
-        // console.log("Fetched workouts:", data);
-        // console.log("Cloned workouts:", structuredClone(data));
-        setWorkouts(data);
-        setEditableWorkouts(structuredClone(data));
-      } else {
-        console.error("Fetch failed with status:", response.status);
-      }
-    } catch (err) {
-      console.log(err.message);
-    } finally {
-      setIsLoading(false);
-    }
   };
 
   const validateSplitBeforeSaving = () => {
@@ -352,7 +329,7 @@ export default function SplitPage() {
   }, [userSplit, splitId]);
 
   useEffect(() => {
-    fetchWorkouts();
+    fetchWorkouts(splitId);
 
     if (localUserSplit) {
       setEditableSplitName(localUserSplit.name);

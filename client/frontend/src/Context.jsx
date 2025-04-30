@@ -16,6 +16,8 @@ export default function GlobalState({ children }) {
   const [exercises, setExercises] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showSpinner, setShowSpinner] = useState(false);
+  const [workouts, setWorkouts] = useState([]);
+  const [editableWorkouts, setEditableWorkouts] = useState([]);
 
   const fetchUserSplit = async () => {
     try {
@@ -36,6 +38,33 @@ export default function GlobalState({ children }) {
       }
     } catch (err) {
       console.error(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchWorkouts = async (splitId) => {
+    try {
+      setIsLoading(true);
+      const res = await fetch(
+        `http://localhost:1337/plan/split/${splitId}/full`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+
+      if (res.ok) {
+        const data = await res.json();
+        // console.log("Fetched workouts:", data);
+        // console.log("Cloned workouts:", structuredClone(data));
+        setWorkouts(data);
+        setEditableWorkouts(structuredClone(data));
+      } else {
+        console.error("Fetch failed with status:", response.status);
+      }
+    } catch (err) {
+      console.log(err.message);
     } finally {
       setIsLoading(false);
     }
@@ -76,6 +105,11 @@ export default function GlobalState({ children }) {
         setShowModal,
         showSpinner,
         setShowSpinner,
+        workouts,
+        setWorkouts,
+        editableWorkouts,
+        setEditableWorkouts,
+        fetchWorkouts,
       }}
     >
       {children}
