@@ -86,12 +86,13 @@ function App() {
       <NavHeader />
       <div className="bg-slate-100 dark:bg-gray-900 flex justify-center">
         <Routes>
-          <Route exact path="/" element={<Home />} />
+          {/* Probably add the landing page here at "/" */}
+          <Route exact path="/" element={<Login />} />{" "}
           <Route exact path="/login" element={<Login />} />
           <Route exact path="/dashboard" element={<Dashboard />} />
           <Route exact path="/newsplit" element={<AddNewSplit />} />
-          <Route exact path="/logpage" element={<LogPage />} />
           <Route path="/split/:splitId" element={<SplitPage />} />
+          <Route path="/logpage/:splitId" element={<LogPage />} />
         </Routes>
       </div>
     </div>

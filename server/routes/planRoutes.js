@@ -20,7 +20,6 @@ router.get("/workout_splits", async (req, res) => {
 });
 
 // Route for saving a custom split to db
-
 router.post("/save_custom_split", async (req, res) => {
   try {
     await pool.query("BEGIN");
@@ -95,7 +94,6 @@ router.post("/save_custom_split", async (req, res) => {
 });
 
 // Route for updating a split when edited
-
 router.put("/update_split/:splitId", async (req, res) => {
   const userId = req.user.id;
   const splitId = req.params.splitId;
@@ -229,7 +227,6 @@ router.delete("/delete_split/:splitId", async (req, res) => {
 });
 
 // Route for fetching workouts
-
 router.get("/workouts", async (req, res) => {
   try {
     const allWorkouts = await pool.query("SELECT * FROM workouts");
@@ -241,7 +238,6 @@ router.get("/workouts", async (req, res) => {
 });
 
 // Fetching a user specific split
-
 router.get("/split/:splitId/full", async (req, res) => {
   const userId = req.user.id;
   const splitId = req.params.splitId;

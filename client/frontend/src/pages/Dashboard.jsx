@@ -58,29 +58,27 @@ export default function Dashboard() {
             );
           })}
         </DashboardCard>
-        <DashboardCard>
+        <DashboardCard className="border-blue-200 dark:border-blue-700 border shadow-blue-500/20 dark:shadow-blue-500/20 hover:shadow-blue-500/40 dark:hover:shadow-blue-500/40">
           <h2 className="text-lg font-semibold dark:text-gray-100">
             Log workout from training split
           </h2>
-          {userSplit?.map((split) => {
-            return (
-              <p
-                key={split.split_id}
-                className="text-gray-600 w-fit dark:text-gray-300 cursor-pointer hover:text-gray-400 dark:hover:text-gray-600"
-                onClick={() => navigate(`/split/${split.split_id}`)}
-              >
-                {split.name}
-              </p>
-            );
-          })}
+          {userSplit?.map((split) => (
+            <p
+              key={split.split_id}
+              className="text-gray-600 w-fit dark:text-gray-300 cursor-pointer hover:text-gray-400 dark:hover:text-gray-600"
+              onClick={() => navigate(`/logpage/${split.split_id}`)}
+            >
+              {split.name}
+            </p>
+          ))}
         </DashboardCard>
 
-        <div className="flex items-center justify-between p-6 dark:bg-green-700 bg-green-50 border-green-300 text-green-700 hover:text-green-600 rounded-xl shadow-lg border transition-all hover:shadow-xl hover:-translate-y-0.5 cursor-pointer">
+        <div className="flex items-center justify-between p-6 dark:bg-green-700 bg-green-50 border-green-300 text-green-700 hover:text-green-600 rounded-xl shadow-lg border transition-all hover:shadow-xl hover:-translate-y-0.5">
           <h2 className="text-lg font-semibold text-green-700 dark:text-green-200">
             Add New Split
           </h2>
           <Link to={"/newsplit"} onClick={() => setIsLoading(true)}>
-            <i className="fa-solid fa-circle-plus text-4xl text-green-500 dark:text-green-200 hover:text-green-600 transition-colors"></i>
+            <i className="fa-solid fa-circle-plus text-5xl text-green-500 dark:text-green-200 hover:text-green-600 transition-colors"></i>
           </Link>
         </div>
       </div>

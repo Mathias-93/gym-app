@@ -63,14 +63,14 @@ export default function NavHeader() {
         <nav className="bg-gray-100 dark:bg-gray-800 shadow-md">
           <ul className="flex items-center justify-between px-8 py-3">
             {/* Home Link */}
-            <li>
+            {/* <li>
               <Link
                 to="/"
                 className="text-gray-700 dark:text-gray-100 text-lg font-medium hover:text-blue-600 dark:hover:text-blue-400 transition-all"
               >
                 Home
               </Link>
-            </li>
+            </li> */}
 
             {/* Conditional Auth Links */}
             {!isAuthenticated ? (
@@ -79,7 +79,9 @@ export default function NavHeader() {
                   to="/login"
                   className="text-gray-700 dark:text-gray-100 text-lg font-medium hover:text-blue-600 dark:hover:text-blue-400 transition-all"
                 >
-                  Log In
+                  <button className="bg-blue-600 text-white text-lg px-4 py-1 rounded-lg hover:bg-blue-400 transition-all">
+                    Log In
+                  </button>
                 </Link>
               </li>
             ) : (
