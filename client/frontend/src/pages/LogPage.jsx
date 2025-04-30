@@ -1,31 +1,126 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { GlobalContext } from "../Context";
 import Spinner from "../components/Spinner";
+import { useParams } from "react-router";
 
 export default function LogPage() {
-  const { workouts, showSpinner } = useContext(GlobalContext);
+  const { workouts, showSpinner, fetchWorkouts } = useContext(GlobalContext);
   const [selectedWorkout, setSelectedWorkout] = useState(null);
+  const [logData, setLogData] = useState(() => {
+    // Try loading from localStorage on init
+    const saved = localStorage.getItem("logDraft");
+    return saved ? JSON.parse(saved) : null;
+  });
+  const [sets, setSets] = useState([]);
+  const [notes, setNotes] = useState(null);
+  const { splitId } = useParams();
+
+  const handleSubmit = async () => {
+    // send to backend...
+    localStorage.removeItem("logDraft");
+    setLogData(null);
+  };
+
+  const handleAddSet = () => {
+    setSets((prev) => [...prev, sets.length + 1]);
+  };
+
+  const handleRemoveSet = (i) => {
+    setSets((prev) => {
+      return prev.filter((set, setIndex) => setIndex !== i);
+    });
+  };
+
+  useEffect(() => {
+    fetchWorkouts(splitId);
+  }, []);
+
+  useEffect(() => {
+    if (logData) {
+      localStorage.setItem("logDraft", JSON.stringify(logData));
+    }
+  }, [logData]);
 
   if (showSpinner) {
     return <Spinner />;
   }
   console.log(workouts);
+
   return (
     <div className="w-full min-h-screen p-6 bg-gray-100 dark:bg-gray-900 pt-[200px] flex flex-col gap-10 items-center">
+      <div className="w-full max-w-md">
+        <label
+          htmlFor="workout-select"
+          className="block mb-2 text-lg font-semibold text-gray-700 dark:text-gray-200"
+        >
+          Choose a workout:
+        </label>
+        <select
+          id="workout-select"
+          value={selectedWorkout?.workout_id || ""}
+          onChange={(e) => {
+            const selectedId = Number(e.target.value);
+            const workout = workouts.find((w) => w.workout_id === selectedId);
+            setSelectedWorkout(workout);
+          }}
+          className="w-full px-4 py-3 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="" disabled>
+            -- Select a workout --
+          </option>
+          {workouts?.map((workout) => (
+            <option key={workout.workout_id} value={workout.workout_id}>
+              {workout.name}
+            </option>
+          ))}
+        </select>
+      </div>
       <div className="flex flex-col gap-4 w-full max-w-md">
-        {workouts?.map((workout) => (
-          <button
-            key={workout.workout_id}
-            onClick={() => setSelectedWorkout(workout)}
-            className={`w-full text-lg font-medium px-6 py-3 rounded-full transition-colors duration-200
-        ${
-          selectedWorkout?.workout_id === workout.workout_id
-            ? "bg-blue-600 text-white hover:bg-blue-700"
-            : "bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
-        }`}
-          >
-            {workout.name}
-          </button>
+        {selectedWorkout?.exercises?.map((exercise, index) => (
+          <div className="w-full max-w-2xl p-4 bg-white dark:bg-gray-800 rounded-xl shadow border border-gray-300 dark:border-gray-700">
+            <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">
+              {exercise.name}
+            </h3>
+
+            {sets.map((set, i) => (
+              <div key={i} className="grid grid-cols-3 gap-4 mb-2">
+                <input
+                  type="number"
+                  placeholder="Reps"
+                  value={set.reps}
+                  onChange={console.log("")}
+                  className="p-2 rounded border dark:bg-gray-700 dark:text-white"
+                />
+                <input
+                  type="number"
+                  placeholder="Weight"
+                  value={set.weight}
+                  onChange={console.log("")}
+                  className="p-2 rounded border dark:bg-gray-700 dark:text-white"
+                />
+                <button
+                  onClick={() => handleRemoveSet(i)}
+                  className="text-red-500 hover:text-red-700"
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+
+            <button
+              onClick={handleAddSet}
+              className="text-sm text-blue-500 hover:text-blue-700 mt-2"
+            >
+              + Add Set
+            </button>
+
+            <textarea
+              placeholder="Notes (optional)"
+              value={notes}
+              onChange={console.log("")}
+              className="w-full mt-4 p-2 rounded border dark:bg-gray-700 dark:text-white"
+            />
+          </div>
         ))}
       </div>
     </div>
