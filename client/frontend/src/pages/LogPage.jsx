@@ -11,8 +11,8 @@ export default function LogPage() {
     const saved = localStorage.getItem("logDraft");
     return saved ? JSON.parse(saved) : null;
   });
-  const [sets, setSets] = useState([]);
-  const [notes, setNotes] = useState(null);
+  const [sets, setSets] = useState([[]]);
+  const [notes, setNotes] = useState("");
   const { splitId } = useParams();
 
   const handleSubmit = async () => {
@@ -21,13 +21,24 @@ export default function LogPage() {
     setLogData(null);
   };
 
-  const handleAddSet = () => {
-    setSets((prev) => [...prev, sets.length + 1]);
+  const handleAddSet = (exerciseIndex) => {
+    setSets((prev) => {
+      const newSets = structuredClone(prev);
+      newSets[exerciseIndex] = [
+        ...(prev[exerciseIndex] || []),
+        { reps: "", weight: "" },
+      ];
+      return newSets;
+    });
   };
 
-  const handleRemoveSet = (i) => {
+  const handleRemoveSet = (exerciseIndex, setIndex) => {
     setSets((prev) => {
-      return prev.filter((set, setIndex) => setIndex !== i);
+      const newSets = structuredClone(prev);
+      newSets[exerciseIndex] = prev[exerciseIndex].filter(
+        (_, i) => i !== setIndex
+      );
+      return newSets;
     });
   };
 
@@ -44,7 +55,6 @@ export default function LogPage() {
   if (showSpinner) {
     return <Spinner />;
   }
-  console.log(workouts);
 
   return (
     <div className="w-full min-h-screen p-6 bg-gray-100 dark:bg-gray-900 pt-[200px] flex flex-col gap-10 items-center">
@@ -76,14 +86,14 @@ export default function LogPage() {
         </select>
       </div>
       <div className="flex flex-col gap-4 w-full max-w-md">
-        {selectedWorkout?.exercises?.map((exercise, index) => (
+        {selectedWorkout?.exercises?.map((exercise, exerciseIndex) => (
           <div className="w-full max-w-2xl p-4 bg-white dark:bg-gray-800 rounded-xl shadow border border-gray-300 dark:border-gray-700">
             <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">
               {exercise.name}
             </h3>
 
-            {sets.map((set, i) => (
-              <div key={i} className="grid grid-cols-3 gap-4 mb-2">
+            {sets[exerciseIndex]?.map((set, setIndex) => (
+              <div key={setIndex} className="grid grid-cols-3 gap-4 mb-2">
                 <input
                   type="number"
                   placeholder="Reps"
@@ -99,7 +109,7 @@ export default function LogPage() {
                   className="p-2 rounded border dark:bg-gray-700 dark:text-white"
                 />
                 <button
-                  onClick={() => handleRemoveSet(i)}
+                  onClick={() => handleRemoveSet(exerciseIndex, setIndex)}
                   className="text-red-500 hover:text-red-700"
                 >
                   Remove
@@ -108,7 +118,7 @@ export default function LogPage() {
             ))}
 
             <button
-              onClick={handleAddSet}
+              onClick={() => handleAddSet(exerciseIndex)}
               className="text-sm text-blue-500 hover:text-blue-700 mt-2"
             >
               + Add Set
