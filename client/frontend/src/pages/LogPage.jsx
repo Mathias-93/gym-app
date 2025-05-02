@@ -13,6 +13,7 @@ export default function LogPage() {
   });
   const [sets, setSets] = useState([[]]);
   const [notes, setNotes] = useState({});
+  const [hasHydrated, setHasHydrated] = useState(false);
   const { splitId } = useParams();
 
   const handleSubmit = async () => {
@@ -58,6 +59,31 @@ export default function LogPage() {
       [exerciseIndex]: value,
     }));
   };
+
+  useEffect(() => {
+    if (hasHydrated && selectedWorkout) {
+      setLogData({
+        workoutId: selectedWorkout.workout_id,
+        timestamp: new Date().toISOString(),
+        sets,
+        notes,
+      });
+    }
+  }, [selectedWorkout, sets, notes, hasHydrated]);
+
+  useEffect(() => {
+    if (logData && workouts.length > 0 && !hasHydrated) {
+      setSets(logData.sets || [[]]);
+      setNotes(logData.notes || {});
+      const foundWorkout = workouts.find(
+        (w) => w.workout_id === logData.workoutId
+      );
+      if (foundWorkout) {
+        setSelectedWorkout(foundWorkout);
+      }
+      setHasHydrated(true);
+    }
+  }, [logData, workouts, hasHydrated]);
 
   useEffect(() => {
     fetchWorkouts(splitId);
