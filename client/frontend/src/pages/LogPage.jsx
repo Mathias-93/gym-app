@@ -12,7 +12,7 @@ export default function LogPage() {
     return saved ? JSON.parse(saved) : null;
   });
   const [sets, setSets] = useState([[]]);
-  const [notes, setNotes] = useState("");
+  const [notes, setNotes] = useState({});
   const { splitId } = useParams();
 
   const handleSubmit = async () => {
@@ -40,6 +40,23 @@ export default function LogPage() {
       );
       return newSets;
     });
+  };
+
+  const handleSetValuesChange = (exerciseIndex, setIndex, field, value) => {
+    const valueAsNumber =
+      field === "reps" || field === "weight" ? Number(value) : value;
+    setSets((prev) => {
+      const newSets = structuredClone(prev);
+      newSets[exerciseIndex][setIndex][field] = valueAsNumber;
+      return newSets;
+    });
+  };
+
+  const handleChangeNotes = (exerciseIndex, value) => {
+    setNotes((prev) => ({
+      ...prev,
+      [exerciseIndex]: value,
+    }));
   };
 
   useEffect(() => {
@@ -98,14 +115,28 @@ export default function LogPage() {
                   type="number"
                   placeholder="Reps"
                   value={set.reps}
-                  onChange={console.log("")}
+                  onChange={(e) =>
+                    handleSetValuesChange(
+                      exerciseIndex,
+                      setIndex,
+                      "reps",
+                      e.target.value
+                    )
+                  }
                   className="p-2 rounded border dark:bg-gray-700 dark:text-white"
                 />
                 <input
                   type="number"
                   placeholder="Weight"
                   value={set.weight}
-                  onChange={console.log("")}
+                  onChange={(e) =>
+                    handleSetValuesChange(
+                      exerciseIndex,
+                      setIndex,
+                      "weight",
+                      e.target.value
+                    )
+                  }
                   className="p-2 rounded border dark:bg-gray-700 dark:text-white"
                 />
                 <button
@@ -126,8 +157,8 @@ export default function LogPage() {
 
             <textarea
               placeholder="Notes (optional)"
-              value={notes}
-              onChange={console.log("")}
+              value={notes[exerciseIndex] || ""}
+              onChange={(e) => handleChangeNotes(exerciseIndex, e.target.value)}
               className="w-full mt-4 p-2 rounded border dark:bg-gray-700 dark:text-white"
             />
           </div>
