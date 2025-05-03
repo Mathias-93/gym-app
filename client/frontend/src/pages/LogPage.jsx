@@ -2,9 +2,11 @@ import React, { useContext, useEffect, useState } from "react";
 import { GlobalContext } from "../Context";
 import Spinner from "../components/Spinner";
 import { useParams } from "react-router";
+import CustomModal from "../components/CustomModal";
 
 export default function LogPage() {
-  const { workouts, showSpinner, fetchWorkouts } = useContext(GlobalContext);
+  const { workouts, showSpinner, fetchWorkouts, setShowModal, showModal } =
+    useContext(GlobalContext);
   const [selectedWorkout, setSelectedWorkout] = useState(null);
   const [logData, setLogData] = useState(() => {
     // Try loading from localStorage on init
@@ -101,6 +103,20 @@ export default function LogPage() {
 
   return (
     <div className="w-full min-h-screen p-6 bg-gray-100 dark:bg-gray-900 pt-[200px] flex flex-col gap-10 items-center">
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-40">
+          <CustomModal
+            buttonColors={"bg-green-500 text-white hover:bg-green-600"}
+            confirmMessage={"log the workout?"}
+            confirmButton={"Log"}
+            onCancel={() => setShowModal(false)}
+            onConfirm={() => {
+              handleSubmit(splitId);
+              setShowModal(false);
+            }}
+          />
+        </div>
+      )}
       <div className="w-full max-w-md">
         <label
           htmlFor="workout-select"
@@ -139,6 +155,7 @@ export default function LogPage() {
               <div key={setIndex} className="grid grid-cols-3 gap-4 mb-2">
                 <input
                   type="number"
+                  min="0"
                   placeholder="Reps"
                   value={set.reps}
                   onChange={(e) =>
@@ -153,6 +170,7 @@ export default function LogPage() {
                 />
                 <input
                   type="number"
+                  min="0"
                   placeholder="Weight"
                   value={set.weight}
                   onChange={(e) =>
@@ -189,6 +207,17 @@ export default function LogPage() {
             />
           </div>
         ))}
+        <div className="w-full flex flex-col">
+          <button
+            type="button"
+            className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition"
+            onClick={() => {
+              setShowModal(!showModal);
+            }}
+          >
+            Log workout
+          </button>
+        </div>
       </div>
     </div>
   );

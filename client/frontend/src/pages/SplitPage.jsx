@@ -356,10 +356,16 @@ export default function SplitPage() {
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-40">
           <CustomModal
+            buttonColors={
+              "bg-red-500 dark:bg-red-800 text-white py-3 hover:bg-red-400 dark:hover:bg-red-700"
+            }
+            confirmMessage={"delete this split?"}
+            secondMessage={"This action cannot be undone."}
+            confirmButton={"Delete"}
             onCancel={() => setShowModal(false)}
             onConfirm={() => {
               handleDeleteSplit(splitId);
-              setShowModal(!showModal);
+              setShowModal(false);
             }}
           />
         </div>
