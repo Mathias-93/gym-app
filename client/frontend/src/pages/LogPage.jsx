@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { GlobalContext } from "../Context";
 import Spinner from "../components/Spinner";
 import { useParams } from "react-router";
@@ -9,7 +9,6 @@ export default function LogPage() {
     useContext(GlobalContext);
   const [selectedWorkout, setSelectedWorkout] = useState(null);
   const [logData, setLogData] = useState(() => {
-    // Try loading from localStorage on init
     const saved = localStorage.getItem("logDraft");
     return saved ? JSON.parse(saved) : null;
   });
@@ -17,8 +16,17 @@ export default function LogPage() {
   const [notes, setNotes] = useState({});
   const [hasHydrated, setHasHydrated] = useState(false);
   const { splitId } = useParams();
+  const savedDraftRef = useRef(
+    (() => {
+      const saved = localStorage.getItem("logDraft");
+      return saved ? JSON.parse(saved) : null;
+    })()
+  );
 
   const handleSubmit = async () => {
+    console.log("handleSubmit fired");
+    const dataToSubmit = logData;
+    console.log("Submitting:", dataToSubmit);
     // send to backend...
     localStorage.removeItem("logDraft");
     setLogData(null);
@@ -63,6 +71,26 @@ export default function LogPage() {
   };
 
   useEffect(() => {
+    fetchWorkouts(splitId);
+  }, []);
+
+  useEffect(() => {
+    if (savedDraftRef.current && workouts.length > 0 && !hasHydrated) {
+      const { sets, notes, workoutId } = savedDraftRef.current;
+
+      setSets(sets || [[]]);
+      setNotes(notes || {});
+
+      const foundWorkout = workouts.find((w) => w.workout_id === workoutId);
+      if (foundWorkout) {
+        setSelectedWorkout(foundWorkout);
+      }
+
+      setHasHydrated(true);
+    }
+  }, [workouts, hasHydrated]);
+
+  useEffect(() => {
     if (hasHydrated && selectedWorkout) {
       setLogData({
         workoutId: selectedWorkout.workout_id,
@@ -74,25 +102,8 @@ export default function LogPage() {
   }, [selectedWorkout, sets, notes, hasHydrated]);
 
   useEffect(() => {
-    if (logData && workouts.length > 0 && !hasHydrated) {
-      setSets(logData.sets || [[]]);
-      setNotes(logData.notes || {});
-      const foundWorkout = workouts.find(
-        (w) => w.workout_id === logData.workoutId
-      );
-      if (foundWorkout) {
-        setSelectedWorkout(foundWorkout);
-      }
-      setHasHydrated(true);
-    }
-  }, [logData, workouts, hasHydrated]);
-
-  useEffect(() => {
-    fetchWorkouts(splitId);
-  }, []);
-
-  useEffect(() => {
     if (logData) {
+      console.log("Setting logDraft:", logData);
       localStorage.setItem("logDraft", JSON.stringify(logData));
     }
   }, [logData]);
@@ -111,7 +122,7 @@ export default function LogPage() {
             confirmButton={"Log"}
             onCancel={() => setShowModal(false)}
             onConfirm={() => {
-              handleSubmit(splitId);
+              handleSubmit();
               setShowModal(false);
             }}
           />
