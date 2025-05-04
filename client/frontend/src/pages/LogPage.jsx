@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { GlobalContext } from "../Context";
 import Spinner from "../components/Spinner";
-import { useParams } from "react-router";
+import { useLoaderData, useParams } from "react-router";
 import CustomModal from "../components/CustomModal";
 
 export default function LogPage() {
@@ -23,13 +23,38 @@ export default function LogPage() {
     })()
   );
 
+  const validateWorkout = () => {
+    // number of sets to be at least one per exercise
+    const isValidLength = logData.sets.every(
+      (setGroup) => setGroup.length >= 1
+    );
+    if (!isValidLength) return false;
+
+    // number of reps to be at least 1, and weight a value, even 0 (for body weight stuff)
+    const isValidValues = logData.sets.every((setGroup) => {
+      return setGroup.every(
+        (set) => set.reps > 0 && typeof set.weight === "number"
+      );
+    });
+
+    if (!isValidValues) return false;
+
+    return true;
+  };
+
   const handleSubmit = async () => {
-    console.log("handleSubmit fired");
-    const dataToSubmit = logData;
-    console.log("Submitting:", dataToSubmit);
+    console.log("Right before:", logData.sets);
+    if (!validateWorkout()) {
+      console.log("nope");
+      return;
+    } else {
+      console.log("Alright");
+      return;
+    }
+
     // send to backend...
-    localStorage.removeItem("logDraft");
-    setLogData(null);
+    /* localStorage.removeItem("logDraft");
+    setLogData(null); */
   };
 
   const handleAddSet = (exerciseIndex) => {
