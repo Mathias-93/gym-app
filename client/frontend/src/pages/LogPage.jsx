@@ -3,10 +3,19 @@ import { GlobalContext } from "../Context";
 import Spinner from "../components/Spinner";
 import { useLoaderData, useParams } from "react-router";
 import CustomModal from "../components/CustomModal";
+import { toast } from "react-hot-toast";
+import CustomToast from "../components/CustomToast";
 
 export default function LogPage() {
-  const { workouts, showSpinner, fetchWorkouts, setShowModal, showModal } =
-    useContext(GlobalContext);
+  const {
+    workouts,
+    showSpinner,
+    fetchWorkouts,
+    setShowModal,
+    showModal,
+    isLoading,
+    setIsLoading,
+  } = useContext(GlobalContext);
   const [selectedWorkout, setSelectedWorkout] = useState(null);
   const [logData, setLogData] = useState(() => {
     const saved = localStorage.getItem("logDraft");
@@ -39,22 +48,65 @@ export default function LogPage() {
 
     if (!isValidValues) return false;
 
+    // Extra guard for notes length
+    const isNotesLength = Object.values(logData.notes).every(
+      (note) => note.length <= 500
+    );
+
+    if (!isNotesLength) return false;
+
     return true;
   };
 
   const handleSubmit = async () => {
-    console.log("Right before:", logData.sets);
+    /*     console.log("Right before:", logData.sets); */
     if (!validateWorkout()) {
-      console.log("nope");
-      return;
-    } else {
-      console.log("Alright");
+      toast.custom(
+        (t) =>
+          t.visible && (
+            <CustomToast
+              t={t}
+              message="Each exercise must have at least one set, reps cannot be 0 and weight must be a number."
+              type="error"
+            />
+          ),
+        { duration: 5000, position: "top-center" }
+      );
       return;
     }
-
     // send to backend...
-    /* localStorage.removeItem("logDraft");
-    setLogData(null); */
+    try {
+      setIsLoading(true);
+      const response = await fetch(``, {
+        method: "POST",
+        headers: { "Content-type": "application/json" },
+        body: JSON.stringify({
+          workoutId: logData.workoutId,
+          setsData: logData.sets,
+          notes: logData.notes,
+          name: selectedWorkout.name,
+          exerciseIds: selectedWorkout.exercises.map((ex) => ex.exercise_id),
+        }),
+      });
+    } catch (err) {
+      console.log("Something went wrong:", err.message);
+      toast.custom(
+        (t) =>
+          t.visible && (
+            <CustomToast
+              t={t}
+              message="Something went wrong when logging workout."
+              type="error"
+            />
+          ),
+        { duration: 5000, position: "top-center" }
+      );
+    } finally {
+      setIsLoading(false);
+    }
+
+    localStorage.removeItem("logDraft");
+    setLogData(null);
   };
 
   const handleAddSet = (exerciseIndex) => {
@@ -167,6 +219,7 @@ export default function LogPage() {
             const selectedId = Number(e.target.value);
             const workout = workouts.find((w) => w.workout_id === selectedId);
             setSelectedWorkout(workout);
+            console.log(selectedWorkout);
           }}
           className="w-full px-4 py-3 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
@@ -188,43 +241,58 @@ export default function LogPage() {
             </h3>
 
             {sets[exerciseIndex]?.map((set, setIndex) => (
-              <div key={setIndex} className="grid grid-cols-3 gap-4 mb-2">
-                <input
-                  type="number"
-                  min="0"
-                  placeholder="Reps"
-                  value={set.reps}
-                  onChange={(e) =>
-                    handleSetValuesChange(
-                      exerciseIndex,
-                      setIndex,
-                      "reps",
-                      e.target.value
-                    )
-                  }
-                  className="p-2 rounded border dark:bg-gray-700 dark:text-white"
-                />
-                <input
-                  type="number"
-                  min="0"
-                  placeholder="Weight"
-                  value={set.weight}
-                  onChange={(e) =>
-                    handleSetValuesChange(
-                      exerciseIndex,
-                      setIndex,
-                      "weight",
-                      e.target.value
-                    )
-                  }
-                  className="p-2 rounded border dark:bg-gray-700 dark:text-white"
-                />
-                <button
-                  onClick={() => handleRemoveSet(exerciseIndex, setIndex)}
-                  className="text-red-500 hover:text-red-700"
-                >
-                  Remove
-                </button>
+              <div
+                key={setIndex}
+                className="grid grid-cols-3 gap-4 mb-2 items-center"
+              >
+                <div className="flex flex-col">
+                  <label className="text-sm text-gray-700 dark:text-gray-300 mb-1">
+                    Weight:
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={set.weight}
+                    onChange={(e) =>
+                      handleSetValuesChange(
+                        exerciseIndex,
+                        setIndex,
+                        "weight",
+                        e.target.value
+                      )
+                    }
+                    className="p-2 rounded border dark:bg-gray-700 dark:text-white"
+                  />
+                </div>
+
+                <div className="flex flex-col">
+                  <label className="text-sm text-gray-700 dark:text-gray-300 mb-1">
+                    Reps:
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={set.reps}
+                    onChange={(e) =>
+                      handleSetValuesChange(
+                        exerciseIndex,
+                        setIndex,
+                        "reps",
+                        e.target.value
+                      )
+                    }
+                    className="p-2 rounded border dark:bg-gray-700 dark:text-white"
+                  />
+                </div>
+
+                <div className="flex items-center mt-6">
+                  <button
+                    onClick={() => handleRemoveSet(exerciseIndex, setIndex)}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    Remove
+                  </button>
+                </div>
               </div>
             ))}
 
@@ -236,7 +304,8 @@ export default function LogPage() {
             </button>
 
             <textarea
-              placeholder="Notes (optional)"
+              placeholder="Notes (max 500 characters)"
+              maxLength="500"
               value={notes[exerciseIndex] || ""}
               onChange={(e) => handleChangeNotes(exerciseIndex, e.target.value)}
               className="w-full mt-4 p-2 rounded border dark:bg-gray-700 dark:text-white"

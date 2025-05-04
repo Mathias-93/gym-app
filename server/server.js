@@ -29,6 +29,9 @@ app.use("/plan", authenticateToken, planRoutes);
 // Any api requests that has to do with fetching exercises
 app.use("/exercises", authenticateToken, exerciseRoutes);
 
+// Any api requests that has to do with logging workouts
+app.use("/log", authenticateToken, logRoutes);
+
 app.get("/", async (req, res) => {
   try {
     // Loading front end
