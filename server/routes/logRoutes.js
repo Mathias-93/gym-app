@@ -37,29 +37,34 @@ router.post("/workout/:splitId", async (req, res) => {
     for (let i = 0; i < exerciseIdsList.length; i++) {
       const exerciseId = exerciseIdsList[i];
       const setsForThisExercise = setsData[i];
-      const notesForThisExercise = notes;
+      const notesForThisExercise = notes[i] || null;
+      const exerciseName = exerciseNamesList[i];
 
-      for (const set of setsForThisExercise) {
+      for (let j = 0; j < setsForThisExercise.length; j++) {
+        const set = setsForThisExercise[j];
         const { reps, weight } = set;
+        const setNumber = j + 1;
 
         await pool.query(
           `
-          INSERT INTO workout_log_exercises (log_id, exercise_id, sets, reps, weight, notes, exercise_name)
+          INSERT INTO workout_log_exercises (log_id, exercise_id, reps, weight, notes, exercise_name, set_number)
           VALUES ($1, $2, $3, $4, $5, $6, $7)
         `,
           [
             logId,
             exerciseId,
-            setsForThisExercise.length,
             reps,
             weight,
             notesForThisExercise,
+            exerciseName,
+            setNumber,
           ]
         );
       }
     }
 
     await pool.query("COMMIT");
+    res.status(200).json({ message: "Successfully logged exercise!" });
   } catch (err) {
     await pool.query("ROLLBACK");
     console.error("Something went wrong:", err.message);

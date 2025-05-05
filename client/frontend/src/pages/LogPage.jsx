@@ -32,15 +32,13 @@ export default function LogPage() {
     })()
   );
 
-  const validateWorkout = () => {
+  const validateWorkout = (data) => {
     // number of sets to be at least one per exercise
-    const isValidLength = logData.sets.every(
-      (setGroup) => setGroup.length >= 1
-    );
+    const isValidLength = data.sets.every((setGroup) => setGroup.length >= 1);
     if (!isValidLength) return false;
 
     // number of reps to be at least 1, and weight a value, even 0 (for body weight stuff)
-    const isValidValues = logData.sets.every((setGroup) => {
+    const isValidValues = data.sets.every((setGroup) => {
       return setGroup.every(
         (set) => set.reps > 0 && typeof set.weight === "number"
       );
@@ -49,7 +47,7 @@ export default function LogPage() {
     if (!isValidValues) return false;
 
     // Extra guard for notes length
-    const isNotesLength = Object.values(logData.notes).every(
+    const isNotesLength = Object.values(data.notes).every(
       (note) => note.length <= 500
     );
 
@@ -60,7 +58,7 @@ export default function LogPage() {
 
   const handleSubmit = async () => {
     /*     console.log("Right before:", logData.sets); */
-    if (!validateWorkout()) {
+    if (!validateWorkout(logData)) {
       toast.custom(
         (t) =>
           t.visible && (
@@ -91,17 +89,11 @@ export default function LogPage() {
               (ex) => ex.exercise_id
             ),
           }),
+          credentials: "include",
         }
       );
 
       if (!response.ok) {
-        toast.custom(
-          (t) =>
-            t.visible && (
-              <CustomToast t={t} message="Something went wrong." type="error" />
-            ),
-          { duration: 5000, position: "top-center" }
-        );
         throw new Error(`Something went wrong: ${response.statusText}`);
       }
 
@@ -113,6 +105,8 @@ export default function LogPage() {
           ),
         { duration: 5000, position: "top-center" }
       );
+      localStorage.removeItem("logDraft");
+      setLogData(null);
     } catch (err) {
       console.log("Something went wrong:", err.message);
       toast.custom(
