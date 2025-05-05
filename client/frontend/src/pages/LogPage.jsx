@@ -86,10 +86,32 @@ export default function LogPage() {
             workoutId: logData.workoutId,
             setsData: logData.sets,
             notes: logData.notes,
-            name: selectedWorkout.name,
-            exerciseIds: selectedWorkout.exercises.map((ex) => ex.exercise_id),
+            exerciseNamesList: selectedWorkout.exercises.map((ex) => ex.name),
+            exerciseIdsList: selectedWorkout.exercises.map(
+              (ex) => ex.exercise_id
+            ),
           }),
         }
+      );
+
+      if (!response.ok) {
+        toast.custom(
+          (t) =>
+            t.visible && (
+              <CustomToast t={t} message="Something went wrong." type="error" />
+            ),
+          { duration: 5000, position: "top-center" }
+        );
+        throw new Error(`Something went wrong: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      toast.custom(
+        (t) =>
+          t.visible && (
+            <CustomToast t={t} message="Split saved!" type="success" />
+          ),
+        { duration: 5000, position: "top-center" }
       );
     } catch (err) {
       console.log("Something went wrong:", err.message);
@@ -165,7 +187,6 @@ export default function LogPage() {
       if (foundWorkout) {
         setSelectedWorkout(foundWorkout);
       }
-
       setHasHydrated(true);
     }
   }, [workouts, hasHydrated]);
