@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import pool from "./db.js";
 import authRoutes from "./routes/authRoutes.js";
 import planRoutes from "./routes/planRoutes.js";
+import logRoutes from "./routes/logRoutes.js";
 import exerciseRoutes from "./routes/exerciseRoutes.js";
 import authenticateToken from "./middleware/authMiddleware.js";
 

@@ -77,17 +77,20 @@ export default function LogPage() {
     // send to backend...
     try {
       setIsLoading(true);
-      const response = await fetch(``, {
-        method: "POST",
-        headers: { "Content-type": "application/json" },
-        body: JSON.stringify({
-          workoutId: logData.workoutId,
-          setsData: logData.sets,
-          notes: logData.notes,
-          name: selectedWorkout.name,
-          exerciseIds: selectedWorkout.exercises.map((ex) => ex.exercise_id),
-        }),
-      });
+      const response = await fetch(
+        `http://localhost:1337/log/workout/${splitId}`,
+        {
+          method: "POST",
+          headers: { "Content-type": "application/json" },
+          body: JSON.stringify({
+            workoutId: logData.workoutId,
+            setsData: logData.sets,
+            notes: logData.notes,
+            name: selectedWorkout.name,
+            exerciseIds: selectedWorkout.exercises.map((ex) => ex.exercise_id),
+          }),
+        }
+      );
     } catch (err) {
       console.log("Something went wrong:", err.message);
       toast.custom(
