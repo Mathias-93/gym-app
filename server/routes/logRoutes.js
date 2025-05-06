@@ -72,4 +72,34 @@ router.post("/workout/:splitId", async (req, res) => {
   }
 });
 
+router.get("/previous/:workoutId", async (req, res) => {
+  const userId = req.user.id;
+  const workoutId = req.params.workoutId;
+
+  try {
+    const result = await pool.query(
+      `
+        SELECT wle.*
+        FROM workout_log_exercises wle
+        WHERE wle.log_id = (
+          SELECT wl.log_id
+          FROM workout_logs wl
+          WHERE wl.user_id = $1 AND wl.workout_id = $2
+          ORDER BY wl.completed_at DESC
+          LIMIT 1
+        )
+      `,
+      [userId, workoutId]
+    );
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error(
+      "Something went wrong fetching previous workout:",
+      err.message
+    );
+    res.status(500).json({ message: "Failed to fetch previous workout." });
+  }
+});
+
 export default router;
