@@ -23,14 +23,7 @@ export default function LogPage() {
   });
   const [sets, setSets] = useState([[]]);
   const [notes, setNotes] = useState({});
-  const [hasHydrated, setHasHydrated] = useState(false);
   const { splitId } = useParams();
-  const savedDraftRef = useRef(
-    (() => {
-      const saved = localStorage.getItem("logDraft");
-      return saved ? JSON.parse(saved) : null;
-    })()
-  );
 
   const validateWorkout = (data) => {
     // number of sets to be at least one per exercise
@@ -171,8 +164,8 @@ export default function LogPage() {
   }, []);
 
   useEffect(() => {
-    if (savedDraftRef.current && workouts.length > 0 && !hasHydrated) {
-      const { sets, notes, workoutId } = savedDraftRef.current;
+    if (logData) {
+      const { sets, notes, workoutId } = logData;
 
       setSets(sets || [[]]);
       setNotes(notes || {});
@@ -181,12 +174,11 @@ export default function LogPage() {
       if (foundWorkout) {
         setSelectedWorkout(foundWorkout);
       }
-      setHasHydrated(true);
     }
-  }, [workouts, hasHydrated]);
+  }, [workouts]);
 
   useEffect(() => {
-    if (hasHydrated && selectedWorkout) {
+    if (selectedWorkout) {
       setLogData({
         workoutId: selectedWorkout.workout_id,
         timestamp: new Date().toISOString(),
@@ -194,7 +186,7 @@ export default function LogPage() {
         notes,
       });
     }
-  }, [selectedWorkout, sets, notes, hasHydrated]);
+  }, [selectedWorkout, sets, notes]);
 
   useEffect(() => {
     if (logData) {
@@ -253,7 +245,10 @@ export default function LogPage() {
       </div>
       <div className="flex flex-col gap-4 w-full max-w-md">
         {selectedWorkout?.exercises?.map((exercise, exerciseIndex) => (
-          <div className="w-full max-w-2xl p-4 bg-white dark:bg-gray-800 rounded-xl shadow border border-gray-300 dark:border-gray-700">
+          <div
+            key={exerciseIndex}
+            className="w-full max-w-2xl p-4 bg-white dark:bg-gray-800 rounded-xl shadow border border-gray-300 dark:border-gray-700"
+          >
             <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">
               {exercise.name}
             </h3>
