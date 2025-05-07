@@ -158,7 +158,7 @@ export default function LogPage() {
     // Loop through selectedWorkout.exercises
     selectedWorkout.exercises.forEach((exercise, exerciseIndex) => {
       // get exercise.exercise_id
-      const exerciseId = exercise.exerciseId;
+      const exerciseId = exercise.exercise_id;
       // filter all entries in previousWorkout that match this exercise_id
       const matchingEntries = previousWorkout.filter(
         (set) => set.exercise_id === exerciseId
@@ -250,7 +250,7 @@ export default function LogPage() {
         notes,
       });
     }
-  }, [selectedWorkout]);
+  }, [selectedWorkout, sets, notes]);
 
   useEffect(() => {
     if (logData) {
