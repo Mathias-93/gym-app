@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { GlobalContext } from "../Context";
 import Spinner from "../components/Spinner";
-import { useLoaderData, useParams } from "react-router";
+import { useParams } from "react-router";
 import CustomModal from "../components/CustomModal";
 import { toast } from "react-hot-toast";
 import CustomToast from "../components/CustomToast";
@@ -13,7 +13,6 @@ export default function LogPage() {
     fetchWorkouts,
     setShowModal,
     showModal,
-    isLoading,
     setIsLoading,
   } = useContext(GlobalContext);
   const [selectedWorkout, setSelectedWorkout] = useState(null);
@@ -23,6 +22,7 @@ export default function LogPage() {
   });
   const [sets, setSets] = useState([[]]);
   const [notes, setNotes] = useState({});
+  const [previousWorkout, setPreviousWorkout] = useState(null);
   const { splitId } = useParams();
 
   const validateWorkout = (data) => {
@@ -119,6 +119,36 @@ export default function LogPage() {
 
     localStorage.removeItem("logDraft");
     setLogData(null);
+  };
+
+  const handleFetchPreviousWorkoutData = async (workoutId) => {
+    try {
+      const response = await fetch(
+        `http://localhost:1337/log/previous/${workoutId}`,
+        {
+          method: "GET",
+          headers: { "Content-type": "application/json" },
+          credentials: "include",
+        }
+      );
+      if (!response.ok) {
+        throw new Error(
+          `Somethig went wrong fetching the previous workout data:${response.statusText}`
+        );
+      }
+
+      const data = await response.json();
+      if (data && data.length > 0) {
+        setPreviousWorkout(data);
+      }
+
+      console.log("Previous workout:", data);
+    } catch (err) {
+      console.log(
+        "Something went wrong fetching the previous workout data:",
+        err.message
+      );
+    }
   };
 
   const handleAddSet = (exerciseIndex) => {
@@ -226,6 +256,7 @@ export default function LogPage() {
           id="workout-select"
           value={selectedWorkout?.workout_id || ""}
           onChange={(e) => {
+            handleFetchPreviousWorkoutData(selectedWorkout?.workout_id);
             const selectedId = Number(e.target.value);
             const workout = workouts.find((w) => w.workout_id === selectedId);
             setSelectedWorkout(workout);
