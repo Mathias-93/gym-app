@@ -209,6 +209,7 @@ export default function LogPage() {
 
   useEffect(() => {
     if (selectedWorkout) {
+      handleFetchPreviousWorkoutData(selectedWorkout.workout_id);
       setLogData({
         workoutId: selectedWorkout.workout_id,
         timestamp: new Date().toISOString(),
@@ -256,7 +257,8 @@ export default function LogPage() {
           id="workout-select"
           value={selectedWorkout?.workout_id || ""}
           onChange={(e) => {
-            handleFetchPreviousWorkoutData(selectedWorkout?.workout_id);
+            setPreviousWorkout(null);
+
             const selectedId = Number(e.target.value);
             const workout = workouts.find((w) => w.workout_id === selectedId);
             setSelectedWorkout(workout);
@@ -275,6 +277,19 @@ export default function LogPage() {
         </select>
       </div>
       <div className="flex flex-col gap-4 w-full max-w-md">
+        {previousWorkout && previousWorkout.length > 0 && (
+          <div className="w-full flex flex-col">
+            <button
+              type="button"
+              className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition"
+              onClick={() => {
+                setPreviousWorkout(null);
+              }}
+            >
+              Load previous workout data
+            </button>
+          </div>
+        )}
         {selectedWorkout?.exercises?.map((exercise, exerciseIndex) => (
           <div
             key={exerciseIndex}
