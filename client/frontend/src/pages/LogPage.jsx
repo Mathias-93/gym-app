@@ -151,6 +151,39 @@ export default function LogPage() {
     }
   };
 
+  const handleHydrateFromPreviousWorkout = () => {
+    let newSets = [];
+    let newNotes = {};
+
+    // Loop through selectedWorkout.exercises
+    selectedWorkout.exercises.forEach((exercise, exerciseIndex) => {
+      // get exercise.exercise_id
+      const exerciseId = exercise.exerciseId;
+      // filter all entries in previousWorkout that match this exercise_id
+      const matchingEntries = previousWorkout.filter(
+        (set) => set.exercise_id === exerciseId
+      );
+      const entryWithNotes = matchingEntries.find(
+        (entry) => entry.notes && entry.notes.trim() !== ""
+      );
+      // if any of the mathcing sets has a non-empty notes field, use that as notes[exerciseIndex]
+      if (entryWithNotes) {
+        newNotes[exerciseIndex] = entryWithNotes.notes;
+      }
+
+      // for each match (each set) extract { reps, weight } and build a set array
+      let setArray = [];
+      matchingEntries.forEach((entry) => {
+        // Push each array of { reps, weight } objects to the correct position in the sets array
+        setArray.push({ reps: entry.reps, weight: entry.weight });
+      });
+      newSets.push(setArray);
+    });
+    // Update sets and notes state
+    setSets(newSets);
+    setNotes(newNotes);
+  };
+
   const handleAddSet = (exerciseIndex) => {
     setSets((prev) => {
       const newSets = structuredClone(prev);
@@ -217,7 +250,7 @@ export default function LogPage() {
         notes,
       });
     }
-  }, [selectedWorkout, sets, notes]);
+  }, [selectedWorkout]);
 
   useEffect(() => {
     if (logData) {
@@ -258,7 +291,6 @@ export default function LogPage() {
           value={selectedWorkout?.workout_id || ""}
           onChange={(e) => {
             setPreviousWorkout(null);
-
             const selectedId = Number(e.target.value);
             const workout = workouts.find((w) => w.workout_id === selectedId);
             setSelectedWorkout(workout);
@@ -283,10 +315,11 @@ export default function LogPage() {
               type="button"
               className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition"
               onClick={() => {
+                handleHydrateFromPreviousWorkout();
                 setPreviousWorkout(null);
               }}
             >
-              Load previous workout data
+              Load last logged workout data
             </button>
           </div>
         )}
