@@ -306,7 +306,8 @@ export default function LogPage() {
             confirmButton={"Clear"}
             onCancel={() => setShowOtherOtherModal(false)}
             onConfirm={() => {
-              /* Clear form data function here */
+              setSets([[]]);
+              setNotes({});
               setShowOtherOtherModal(false);
             }}
           />
