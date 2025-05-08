@@ -42,7 +42,8 @@ export default function NavHeader() {
 
         {/* Centered Title */}
         <h1 className="absolute left-1/2 -translate-x-1/2 text-4xl md:text-5xl font-extrabold text-white tracking-wider drop-shadow-xl">
-          The Iron Archives
+          The <span className="text-blue-600 dark:text-blue-400">Iron</span>{" "}
+          Archives
         </h1>
 
         {/* Dark Mode Toggle (right-aligned) */}
@@ -97,6 +98,14 @@ export default function NavHeader() {
                 </li>
 
                 {/* Logout Button */}
+                <li className="flex items-center justify-center">
+                  <Link
+                    to="/history"
+                    className="text-gray-700 dark:text-gray-100 text-lg font-medium hover:text-blue-600 dark:hover:text-blue-400 transition-all"
+                  >
+                    History
+                  </Link>
+                </li>
                 <li>
                   <button
                     onClick={logoutUser}

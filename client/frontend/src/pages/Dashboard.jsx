@@ -9,13 +9,9 @@ export default function Dashboard() {
     isAuthenticated,
     isLoadingAuth,
     userInformation,
-    isLoading,
-    setIsLoading,
     userSplit,
-    setUserSplit,
     fetchUserSplit,
     showSpinner,
-    setShowSpinner,
   } = useContext(GlobalContext);
   const navigate = useNavigate();
 

@@ -102,4 +102,29 @@ router.get("/previous/:workoutId", async (req, res) => {
   }
 });
 
+router.get("/history/:splitId", async (req, res) => {
+  const userId = req.user.id;
+  const splitId = req.params.splitId;
+
+  try {
+    const result = await pool.query(
+      `
+        SELECT
+          wl.log_id,
+          wl.completed_at,
+          w.name AS workout_name
+        FROM workout_logs wl
+        JOIN workouts w ON wl.workout_id = w.workout_id
+        WHERE wl.user_id = $1 AND w.split_id = $2
+        ORDER BY wl.completed_at DESC
+      `,
+      [userId, splitId]
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Could not fetch log history:", err.message);
+    res.status(500).json({ message: "Could not fetch log history" });
+  }
+});
+
 export default router;

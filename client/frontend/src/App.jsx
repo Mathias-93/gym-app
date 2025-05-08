@@ -10,6 +10,7 @@ import AddNewSplit from "./pages/AddNewSplit";
 import LogPage from "./pages/LogPage";
 import SplitPage from "./pages/SplitPage";
 import { Toaster } from "react-hot-toast";
+import History from "./pages/History";
 
 function App() {
   const {
@@ -90,6 +91,7 @@ function App() {
           <Route exact path="/" element={<Login />} />{" "}
           <Route exact path="/login" element={<Login />} />
           <Route exact path="/dashboard" element={<Dashboard />} />
+          <Route exact path="/history" element={<History />} />
           <Route exact path="/newsplit" element={<AddNewSplit />} />
           <Route path="/split/:splitId" element={<SplitPage />} />
           <Route path="/logpage/:splitId" element={<LogPage />} />

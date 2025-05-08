@@ -11,18 +11,12 @@ import Spinner from "../components/Spinner";
 export default function SplitPage() {
   const {
     userSplit,
-    setUserSplit,
-    isLoading,
     fetchUserSplit,
     setIsLoading,
     exercises,
-    setExercises,
     showModal,
     setShowModal,
     showSpinner,
-    setShowSpinner,
-    workouts,
-    setWorkouts,
     editableWorkouts,
     setEditableWorkouts,
     fetchWorkouts,
