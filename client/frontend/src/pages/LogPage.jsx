@@ -356,19 +356,25 @@ export default function LogPage() {
             </button>
           </div>
         )}
-        {previousWorkout && previousWorkout.length > 0 && (
-          <div className="w-full flex flex-col">
-            <button
-              type="button"
-              className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition"
-              onClick={() => {
-                setShowOtherOtherModal(true);
-              }}
-            >
-              Clear workout data
-            </button>
-          </div>
-        )}
+
+        <div className="w-full flex flex-col">
+          <button
+            type="button"
+            disabled={!sets.some((set) => set.length > 0)}
+            className={`w-full py-3 rounded-lg transition
+              ${
+                sets.some((set) => set.length > 0)
+                  ? "bg-blue-500 text-white hover:bg-blue-600"
+                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+              }`}
+            onClick={() => {
+              setShowOtherOtherModal(true);
+            }}
+          >
+            Clear workout data
+          </button>
+        </div>
+
         {selectedWorkout?.exercises?.map((exercise, exerciseIndex) => (
           <div
             key={exerciseIndex}
