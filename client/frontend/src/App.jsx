@@ -11,6 +11,7 @@ import LogPage from "./pages/LogPage";
 import SplitPage from "./pages/SplitPage";
 import { Toaster } from "react-hot-toast";
 import History from "./pages/History";
+import HistorySpecific from "./pages/HistorySpecific";
 
 function App() {
   const {
@@ -92,6 +93,11 @@ function App() {
           <Route exact path="/login" element={<Login />} />
           <Route exact path="/dashboard" element={<Dashboard />} />
           <Route exact path="/history" element={<History />} />
+          <Route
+            exact
+            path="/historyspecific/:logId"
+            element={<HistorySpecific />}
+          />
           <Route exact path="/newsplit" element={<AddNewSplit />} />
           <Route path="/split/:splitId" element={<SplitPage />} />
           <Route path="/logpage/:splitId" element={<LogPage />} />

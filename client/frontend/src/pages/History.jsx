@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { GlobalContext } from "../Context";
 import Spinner from "../components/Spinner";
-import { useNavigate } from "react-router";
+import { useNavigate, Link } from "react-router";
 
 export default function History() {
   const {
@@ -14,6 +14,7 @@ export default function History() {
     fetchUserSplit,
   } = useContext(GlobalContext);
   const [selectedSplit, setSelectedSplit] = useState(null);
+  const [splitHistoryData, setSplitHistoryData] = useState(null);
 
   const navigate = useNavigate();
 
@@ -31,11 +32,34 @@ export default function History() {
 
   const handleFetchLogsHistory = async () => {
     try {
-      const response = await fetch(`http://localhost:1337/log/history/${asd}`);
+      const response = await fetch(
+        `http://localhost:1337/log/history/${selectedSplit.split_id}`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Big oof`);
+      }
+
+      const data = await response.json();
+
+      if (data?.length > 0) {
+        setSplitHistoryData(data);
+      }
+
+      console.log("Data:", data);
+      console.log("SplitHistoryData:", splitHistoryData);
     } catch (err) {
       console.log(err.message);
     }
   };
+
+  useEffect(() => {
+    handleFetchLogsHistory();
+  }, [selectedSplit]);
 
   if (showSpinner) {
     return <Spinner />;
@@ -57,7 +81,7 @@ export default function History() {
             const split = userSplit.find(
               (split) => split.split_id === selectedId
             );
-            setSelectedSplit(split);
+            if (split) setSelectedSplit(split);
           }}
           className="w-full px-4 py-3 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
@@ -70,6 +94,26 @@ export default function History() {
             </option>
           ))}
         </select>
+        {splitHistoryData?.length > 0 && (
+          <div className="mt-6 space-y-4">
+            {splitHistoryData.map((dataEntry, index) => (
+              <button
+                key={index}
+                onClick={() => navigate(`/historyspecific/${dataEntry.log_id}`)}
+                className="w-full text-left p-4 rounded-lg bg-white dark:bg-gray-800 shadow-md border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
+              >
+                <div className="flex justify-between items-center">
+                  <span className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+                    {dataEntry.workout_name}
+                  </span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">
+                    {new Date(dataEntry.completed_at).toLocaleDateString()}
+                  </span>
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

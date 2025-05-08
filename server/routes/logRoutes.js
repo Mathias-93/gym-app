@@ -127,4 +127,9 @@ router.get("/history/:splitId", async (req, res) => {
   }
 });
 
+router.get("/log-history-specific/:logId", (req, res) => {
+  try {
+  } catch (error) {}
+});
+
 export default router;
