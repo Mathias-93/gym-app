@@ -23,6 +23,8 @@ export default function LogPage() {
   const [sets, setSets] = useState([[]]);
   const [notes, setNotes] = useState({});
   const [previousWorkout, setPreviousWorkout] = useState(null);
+  const [showOtherModal, setShowOtherModal] = useState(false);
+  const [showOtherOtherModal, setShowOtherOtherModal] = useState(false);
   const { splitId } = useParams();
 
   const validateWorkout = (data) => {
@@ -279,6 +281,37 @@ export default function LogPage() {
           />
         </div>
       )}
+      {showOtherModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-40">
+          <CustomModal
+            buttonColors={"bg-green-500 text-white hover:bg-green-600"}
+            confirmMessage={"load the previous workout's data?"}
+            secondMessage={"All current entries will be lost."}
+            confirmButton={"Load"}
+            onCancel={() => setShowOtherModal(false)}
+            onConfirm={() => {
+              handleHydrateFromPreviousWorkout();
+              setShowOtherModal(false);
+              setPreviousWorkout(null);
+            }}
+          />
+        </div>
+      )}
+      {showOtherOtherModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-40">
+          <CustomModal
+            buttonColors={"bg-green-500 text-white hover:bg-green-600"}
+            confirmMessage={"clear the form data?"}
+            secondMessage={"All current entries will be lost."}
+            confirmButton={"Clear"}
+            onCancel={() => setShowOtherOtherModal(false)}
+            onConfirm={() => {
+              /* Clear form data function here */
+              setShowOtherOtherModal(false);
+            }}
+          />
+        </div>
+      )}
       <div className="w-full max-w-md">
         <label
           htmlFor="workout-select"
@@ -315,11 +348,23 @@ export default function LogPage() {
               type="button"
               className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition"
               onClick={() => {
-                handleHydrateFromPreviousWorkout();
-                setPreviousWorkout(null);
+                setShowOtherModal(true);
               }}
             >
               Load last logged workout data
+            </button>
+          </div>
+        )}
+        {previousWorkout && previousWorkout.length > 0 && (
+          <div className="w-full flex flex-col">
+            <button
+              type="button"
+              className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition"
+              onClick={() => {
+                setShowOtherOtherModal(true);
+              }}
+            >
+              Clear workout data
             </button>
           </div>
         )}
