@@ -127,9 +127,28 @@ router.get("/history/:splitId", async (req, res) => {
   }
 });
 
-router.get("/log-history-specific/:logId", (req, res) => {
+router.get("/log-history-specific/:logId", async (req, res) => {
+  const userId = req.user.id;
+  const logId = req.params.logId;
+
   try {
-  } catch (error) {}
+    const response = await pool.query(
+      `
+        SELECT *
+        FROM workout_log_exercises
+        WHERE log_id = $1
+        ORDER BY exercise_id, set_number ASC;
+      `,
+      [logId]
+    );
+
+    res.json(response.rows);
+  } catch (error) {
+    console.error(err.message);
+    res
+      .status(500)
+      .json({ message: "Something went wrong fetching the log data" });
+  }
 });
 
 export default router;

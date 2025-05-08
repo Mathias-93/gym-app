@@ -32,6 +32,7 @@ export default function History() {
 
   const handleFetchLogsHistory = async () => {
     try {
+      setIsLoading(true);
       const response = await fetch(
         `http://localhost:1337/log/history/${selectedSplit.split_id}`,
         {
@@ -54,6 +55,8 @@ export default function History() {
       console.log("SplitHistoryData:", splitHistoryData);
     } catch (err) {
       console.log(err.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
