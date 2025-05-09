@@ -256,8 +256,6 @@ export default function SplitPage() {
   };
 
   const handleDeleteSplit = async (splitId) => {
-    console.log("SPLITID:", splitId);
-
     try {
       setIsLoading(true);
       const response = await fetch(
@@ -319,7 +317,6 @@ export default function SplitPage() {
       );
       setLocalUserSplit(match);
     }
-    console.log("Local User Split:", localUserSplit);
   }, [userSplit, splitId]);
 
   useEffect(() => {

@@ -18,8 +18,6 @@ export default function HistorySpecific() {
         groupedExercises[exerciseName] = [];
       }
       groupedExercises[exerciseName].push(dataEntry);
-
-      console.log("Groupies:", groupedExercises);
     });
 
     setFormattedLogData(groupedExercises);
@@ -42,9 +40,6 @@ export default function HistorySpecific() {
       const data = await response.json();
 
       setLogData(data);
-
-      console.log("Data:", data);
-      console.log("LogData:", logData);
     } catch (error) {
       console.log(error.message);
     } finally {

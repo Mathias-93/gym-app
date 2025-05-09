@@ -4,6 +4,8 @@ import SuggestionDropdown from "../components/SuggestionDropdown";
 import { useClickOutsideAndEscape } from "../hooks/useClickOutsideAndEscape";
 import Spinner from "../components/Spinner";
 import { useNavigate } from "react-router";
+import CustomToast from "../components/CustomToast";
+import { toast } from "react-hot-toast";
 
 export default function AddNewSplit() {
   const {
@@ -112,7 +114,17 @@ export default function AddNewSplit() {
 
   const addCustomSplitToDb = async (splitName, days, workouts) => {
     if (!validateSplit(splitName, days, workouts)) {
-      alert("Please complete all fields before saving!");
+      toast.custom(
+        (t) =>
+          t.visible && (
+            <CustomToast
+              t={t}
+              message="Could not create split, please make sure all fields are filled in correctly."
+              type="error"
+            />
+          ),
+        { duration: 5000, position: "top-center" }
+      );
       return;
     }
     try {
@@ -135,17 +147,19 @@ export default function AddNewSplit() {
       }
 
       const data = await response.json();
-      alert("Split added to db!");
+      toast.custom(
+        (t) =>
+          t.visible && (
+            <CustomToast t={t} message="Split created!" type="success" />
+          ),
+        { duration: 5000, position: "top-center" }
+      );
     } catch (err) {
       console.error("Something went wrong:", err.message);
     } finally {
       setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    console.log(workouts);
-  }, []);
 
   if (showSpinner) {
     return <Spinner />;
@@ -180,7 +194,7 @@ export default function AddNewSplit() {
           <input
             type="number"
             min="1"
-            max="7"
+            max="12"
             value={days}
             onChange={(e) => setDays(Number(e.target.value))}
             className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"

@@ -31,6 +31,7 @@ export default function History() {
   }, [isAuthenticated]);
 
   const handleFetchLogsHistory = async () => {
+    if (!selectedSplit) return;
     try {
       setIsLoading(true);
       const response = await fetch(
@@ -50,9 +51,6 @@ export default function History() {
       if (data?.length > 0) {
         setSplitHistoryData(data);
       }
-
-      console.log("Data:", data);
-      console.log("SplitHistoryData:", splitHistoryData);
     } catch (err) {
       console.log(err.message);
     } finally {
@@ -97,7 +95,7 @@ export default function History() {
             </option>
           ))}
         </select>
-        {splitHistoryData?.length > 0 && (
+        {splitHistoryData?.length > 0 ? (
           <div className="mt-6 space-y-4">
             {splitHistoryData.map((dataEntry, index) => (
               <button
@@ -115,6 +113,12 @@ export default function History() {
                 </div>
               </button>
             ))}
+          </div>
+        ) : (
+          <div className="mt-10 w-full max-w-md p-6 text-center bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-300 dark:border-gray-700">
+            <p className="text-gray-600 dark:text-gray-300 text-sm">
+              No workout history found for this split yet.
+            </p>
           </div>
         )}
       </div>

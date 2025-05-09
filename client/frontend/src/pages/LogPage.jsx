@@ -52,7 +52,6 @@ export default function LogPage() {
   };
 
   const handleSubmit = async () => {
-    /*     console.log("Right before:", logData.sets); */
     if (!validateWorkout(logData)) {
       toast.custom(
         (t) =>
@@ -143,8 +142,6 @@ export default function LogPage() {
       if (data && data.length > 0) {
         setPreviousWorkout(data);
       }
-
-      console.log("Previous workout:", data);
     } catch (err) {
       console.log(
         "Something went wrong fetching the previous workout data:",
@@ -256,7 +253,6 @@ export default function LogPage() {
 
   useEffect(() => {
     if (logData) {
-      console.log("Setting logDraft:", logData);
       localStorage.setItem("logDraft", JSON.stringify(logData));
     }
   }, [logData]);
@@ -328,7 +324,6 @@ export default function LogPage() {
             const selectedId = Number(e.target.value);
             const workout = workouts.find((w) => w.workout_id === selectedId);
             setSelectedWorkout(workout);
-            console.log(selectedWorkout);
           }}
           className="w-full px-4 py-3 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
         >

@@ -77,7 +77,7 @@ export default function Dashboard() {
             </p>
           ))}
         </DashboardCard>
-        <DashboardCard className="hover:scale-[1.02] transform bg-gradient-to-br from-blue-100 via-blue-200 to-blue-300 dark:from-blue-900 dark:via-blue-800 dark:to-blue-700 border-blue-300 dark:border-blue-700 border shadow-blue-400/30 dark:shadow-blue-500/20 hover:shadow-blue-500/40 dark:hover:shadow-blue-500/40 transition-all duration-300">
+        <DashboardCard className="hover:scale-[1.02] transform bg-gradient-to-br from-blue-100 via-blue-200 to-blue-300 dark:from-blue-900 dark:via-blue-800 dark:to-blue-600 border-blue-300 dark:border-blue-700 border shadow-blue-400/30 dark:shadow-blue-500/20 hover:shadow-blue-500/40 dark:hover:shadow-blue-500/40 transition-all duration-300">
           <div className="flex w-full h-full">
             <div className="flex items-center justify-between w-full">
               <h2 className="text-lg font-semibold text-black dark:text-blue-100">
