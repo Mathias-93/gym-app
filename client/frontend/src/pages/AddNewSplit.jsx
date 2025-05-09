@@ -3,6 +3,7 @@ import { GlobalContext } from "../Context";
 import SuggestionDropdown from "../components/SuggestionDropdown";
 import { useClickOutsideAndEscape } from "../hooks/useClickOutsideAndEscape";
 import Spinner from "../components/Spinner";
+import { useNavigate } from "react-router";
 
 export default function AddNewSplit() {
   const {
@@ -26,6 +27,8 @@ export default function AddNewSplit() {
     setActiveDropdown(null);
     setFilteredExercises([]);
   });
+
+  const navigate = useNavigate();
 
   const handleExercisesFilter = (day, index, query) => {
     const lowerQuery = query.toLowerCase();
@@ -234,6 +237,7 @@ export default function AddNewSplit() {
         {/* Buttons */}
         <div className="flex justify-between mt-6">
           <button
+            onClick={() => navigate("/dashboard")}
             type="button"
             className="w-1/2 bg-gray-300 dark:bg-gray-700 text-gray-900 dark:text-white py-3 rounded-lg mr-2 hover:bg-gray-400 dark:hover:bg-gray-600 transition"
           >
