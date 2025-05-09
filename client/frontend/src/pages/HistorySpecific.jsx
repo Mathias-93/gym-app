@@ -66,31 +66,35 @@ export default function HistorySpecific() {
 
   return (
     <div className="w-full min-h-screen p-6 bg-gray-100 dark:bg-gray-900 pt-[200px] flex flex-col gap-10 items-center">
-      {logData?.length > 0 && (
-        <div className="mt-6 space-y-4">
-          {logData.map((dataEntry, index) => (
-            <button
-              key={index}
-              onClick={console.log("asdasd")}
-              className="w-full text-left p-4 rounded-lg bg-white dark:bg-gray-800 shadow-md border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
+      {formattedLogData && (
+        <div className="w-full max-w-2xl space-y-6">
+          {Object.entries(formattedLogData).map(([exerciseName, sets]) => (
+            <div
+              key={exerciseName}
+              className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow border border-gray-300 dark:border-gray-700"
             >
-              <div className="flex justify-between items-center">
-                <span className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-                  {dataEntry.exercise_name}
-                </span>
-                <span className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-                  Reps: {dataEntry.reps}
-                </span>
-                <span className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-                  Weight: {dataEntry.weight}
-                </span>
-                {dataEntry.notes !== null ? (
-                  <span className="text-lg font-semibold text-gray-800 dark:text-gray-100">
-                    Notes: {dataEntry.notes}
-                  </span>
-                ) : null}
-              </div>
-            </button>
+              <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">
+                {exerciseName}
+              </h2>
+
+              <ul className="space-y-2">
+                {sets.map((set, index) => (
+                  <li
+                    key={index}
+                    className="text-gray-700 dark:text-gray-200 text-md"
+                  >
+                    Set {set.set_number}: {set.reps} reps @ {set.weight} kg
+                  </li>
+                ))}
+              </ul>
+
+              {/* Show notes once, after all sets */}
+              {sets[0]?.notes && (
+                <div className="text-md text-gray-500 dark:text-gray-400 mt-4 italic">
+                  Notes: {sets[0].notes}
+                </div>
+              )}
+            </div>
           ))}
         </div>
       )}
