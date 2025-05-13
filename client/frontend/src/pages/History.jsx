@@ -41,6 +41,7 @@ export default function History() {
           credentials: "include",
         }
       );
+      console.log(selectedSplit.split_id);
 
       if (!response.ok) {
         throw new Error(`Big oof`);

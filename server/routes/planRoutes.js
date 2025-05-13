@@ -124,13 +124,28 @@ router.put("/update_split/:splitId", async (req, res) => {
       [name, numberOfDays, true, splitId]
     );
 
-    // DELETE the old workouts for that split
+    // Query all workouts associated with a split_id
+    const allWorkoutsInDb = await pool.query(
+      `SELECT * FROM workouts WHERE split_id = $1`,
+      [splitId]
+    );
+
+    // Get the rows and create a new Map
+    const existingWorkouts = allWorkoutsInDb.rows;
+    const existingWorkoutsMap = new Map();
+
+    // Loop through existing workouts
+    existingWorkouts.forEach((workout) =>
+      existingWorkoutsMap.set(workout.name.trim(), workout)
+    );
+
+    /*  // DELETE the old workouts for that split
     const removeOldWorkouts = await pool.query(
       `
         DELETE FROM workouts WHERE split_id = $1;
       `,
       [splitId]
-    );
+    ); */
 
     // Re-insert all workouts and exercises
     for (const workout of workouts) {

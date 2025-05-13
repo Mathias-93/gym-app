@@ -172,6 +172,17 @@ export default function SplitPage() {
       return false;
     }
 
+    const hasDuplicateNames = (workouts) => {
+      const names = new Set();
+
+      for (let workout of workouts) {
+        const trimmed = workout.name.trim().toLowerCase();
+        if (names.has(trimmed)) return true;
+        names.add(trimmed);
+      }
+      return false;
+    };
+
     // Each workout has a name
     // Each workout has at least one exercise
     // All exercises have non-empty names and the name isn't the example name (it's been edited)
@@ -191,15 +202,16 @@ export default function SplitPage() {
     };
 
     const workoutIsValid = editableWorkouts.every(isValidWorkout);
+    const workoutHasDuplicateNames = hasDuplicateNames(editableWorkouts);
 
-    if (!workoutIsValid) {
+    if (!workoutIsValid || workoutHasDuplicateNames) {
       toast.custom(
         (t) =>
           t.visible && (
             <CustomToast
               t={t}
-              message="Each workout must have a name and at least one exercise with a valid name."
-              type="success"
+              message="Each workout must have a name and at least one exercise with a valid, unique name."
+              type="error"
             />
           ),
         { duration: 5000, position: "top-center" }
