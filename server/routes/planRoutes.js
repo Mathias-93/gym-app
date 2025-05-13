@@ -1,5 +1,6 @@
 import express from "express";
 import pool from "../db.js";
+import insertExercisesForWorkout from "../utils/insertExercisesForWorkout.js";
 
 const router = express.Router();
 
@@ -139,59 +140,55 @@ router.put("/update_split/:splitId", async (req, res) => {
       existingWorkoutsMap.set(workout.name.trim(), workout)
     );
 
-    /*  // DELETE the old workouts for that split
-    const removeOldWorkouts = await pool.query(
-      `
-        DELETE FROM workouts WHERE split_id = $1;
-      `,
-      [splitId]
-    ); */
-
-    // Re-insert all workouts and exercises
     for (const workout of workouts) {
-      const newWorkout = await pool.query(
-        `
+      const existingWorkout = existingWorkoutsMap.get(workout.name.trim());
+
+      // If matched
+      if (existingWorkout) {
+        // Update the existing workout (UPDATE workouts SET name = ...)
+        const updateWorkout = await pool.query(
+          `
+            UPDATE workouts SET name = $1 WHERE workout_id = $2
+          `,
+          [workout.name.trim(), existingWorkout.workout_id]
+        );
+        // Delete current exercises in workout_exercises_junction_table for that workout_id
+        const deleteExercises = await pool.query(
+          `
+            DELETE FROM workout_exercises_junction_table WHERE workout_id = $1
+          `,
+          [existingWorkout.workout_id]
+        );
+        // Re-insert the new list of exercises
+        await insertExercisesForWorkout(
+          pool,
+          existingWorkout.workout_id,
+          workout.exercises,
+          userId
+        );
+
+        // if not matched
+      } else {
+        // Insert a brand new workout
+        const newWorkout = await pool.query(
+          `
         INSERT INTO workouts (split_id, name, is_custom, user_id)
         VALUES ($1, $2, $3, $4)
         RETURNING workout_id
         `,
-        [splitId, workout.name, true, userId]
-      );
-
-      for (const exercise of workout.exercises) {
-        const exerciseName = exercise.name.trim();
-
-        if (!exerciseName) continue;
-
-        const existingExercise = await pool.query(
-          `
-          SELECT exercise_id FROM exercises WHERE name=$1
-          `,
-          [exerciseName]
+          [splitId, workout.name, true, userId]
         );
 
-        let exerciseId;
-
-        if (existingExercise.rows.length > 0) {
-          exerciseId = existingExercise.rows[0].exercise_id;
-        } else {
-          const newExercise = await pool.query(
-            `INSERT INTO exercises (name, is_custom, user_id)
-             VALUES ($1, $2, $3)
-             RETURNING exercise_id`,
-            [exerciseName, true, userId]
-          );
-          exerciseId = newExercise.rows[0].exercise_id;
-        }
-
-        await pool.query(
-          `
-          INSERT INTO workout_exercises_junction_table (workout_id, exercise_id)
-          VALUES ($1, $2)
-          `,
-          [newWorkout.rows[0].workout_id, exerciseId]
+        // Insert its exercises
+        await insertExercisesForWorkout(
+          pool,
+          newWorkout.rows[0].workout_id,
+          workout.exercises,
+          userId
         );
       }
+
+      // Track all workout_ids that you keep or create in a list (e.g. retainedWorkoutIds)
     }
 
     await pool.query("COMMIT");
