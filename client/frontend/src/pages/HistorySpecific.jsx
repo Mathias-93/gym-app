@@ -38,7 +38,6 @@ export default function HistorySpecific() {
         throw new Error(`Nope`);
       }
       const data = await response.json();
-      console.log(data);
       setLogData(data);
     } catch (error) {
       console.log(error.message);

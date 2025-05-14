@@ -15,6 +15,7 @@ export default function History() {
   } = useContext(GlobalContext);
   const [selectedSplit, setSelectedSplit] = useState(null);
   const [splitHistoryData, setSplitHistoryData] = useState(null);
+  const [completeUserHistoryData, setCompleteUserHistoryData] = useState(null);
 
   const navigate = useNavigate();
 
@@ -60,15 +61,48 @@ export default function History() {
     }
   };
 
+  const handleFetchCompleteLogHistory = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(
+        `http://localhost:1337/log/history/fullHistory`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Something went wrong: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+
+      if (data?.length > 0) {
+        setCompleteUserHistoryData(data);
+      } else {
+        setCompleteUserHistoryData(null);
+      }
+    } catch (err) {
+      console.log(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     handleFetchLogsHistory();
   }, [selectedSplit]);
+
+  useEffect(() => {
+    handleFetchCompleteLogHistory();
+  }, []);
 
   if (showSpinner) {
     return <Spinner />;
   }
   return (
-    <div className="w-full min-h-screen p-6 bg-gray-100 dark:bg-gray-900 pt-[200px] flex flex-col gap-10 items-center">
+    <div className="w-full min-h-screen p-6 bg-gray-100 dark:bg-gray-900 pt-[200px] flex gap-10 mt-14 justify-center">
       <div className="w-full max-w-md">
         <label
           htmlFor="split-select"
@@ -105,7 +139,6 @@ export default function History() {
                 onClick={() => navigate(`/historyspecific/${dataEntry.log_id}`)}
                 className="w-full text-left p-4 rounded-lg bg-white dark:bg-gray-800 shadow-md border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
               >
-                {console.log(splitHistoryData)}
                 <div className="flex justify-between items-center">
                   <span className="text-lg font-semibold text-gray-800 dark:text-gray-100">
                     {dataEntry.workout_name}
@@ -121,6 +154,38 @@ export default function History() {
           <div className="mt-10 w-full max-w-md p-6 text-center bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-300 dark:border-gray-700">
             <p className="text-gray-600 dark:text-gray-300 text-sm">
               No workout history found for this split yet.
+            </p>
+          </div>
+        )}
+      </div>
+      <div className="w-full max-w-md">
+        <h2 className="block mb-2 text-lg font-semibold text-gray-700 dark:text-gray-200">
+          Full workout history:
+        </h2>
+
+        {completeUserHistoryData?.length > 0 ? (
+          <div className="space-y-4">
+            {completeUserHistoryData.map((dataEntry, index) => (
+              <button
+                key={index}
+                onClick={() => navigate(`/historyspecific/${dataEntry.log_id}`)}
+                className="w-full text-left p-4 rounded-lg bg-white dark:bg-gray-800 shadow-md border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
+              >
+                <div className="flex justify-between items-center">
+                  <span className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+                    {dataEntry.workout_name}
+                  </span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">
+                    {new Date(dataEntry.completed_at).toLocaleDateString()}
+                  </span>
+                </div>
+              </button>
+            ))}
+          </div>
+        ) : (
+          <div className="mt-10 w-full max-w-md p-6 text-center bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-300 dark:border-gray-700">
+            <p className="text-gray-600 dark:text-gray-300 text-sm">
+              You haven’t logged any workouts yet.
             </p>
           </div>
         )}

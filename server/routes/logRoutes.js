@@ -3,6 +3,29 @@ import pool from "../db.js";
 
 const router = express.Router();
 
+router.get("/history/fullHistory", async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    const result = await pool.query(
+      `
+        SELECT
+          log_id,
+          completed_at,
+          workout_name
+        FROM workout_logs
+        WHERE user_id = $1
+        ORDER BY completed_at DESC
+      `,
+      [userId]
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Could not fetch log history:", err.message);
+    res.status(500).json({ message: "Could not fetch log history" });
+  }
+});
+
 router.post("/workout/:splitId", async (req, res) => {
   const {
     exerciseNamesList,
@@ -124,29 +147,6 @@ router.get("/history/:splitId", async (req, res) => {
         ORDER BY completed_at DESC
       `,
       [userId, splitId]
-    );
-    res.json(result.rows);
-  } catch (err) {
-    console.error("Could not fetch log history:", err.message);
-    res.status(500).json({ message: "Could not fetch log history" });
-  }
-});
-
-router.get("/history/full_history", async (req, res) => {
-  const userId = req.user.id;
-
-  try {
-    const result = await pool.query(
-      `
-        SELECT
-          log_id,
-          completed_at,
-          workout_name
-        FROM workout_logs
-        WHERE user_id = $1
-        ORDER BY completed_at DESC
-      `,
-      [userId]
     );
     res.json(result.rows);
   } catch (err) {
