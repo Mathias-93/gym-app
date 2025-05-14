@@ -96,8 +96,15 @@ export default function NavHeader() {
                     Dashboard
                   </Link>
                 </li>
+                <li className="flex items-center justify-center">
+                  <Link
+                    to="/prsandgoals"
+                    className="text-gray-700 dark:text-gray-100 text-lg font-medium hover:text-blue-600 dark:hover:text-blue-400 transition-all"
+                  >
+                    PR's and Goals
+                  </Link>
+                </li>
 
-                {/* Logout Button */}
                 <li className="flex items-center justify-center">
                   <Link
                     to="/history"
