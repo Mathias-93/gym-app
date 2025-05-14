@@ -4,7 +4,7 @@ import Spinner from "../components/Spinner";
 import { GlobalContext } from "../Context";
 
 export default function HistorySpecific() {
-  const { showSpinner, isLoading, setIsLoading } = useContext(GlobalContext);
+  const { showSpinner, setIsLoading } = useContext(GlobalContext);
   const { logId } = useParams();
   const [logData, setLogData] = useState(null);
   const [formattedLogData, setFormattedLogData] = useState();
@@ -38,7 +38,7 @@ export default function HistorySpecific() {
         throw new Error(`Nope`);
       }
       const data = await response.json();
-
+      console.log(data);
       setLogData(data);
     } catch (error) {
       console.log(error.message);

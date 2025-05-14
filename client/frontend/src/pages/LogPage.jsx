@@ -78,6 +78,7 @@ export default function LogPage() {
             workoutId: logData.workoutId,
             setsData: logData.sets,
             notes: logData.notes,
+            workoutName: selectedWorkout.name,
             exerciseNamesList: selectedWorkout.exercises.map((ex) => ex.name),
             exerciseIdsList: selectedWorkout.exercises.map(
               (ex) => ex.exercise_id

@@ -140,6 +140,8 @@ router.put("/update_split/:splitId", async (req, res) => {
       existingWorkoutsMap.set(workout.name.trim(), workout)
     );
 
+    let retainedWorkoutIds = [];
+
     for (const workout of workouts) {
       const existingWorkout = existingWorkoutsMap.get(workout.name.trim());
 
@@ -166,6 +168,7 @@ router.put("/update_split/:splitId", async (req, res) => {
           workout.exercises,
           userId
         );
+        retainedWorkoutIds.push(existingWorkout.workout_id);
 
         // if not matched
       } else {
@@ -178,18 +181,27 @@ router.put("/update_split/:splitId", async (req, res) => {
         `,
           [splitId, workout.name, true, userId]
         );
+        const newWorkoutId = newWorkout.rows[0].workout_id;
 
         // Insert its exercises
         await insertExercisesForWorkout(
           pool,
-          newWorkout.rows[0].workout_id,
+          newWorkoutId,
           workout.exercises,
           userId
         );
+        retainedWorkoutIds.push(newWorkoutId);
       }
-
-      // Track all workout_ids that you keep or create in a list (e.g. retainedWorkoutIds)
     }
+    // Track all workout_ids that you keep or create in a list (retainedWorkoutIds)
+    await pool.query(
+      `DELETE FROM workouts 
+   WHERE split_id = $1 
+   AND workout_id NOT IN (${retainedWorkoutIds
+     .map((_, i) => `$${i + 2}`)
+     .join(", ")})`,
+      [splitId, ...retainedWorkoutIds]
+    );
 
     await pool.query("COMMIT");
     res.status(200).json({

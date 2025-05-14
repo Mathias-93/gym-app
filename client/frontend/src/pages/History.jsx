@@ -9,9 +9,9 @@ export default function History() {
     setIsLoading,
     isAuthenticated,
     isLoadingAuth,
-    userInformation,
     userSplit,
     fetchUserSplit,
+    isLoading,
   } = useContext(GlobalContext);
   const [selectedSplit, setSelectedSplit] = useState(null);
   const [splitHistoryData, setSplitHistoryData] = useState(null);
@@ -41,16 +41,17 @@ export default function History() {
           credentials: "include",
         }
       );
-      console.log(selectedSplit.split_id);
 
       if (!response.ok) {
-        throw new Error(`Big oof`);
+        throw new Error(`Something went wrong: ${response.statusText}`);
       }
 
       const data = await response.json();
 
       if (data?.length > 0) {
         setSplitHistoryData(data);
+      } else {
+        setSplitHistoryData(null);
       }
     } catch (err) {
       console.log(err.message);
@@ -104,6 +105,7 @@ export default function History() {
                 onClick={() => navigate(`/historyspecific/${dataEntry.log_id}`)}
                 className="w-full text-left p-4 rounded-lg bg-white dark:bg-gray-800 shadow-md border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
               >
+                {console.log(splitHistoryData)}
                 <div className="flex justify-between items-center">
                   <span className="text-lg font-semibold text-gray-800 dark:text-gray-100">
                     {dataEntry.workout_name}

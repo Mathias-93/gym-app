@@ -4,8 +4,14 @@ import pool from "../db.js";
 const router = express.Router();
 
 router.post("/workout/:splitId", async (req, res) => {
-  const { exerciseNamesList, workoutId, setsData, notes, exerciseIdsList } =
-    req.body;
+  const {
+    exerciseNamesList,
+    workoutId,
+    setsData,
+    notes,
+    exerciseIdsList,
+    workoutName,
+  } = req.body;
   const splitId = req.params.splitId;
   const userId = req.user.id;
   try {
@@ -25,11 +31,11 @@ router.post("/workout/:splitId", async (req, res) => {
 
     const result = await pool.query(
       `
-        INSERT INTO workout_logs (user_id, workout_id)
-        VALUES ($1, $2)
+        INSERT INTO workout_logs (user_id, workout_id, workout_name, split_id)
+        VALUES ($1, $2, $3, $4)
         RETURNING log_id
       `,
-      [userId, workoutId]
+      [userId, workoutId, workoutName, splitId]
     );
 
     const logId = result.rows[0].log_id;
@@ -110,15 +116,37 @@ router.get("/history/:splitId", async (req, res) => {
     const result = await pool.query(
       `
         SELECT
-          wl.log_id,
-          wl.completed_at,
-          w.name AS workout_name
-        FROM workout_logs wl
-        JOIN workouts w ON wl.workout_id = w.workout_id
-        WHERE wl.user_id = $1 AND w.split_id = $2
-        ORDER BY wl.completed_at DESC
+          log_id,
+          completed_at,
+          workout_name
+        FROM workout_logs
+        WHERE user_id = $1 AND split_id = $2
+        ORDER BY completed_at DESC
       `,
       [userId, splitId]
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Could not fetch log history:", err.message);
+    res.status(500).json({ message: "Could not fetch log history" });
+  }
+});
+
+router.get("/history/full_history", async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    const result = await pool.query(
+      `
+        SELECT
+          log_id,
+          completed_at,
+          workout_name
+        FROM workout_logs
+        WHERE user_id = $1
+        ORDER BY completed_at DESC
+      `,
+      [userId]
     );
     res.json(result.rows);
   } catch (err) {
