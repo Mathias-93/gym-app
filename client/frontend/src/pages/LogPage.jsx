@@ -250,6 +250,7 @@ export default function LogPage() {
         notes,
       });
     }
+    console.log(logData);
   }, [selectedWorkout, sets, notes]);
 
   useEffect(() => {

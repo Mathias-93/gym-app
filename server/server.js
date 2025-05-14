@@ -6,6 +6,7 @@ import pool from "./db.js";
 import authRoutes from "./routes/authRoutes.js";
 import planRoutes from "./routes/planRoutes.js";
 import logRoutes from "./routes/logRoutes.js";
+import prRoutes from "./routes/prRoutes.js";
 import exerciseRoutes from "./routes/exerciseRoutes.js";
 import authenticateToken from "./middleware/authMiddleware.js";
 
@@ -32,6 +33,9 @@ app.use("/exercises", authenticateToken, exerciseRoutes);
 
 // Any api requests that has to do with logging workouts
 app.use("/log", authenticateToken, logRoutes);
+
+// Any api requests that has to do with PR's
+app.use("/prs", authenticateToken, prRoutes);
 
 app.get("/", async (req, res) => {
   try {

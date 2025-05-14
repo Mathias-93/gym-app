@@ -69,6 +69,11 @@ router.post("/workout/:splitId", async (req, res) => {
       const notesForThisExercise = notes[i] || null;
       const exerciseName = exerciseNamesList[i];
 
+      // Accumulate the total volume for an exercise
+      let totalVolume = 0;
+      let totalSets = 0;
+      let totalReps = 0;
+
       for (let j = 0; j < setsForThisExercise.length; j++) {
         const set = setsForThisExercise[j];
         const { reps, weight } = set;
@@ -89,7 +94,22 @@ router.post("/workout/:splitId", async (req, res) => {
             setNumber,
           ]
         );
+
+        // Increment volume per set
+        const setVolume = reps * weight;
+        totalVolume += setVolume;
+        totalSets++;
+        totalReps += reps;
       }
+
+      // Write all datapoints to exercise_volume_logs
+      await pool.query(
+        `
+          INSERT INTO exercise_volume_logs (log_id, exercise_id, total_volume, total_reps, set_count)
+          VALUES ($1, $2, $3, $4, $5)
+        `,
+        [logId, exerciseId, totalVolume, totalReps, totalSets]
+      );
     }
 
     await pool.query("COMMIT");
