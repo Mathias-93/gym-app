@@ -403,7 +403,7 @@ export default function SplitPage() {
       {editableWorkouts?.map((workout, workoutIndex) => {
         return (
           <div
-            key={workout.workout_id}
+            key={workoutIndex}
             className="w-full min-w-[500px] max-w-3xl bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700"
           >
             <div className="relative mb-6">
