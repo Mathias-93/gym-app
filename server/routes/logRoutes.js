@@ -37,6 +37,19 @@ router.post("/workout/:splitId", async (req, res) => {
   } = req.body;
   const splitId = req.params.splitId;
   const userId = req.user.id;
+
+  if (
+    !Array.isArray(exerciseIdsList) ||
+    !Array.isArray(setsData) ||
+    !Array.isArray(exerciseNamesList) ||
+    exerciseIdsList.length !== setsData.length ||
+    exerciseIdsList.length !== exerciseNamesList.length
+  ) {
+    return res.status(400).json({
+      message: "Malformed workout data. Check list lengths and structure.",
+    });
+  }
+
   try {
     await pool.query("BEGIN");
 
@@ -73,6 +86,7 @@ router.post("/workout/:splitId", async (req, res) => {
       let totalVolume = 0;
       let totalSets = 0;
       let totalReps = 0;
+      let highestWeight = 0;
 
       for (let j = 0; j < setsForThisExercise.length; j++) {
         const set = setsForThisExercise[j];
@@ -100,6 +114,9 @@ router.post("/workout/:splitId", async (req, res) => {
         totalVolume += setVolume;
         totalSets++;
         totalReps += reps;
+
+        // Get highest weight
+        if (weight > highestWeight) highestWeight = weight;
       }
 
       // Write all datapoints to exercise_volume_logs
@@ -110,6 +127,50 @@ router.post("/workout/:splitId", async (req, res) => {
         `,
         [logId, exerciseId, totalVolume, totalReps, totalSets]
       );
+
+      // Check if newly added data is a PR
+      const highestVolumeRes = await pool.query(
+        `
+          SELECT MAX(total_volume) FROM exercise_volume_logs
+          WHERE exercise_id = $1 AND user_id = $2
+        `,
+        [exerciseId, userId]
+      );
+      const highestRecordedVolume = highestVolumeRes.rows[0].max || 0;
+
+      // Check if totalVolume is greater than the MAX value found in the total_volume column
+      if (totalVolume > highestRecordedVolume) {
+        // if it is, add it to PR table with user_id, exercise_id, pr_type (volume), value, log_id
+        await pool.query(
+          `
+            INSERT INTO prs (user_id, exercise_id, pr_type, value, log_id)
+            VALUES ($1, $2, $3, $4, $5)
+          `,
+          [userId, exerciseId, "volume", totalVolume, logId]
+        );
+      }
+
+      const highestRecordedWeightRes = await pool.query(
+        `
+          SELECT MAX(value) FROM prs
+          WHERE exercise_id = $1 AND user_id = $2 AND pr_type = $3
+        `,
+        [exerciseId, userId, "weight"]
+      );
+
+      const highestRecordedWeight = highestRecordedWeightRes.rows[0].max || 0;
+
+      // Check if the weight for the exercise is a weight PR
+      if (highestWeight > highestRecordedWeight) {
+        // if it is, add it to PR table with user_id, exercise_id, pr_type (weight), value, log_id
+        await pool.query(
+          `
+            INSERT INTO prs (user_id, exercise_id, pr_type, value, log_id)
+            VALUES ($1, $2, $3, $4, $5)
+          `,
+          [userId, exerciseId, "weight", highestWeight, logId]
+        );
+      }
     }
 
     await pool.query("COMMIT");
