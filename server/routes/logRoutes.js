@@ -115,24 +115,17 @@ router.post("/workout/:splitId", async (req, res) => {
         totalSets++;
         totalReps += reps;
 
-        // Get highest weight
+        // Get highest weight used for exercise from logged data
         if (weight > highestWeight) highestWeight = weight;
       }
-
-      // Write all datapoints to exercise_volume_logs
-      await pool.query(
-        `
-          INSERT INTO exercise_volume_logs (log_id, exercise_id, total_volume, total_reps, set_count)
-          VALUES ($1, $2, $3, $4, $5)
-        `,
-        [logId, exerciseId, totalVolume, totalReps, totalSets]
-      );
 
       // Check if newly added data is a PR
       const highestVolumeRes = await pool.query(
         `
-          SELECT MAX(total_volume) FROM exercise_volume_logs
-          WHERE exercise_id = $1 AND user_id = $2
+          SELECT MAX(evl.total_volume)
+          FROM exercise_volume_logs evl
+          JOIN workout_logs wl ON wl.log_id = evl.log_id
+          WHERE evl.exercise_id = $1 AND wl.user_id = $2;
         `,
         [exerciseId, userId]
       );
@@ -145,10 +138,21 @@ router.post("/workout/:splitId", async (req, res) => {
           `
             INSERT INTO prs (user_id, exercise_id, pr_type, value, log_id)
             VALUES ($1, $2, $3, $4, $5)
+            ON CONFLICT (user_id, exercise_id, pr_type)
+            DO UPDATE SET value = EXCLUDED.value, log_id = EXCLUDED.log_id, achieved_at = CURRENT_TIMESTAMP
           `,
           [userId, exerciseId, "volume", totalVolume, logId]
         );
       }
+
+      // Write all datapoints to exercise_volume_logs
+      await pool.query(
+        `
+          INSERT INTO exercise_volume_logs (log_id, exercise_id, total_volume, total_reps, set_count)
+          VALUES ($1, $2, $3, $4, $5)
+        `,
+        [logId, exerciseId, totalVolume, totalReps, totalSets]
+      );
 
       const highestRecordedWeightRes = await pool.query(
         `
@@ -167,10 +171,14 @@ router.post("/workout/:splitId", async (req, res) => {
           `
             INSERT INTO prs (user_id, exercise_id, pr_type, value, log_id)
             VALUES ($1, $2, $3, $4, $5)
+            ON CONFLICT (user_id, exercise_id, pr_type)
+            DO UPDATE SET value = EXCLUDED.value, log_id = EXCLUDED.log_id, achieved_at = CURRENT_TIMESTAMP
           `,
           [userId, exerciseId, "weight", highestWeight, logId]
         );
       }
+      console.log("totalVolume:", totalVolume);
+      console.log("highestRecordedVolume:", highestRecordedVolume);
     }
 
     await pool.query("COMMIT");
@@ -178,6 +186,7 @@ router.post("/workout/:splitId", async (req, res) => {
   } catch (err) {
     await pool.query("ROLLBACK");
     console.error("Something went wrong:", err.message);
+    console.error("Workout log error:", err.stack || err);
     res.status(500).json({ "Error logging workout": err.message });
   }
 });
