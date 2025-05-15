@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { GlobalContext } from "../Context";
 import Spinner from "../components/Spinner";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import CustomModal from "../components/CustomModal";
 import { toast } from "react-hot-toast";
 import CustomToast from "../components/CustomToast";
@@ -26,6 +26,7 @@ export default function LogPage() {
   const [showOtherModal, setShowOtherModal] = useState(false);
   const [showOtherOtherModal, setShowOtherOtherModal] = useState(false);
   const { splitId } = useParams();
+  const navigate = useNavigate();
 
   const validateWorkout = (data) => {
     // number of sets to be at least one per exercise
@@ -102,6 +103,7 @@ export default function LogPage() {
       );
       localStorage.removeItem("logDraft");
       setLogData(null);
+      navigate("/dashboard");
     } catch (err) {
       console.log("Something went wrong:", err.message);
       toast.custom(
@@ -250,7 +252,6 @@ export default function LogPage() {
         notes,
       });
     }
-    console.log(logData);
   }, [selectedWorkout, sets, notes]);
 
   useEffect(() => {

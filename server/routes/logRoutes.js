@@ -177,8 +177,8 @@ router.post("/workout/:splitId", async (req, res) => {
           [userId, exerciseId, "weight", highestWeight, logId]
         );
       }
-      console.log("totalVolume:", totalVolume);
-      console.log("highestRecordedVolume:", highestRecordedVolume);
+      /*       console.log("totalVolume:", totalVolume);
+      console.log("highestRecordedVolume:", highestRecordedVolume); */
     }
 
     await pool.query("COMMIT");
