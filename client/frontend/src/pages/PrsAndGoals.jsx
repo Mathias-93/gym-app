@@ -18,6 +18,7 @@ export default function PrsAndGoals() {
     setFilteredExercises([]);
   });
   const [selectedExercises, setSelectedExercises] = useState({});
+  const [showFullData, setShowFullData] = useState(false);
 
   const handleExercisesFilter = (query, type) => {
     const lowerQuery = query.toLowerCase();
@@ -42,6 +43,14 @@ export default function PrsAndGoals() {
     }));
     setActiveDropdown(null);
     setFilteredExercises([]);
+  };
+
+  const fetchAndShowVolumeSets = async (logId, exerciseId) => {
+    try {
+      const response = await fetch();
+    } catch (err) {
+      console.log(err.message);
+    }
   };
 
   const fetchUserPrs = async () => {
@@ -179,6 +188,54 @@ export default function PrsAndGoals() {
             </div>
           );
         })}
+      </div>
+      <div className="mt-20 w-full max-w-4xl flex flex-col">
+        <div className="flex items-center justify-center">
+          <button
+            onClick={() => setShowFullData(!showFullData)}
+            className="mb-6 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition"
+          >
+            {showFullData ? "Hide full PR data" : "Show full PR data"}
+          </button>
+        </div>
+        <div className="flex gap-5">
+          {showFullData &&
+            prTypes.map((type, index) => {
+              return (
+                <div>
+                  <h3 className="text-xl font-semibold mb-2 text-gray-800 dark:text-white capitalize">
+                    {type}
+                  </h3>
+                  <ul className="space-y-4">
+                    {prsData
+                      ?.filter((pr) => pr.pr_type === type)
+                      .map((pr, index) => (
+                        <li
+                          key={index}
+                          className="p-4 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 shadow-sm"
+                        >
+                          <p className="text-lg font-semibold text-gray-800 dark:text-white">
+                            {pr.exercise_name}
+                          </p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                            Type:{" "}
+                            <span className="capitalize">{pr.pr_type}</span>
+                          </p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                            Value: {pr.value}{" "}
+                            {pr.pr_type === "weight" ? "kg" : "kg total"}
+                          </p>
+                          <p className="text-sm text-gray-500 dark:text-gray-500">
+                            Achieved:{" "}
+                            {new Date(pr.achieved_at).toLocaleDateString()}
+                          </p>
+                        </li>
+                      ))}
+                  </ul>
+                </div>
+              );
+            })}
+        </div>
       </div>
     </div>
   );
