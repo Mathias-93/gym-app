@@ -39,7 +39,7 @@ app.use("/log", authenticateToken, logRoutes);
 app.use("/prs", authenticateToken, prRoutes);
 
 // Any api requests that has to do with goals
-app.use("/goal", authenticateToken, goalRoutes);
+app.use("/goals", authenticateToken, goalRoutes);
 
 app.get("/", async (req, res) => {
   try {

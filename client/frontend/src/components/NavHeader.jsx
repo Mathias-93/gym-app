@@ -50,8 +50,8 @@ export default function NavHeader() {
 
         {/* Centered Title */}
         <h1 className="absolute left-1/2 -translate-x-1/2 text-2xl md:text-5xl font-extrabold text-white tracking-wider drop-shadow-xl">
-          The <span className="text-blue-600 dark:text-blue-400">Iron</span>{" "}
-          Archives
+          The <span className="text-blue-600 dark:text-blue-400">Bro</span>
+          chives 💪
         </h1>
 
         {/* Dark Mode Toggle (right-aligned) */}

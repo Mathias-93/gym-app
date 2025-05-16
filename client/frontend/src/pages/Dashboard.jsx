@@ -32,8 +32,8 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="w-full min-h-screen p-6 bg-gray-100 dark:bg-gray-900 md:mt-[200px] mt-[125px]">
-      <h1 className="text-4xl font-bold text-center text-gray-800 dark:text-gray-100 tracking-tight mb-[50px] md:mb-[100px]">
+    <div className="w-full min-h-screen px-4 py-10 bg-gray-100 dark:bg-gray-900 ">
+      <h1 className=" md:mt-52 mt-[150px] text-4xl font-bold text-center text-gray-800 dark:text-gray-100 tracking-tight mb-[50px] md:mb-[100px]">
         Welcome back,{" "}
         <span className="text-blue-600 dark:text-blue-400">
           {userInformation?.username}

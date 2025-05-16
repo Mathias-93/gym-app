@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  overflow-y: scroll;
+}
 
 :root {
     --blue-gradient: linear-gradient(to bottom, rgb(37, 99, 235), rgb(30, 64, 175))
@@ -52,3 +55,4 @@
       transform: translateY(-10%);
     }
   }
+

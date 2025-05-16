@@ -260,7 +260,7 @@ export default function PrsAndGoals() {
           {showFullData &&
             prTypes.map((type, index) => {
               return (
-                <div>
+                <div key={index}>
                   <h3 className="text-xl font-semibold mb-2 text-gray-800 dark:text-white capitalize">
                     {type}
                   </h3>
