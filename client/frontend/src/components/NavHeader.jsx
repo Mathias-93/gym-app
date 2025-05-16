@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { GlobalContext } from "../Context";
 import useTheme from "../hooks/useTheme";
@@ -11,6 +11,7 @@ export default function NavHeader() {
     setIsAuthenticated,
     setUserInformation,
   } = useContext(GlobalContext);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navigate = useNavigate();
 
@@ -37,11 +38,18 @@ export default function NavHeader() {
     <header className="fixed top-0 left-0 w-full bg-gray-900 dark:bg-gray-950 shadow-lg z-50">
       {/* Title Bar */}
       <div className="w-full h-20 flex items-center justify-between px-6 relative">
-        {/* Empty Spacer (for alignment) */}
-        <div className="w-10"></div>
+        {/* Mobile Menu Toggle */}
+        <button
+          className={`md:hidden p-2 text-[1.25rem] text-white rounded ${
+            mobileMenuOpen ? "bg-gray-500" : "bg-gray-700"
+          }`}
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        >
+          ☰
+        </button>
 
         {/* Centered Title */}
-        <h1 className="absolute left-1/2 -translate-x-1/2 text-4xl md:text-5xl font-extrabold text-white tracking-wider drop-shadow-xl">
+        <h1 className="absolute left-1/2 -translate-x-1/2 text-2xl md:text-5xl font-extrabold text-white tracking-wider drop-shadow-xl">
           The <span className="text-blue-600 dark:text-blue-400">Iron</span>{" "}
           Archives
         </h1>
@@ -49,12 +57,12 @@ export default function NavHeader() {
         {/* Dark Mode Toggle (right-aligned) */}
         <button
           onClick={toggleTheme}
-          className="p-2 rounded-lg bg-gray-700 dark:bg-gray-600 text-white hover:scale-105 transition-all"
+          className="p-2 rounded-lg bg-gray-700 text-white hover:scale-105 transition-all"
         >
           {theme === "light" ? (
-            <MoonIcon className="w-6 h-6" />
+            <MoonIcon className="w-5 h-5 md:w-6 md:h-6" />
           ) : (
-            <SunIcon className="w-6 h-6" />
+            <SunIcon className="w-5 h-5 md:w-6 md:h-6" />
           )}
         </button>
       </div>
@@ -62,21 +70,15 @@ export default function NavHeader() {
       {/* Navigation Menu */}
       {!isLoadingAuth && (
         <nav className="bg-gray-100 dark:bg-gray-800 shadow-md">
-          <ul className="flex items-center justify-between px-8 py-3">
-            {/* Home Link */}
-            {/* <li>
-              <Link
-                to="/"
-                className="text-gray-700 dark:text-gray-100 text-lg font-medium hover:text-blue-600 dark:hover:text-blue-400 transition-all"
-              >
-                Home
-              </Link>
-            </li> */}
-
-            {/* Conditional Auth Links */}
+          <ul
+            className={`flex flex-col md:flex-row items-start md:items-center px-6 py-4 gap-4 md:gap-6 transition-all duration-300 ${
+              mobileMenuOpen ? "block" : "hidden"
+            } md:flex`}
+          >
             {!isAuthenticated ? (
               <li>
                 <Link
+                  onClick={() => setMobileMenuOpen(false)}
                   to="/login"
                   className="text-gray-700 dark:text-gray-100 text-lg font-medium hover:text-blue-600 dark:hover:text-blue-400 transition-all"
                 >
@@ -86,27 +88,28 @@ export default function NavHeader() {
                 </Link>
               </li>
             ) : (
-              <div className="flex gap-6">
-                {/* Dashboard Link */}
-                <li className="flex items-center justify-center">
+              <>
+                <li>
                   <Link
+                    onClick={() => setMobileMenuOpen(false)}
                     to="/dashboard"
                     className="text-gray-700 dark:text-gray-100 text-lg font-medium hover:text-blue-600 dark:hover:text-blue-400 transition-all"
                   >
                     Dashboard
                   </Link>
                 </li>
-                <li className="flex items-center justify-center">
+                <li>
                   <Link
+                    onClick={() => setMobileMenuOpen(false)}
                     to="/prsandgoals"
                     className="text-gray-700 dark:text-gray-100 text-lg font-medium hover:text-blue-600 dark:hover:text-blue-400 transition-all"
                   >
-                    PR's and Goals
+                    Personal Records
                   </Link>
                 </li>
-
-                <li className="flex items-center justify-center">
+                <li>
                   <Link
+                    onClick={() => setMobileMenuOpen(false)}
                     to="/history"
                     className="text-gray-700 dark:text-gray-100 text-lg font-medium hover:text-blue-600 dark:hover:text-blue-400 transition-all"
                   >
@@ -115,13 +118,16 @@ export default function NavHeader() {
                 </li>
                 <li>
                   <button
-                    onClick={logoutUser}
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      logoutUser();
+                    }}
                     className="bg-red-800 text-white text-lg px-4 py-1 rounded-lg hover:bg-red-700 transition-all"
                   >
                     Log Out
                   </button>
                 </li>
-              </div>
+              </>
             )}
           </ul>
         </nav>

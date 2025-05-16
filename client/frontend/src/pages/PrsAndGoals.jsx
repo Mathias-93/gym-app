@@ -143,7 +143,7 @@ export default function PrsAndGoals() {
               className=" bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6"
             >
               <h2 className="text-xl font-semibold mb-2 text-gray-800 dark:text-white capitalize">
-                {type} PR
+                {type === "weight" ? "🏋️‍♂️" : "📊"} {type} PR
               </h2>
               <div className="relative">
                 <input
@@ -174,20 +174,34 @@ export default function PrsAndGoals() {
               {matchingPr ? (
                 <div className="mt-6 text-gray-900 dark:text-white">
                   {type === "weight" ? (
-                    <p className="text-lg">
-                      🏋️‍♂️ <strong>{matchingPr.exercise_name}</strong> —{" "}
-                      <span className="font-semibold">
-                        {matchingPr.value} kg
-                      </span>
-                    </p>
+                    <div className="flex flex-col gap-3">
+                      <p className="text-lg">
+                        <strong>{matchingPr.exercise_name}</strong> —{" "}
+                        <span className="font-semibold">
+                          {matchingPr.value} kg
+                        </span>{" "}
+                      </p>
+                      <p className="text-sm text-gray-500 dark:text-gray-500">
+                        Achieved{" "}
+                        {new Date(matchingPr.achieved_at).toLocaleDateString()}
+                      </p>
+                    </div>
                   ) : (
                     <div className="mt-2">
-                      <p className="text-lg">
-                        📊 <strong>{matchingPr.exercise_name}</strong> —{" "}
-                        <span className="font-semibold">
-                          {matchingPr.value} kg total
-                        </span>
-                      </p>
+                      <div className="flex flex-col gap-3">
+                        <p className="text-lg">
+                          <strong>{matchingPr.exercise_name}</strong> —{" "}
+                          <span className="font-semibold">
+                            {matchingPr.value} kg total
+                          </span>
+                        </p>
+                        <p className="text-sm text-gray-500 dark:text-gray-500">
+                          Achieved{" "}
+                          {new Date(
+                            matchingPr.achieved_at
+                          ).toLocaleDateString()}
+                        </p>
+                      </div>
 
                       <button
                         onClick={() => {
@@ -242,7 +256,7 @@ export default function PrsAndGoals() {
             {showFullData ? "Hide all PRs" : "Show all PRs"}
           </button>
         </div>
-        <div className="flex gap-5">
+        <div className="flex flex-col md:flex-row gap-5">
           {showFullData &&
             prTypes.map((type, index) => {
               return (

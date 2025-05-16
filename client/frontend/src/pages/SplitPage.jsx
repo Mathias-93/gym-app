@@ -389,7 +389,7 @@ export default function SplitPage() {
           ></i>
         </div>
       ) : (
-        <h1 className="text-5xl font-bold text-center text-gray-800 dark:text-gray-200 flex gap-5">
+        <h1 className="text-3xl mid:text-5xl font-bold text-center text-gray-800 dark:text-gray-200 flex gap-5">
           {editableSplitName}
           <i
             className="fa-solid fa-pencil text-2xl cursor-pointer"
@@ -404,12 +404,12 @@ export default function SplitPage() {
         return (
           <div
             key={workoutIndex}
-            className="w-full min-w-[500px] max-w-3xl bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700"
+            className="w-full mid:min-w-[500px] max-w-3xl bg-white dark:bg-gray-800 p-2 md:p-4 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700"
           >
             <div className="relative mb-6">
               <button
                 onClick={() => removeWorkout(workoutIndex)}
-                className="absolute top-0 right-0 m-1 w-6 h-6 flex items-center justify-center bg-red-500 dark:bg-red-900 text-red-100 dark:text-red-400 rounded hover:bg-red-200 dark:hover:bg-red-800 transition"
+                className="absolute top-0 right-0 mid:top-0 mid:right-0 m-1 w-6 h-6 flex items-center justify-center bg-red-500 dark:bg-red-900 text-red-100 dark:text-red-400 rounded hover:bg-red-200 dark:hover:bg-red-800 transition"
               >
                 <i className="fa-solid fa-xmark text-xs"></i>
               </button>
@@ -478,7 +478,7 @@ export default function SplitPage() {
                             e.target.value
                           );
                         }}
-                        className="flex-1 mt-2 p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                        className="flex-1 mt-2 p-2 md:p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 text-sm md:text-lg dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
                       />
                       {activeDropdown === `${workoutIndex}-${exerciseIndex}` &&
                         filteredExercises.length > 0 && (

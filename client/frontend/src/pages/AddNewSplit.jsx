@@ -167,7 +167,7 @@ export default function AddNewSplit() {
 
   return (
     <div className="mt-[200px] flex justify-center">
-      <div className="w-full min-w-[500px] max-w-3xl bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+      <div className="w-full mid:min-w-[500px] max-w-3xl bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
         <h1 className="text-3xl font-semibold text-gray-900 dark:text-gray-100 mb-6 text-center">
           Add New Split
         </h1>
