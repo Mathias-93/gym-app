@@ -53,7 +53,6 @@ export default function PrsAndGoals() {
       });
 
       const data = await response.json();
-      console.log(data);
       setTemporary(data);
       setPrsData(data);
     } catch (err) {
@@ -86,52 +85,97 @@ export default function PrsAndGoals() {
     }
   }, [exercises, temporary]);
 
-  /* console.log(prsData); */
+  console.log(prsData);
 
   if (showSpinner) {
     <Spinner />;
   }
 
   return (
-    <div className="w-full min-h-screen p-6 bg-gray-100 dark:bg-gray-900 pt-[200px] flex flex-col gap-10 mt-10 items-center">
-      <h1 className="dark:text-white">PRs and Goals</h1>
-      <div className="flex gap-10">
+    <div className="w-full min-h-screen px-4 py-10 bg-gray-100 dark:bg-gray-900 flex flex-col items-center gap-12">
+      <h1 className="text-3xl font-bold text-gray-900 dark:text-white mt-52">
+        🏆 Personal Records
+      </h1>
+      <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-8">
         {prTypes.map((type, index) => {
+          const selectedExerciseName = selectedExercises[type];
+          const matchingPr = prsData?.find(
+            (pr) =>
+              pr.pr_type === type &&
+              pr.exercise_name?.toLowerCase() ===
+                selectedExerciseName?.toLowerCase()
+          );
+
           return (
-            <div key={index} className="relative">
-              <h2 className="dark:text-white">{type}</h2>
-              <input
-                type="text"
-                value={selectedExercises[type] || ""}
-                onChange={(e) => {
-                  handleExercisesFilter(e.target.value, type);
-                  setSelectedExercises((prev) => ({
-                    ...prev,
-                    [type]: e.target.value,
-                  }));
-                }}
-                placeholder={"Search for an exercise"}
-                className="flex-1 mt-2 p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              />
-              ;
-              {activeDropdown === type && filteredExercises?.length > 0 && (
-                <SuggestionDropdown
-                  ref={dropdownref}
-                  data={filteredExercises}
-                  handleClickDropdown={(exerciseName) =>
-                    handleClickDropdown(exerciseName, type)
-                  }
+            <div
+              key={index}
+              className=" bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6"
+            >
+              <h2 className="text-xl font-semibold mb-2 text-gray-800 dark:text-white capitalize">
+                {type} PR
+              </h2>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={selectedExercises[type] || ""}
+                  onChange={(e) => {
+                    handleExercisesFilter(e.target.value, type);
+                    setSelectedExercises((prev) => ({
+                      ...prev,
+                      [type]: e.target.value,
+                    }));
+                  }}
+                  placeholder="Search for an exercise"
+                  className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 />
-              )}
-              {prsData?.map((pr) =>
-                pr.pr_type === type &&
-                pr.exercise_name === selectedExercises[type] ? (
-                  <p className="dark:text-white">
-                    Max {type === "weight" ? "weight" : "volume"} lifted for{" "}
-                    {pr.exercise_name}: {pr.value}
-                  </p>
-                ) : null
-              )}
+
+                {activeDropdown === type && filteredExercises?.length > 0 && (
+                  <SuggestionDropdown
+                    ref={dropdownref}
+                    data={filteredExercises}
+                    handleClickDropdown={(exerciseName) =>
+                      handleClickDropdown(exerciseName, type)
+                    }
+                  />
+                )}
+              </div>
+
+              {matchingPr ? (
+                <div className="mt-6 text-gray-900 dark:text-white">
+                  {type === "weight" ? (
+                    <p className="text-lg">
+                      🏋️‍♂️ <strong>{matchingPr.exercise_name}</strong> —{" "}
+                      <span className="font-semibold">
+                        {matchingPr.value} kg
+                      </span>
+                    </p>
+                  ) : (
+                    <div>
+                      <p className="text-lg">
+                        📊 <strong>{matchingPr.exercise_name}</strong> —{" "}
+                        <span className="font-semibold">
+                          {matchingPr.value} kg total
+                        </span>
+                      </p>
+                      <button
+                        onClick={() =>
+                          fetchAndShowVolumeSets(
+                            matchingPr.log_id,
+                            matchingPr.exercise_id
+                          )
+                        }
+                        className="mt-3 inline-block px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-md"
+                      >
+                        View Set Breakdown
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : selectedExerciseName ? (
+                <p className="text-sm text-gray-400 mt-4">
+                  No PR found for that exercise.
+                </p>
+              ) : null}
             </div>
           );
         })}

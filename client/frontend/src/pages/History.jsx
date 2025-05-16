@@ -102,7 +102,10 @@ export default function History() {
     return <Spinner />;
   }
   return (
-    <div className="w-full min-h-screen p-6 bg-gray-100 dark:bg-gray-900 pt-[200px] flex gap-10 mt-14 justify-center">
+    <div className="w-full min-h-screen px-4 py-10 bg-gray-100 dark:bg-gray-900 flex flex-col items-center gap-12">
+      <h1 className="text-3xl font-bold text-gray-900 dark:text-white mt-52">
+        📅 History
+      </h1>
       <div className="w-full max-w-md">
         <label
           htmlFor="split-select"
@@ -160,7 +163,7 @@ export default function History() {
       </div>
       <div className="w-full max-w-md">
         <h2 className="block mb-2 text-lg font-semibold text-gray-700 dark:text-gray-200">
-          Full workout history:
+          Full workout history across all splits:
         </h2>
 
         {completeUserHistoryData?.length > 0 ? (
