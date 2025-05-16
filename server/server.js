@@ -7,6 +7,7 @@ import authRoutes from "./routes/authRoutes.js";
 import planRoutes from "./routes/planRoutes.js";
 import logRoutes from "./routes/logRoutes.js";
 import prRoutes from "./routes/prRoutes.js";
+import goalRoutes from "./routes/goalRoutes.js";
 import exerciseRoutes from "./routes/exerciseRoutes.js";
 import authenticateToken from "./middleware/authMiddleware.js";
 
@@ -36,6 +37,9 @@ app.use("/log", authenticateToken, logRoutes);
 
 // Any api requests that has to do with PR's
 app.use("/prs", authenticateToken, prRoutes);
+
+// Any api requests that has to do with goals
+app.use("/goal", authenticateToken, goalRoutes);
 
 app.get("/", async (req, res) => {
   try {

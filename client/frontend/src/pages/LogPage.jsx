@@ -97,7 +97,7 @@ export default function LogPage() {
       toast.custom(
         (t) =>
           t.visible && (
-            <CustomToast t={t} message="Split saved!" type="success" />
+            <CustomToast t={t} message="Workout logged!" type="success" />
           ),
         { duration: 5000, position: "top-center" }
       );

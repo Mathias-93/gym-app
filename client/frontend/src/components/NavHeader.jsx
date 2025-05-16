@@ -110,6 +110,15 @@ export default function NavHeader() {
                 <li>
                   <Link
                     onClick={() => setMobileMenuOpen(false)}
+                    to="/goals"
+                    className="text-gray-700 dark:text-gray-100 text-lg font-medium hover:text-blue-600 dark:hover:text-blue-400 transition-all"
+                  >
+                    Goals
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    onClick={() => setMobileMenuOpen(false)}
                     to="/history"
                     className="text-gray-700 dark:text-gray-100 text-lg font-medium hover:text-blue-600 dark:hover:text-blue-400 transition-all"
                   >

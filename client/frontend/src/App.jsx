@@ -13,6 +13,7 @@ import { Toaster } from "react-hot-toast";
 import History from "./pages/History";
 import HistorySpecific from "./pages/HistorySpecific";
 import PrsAndGoals from "./pages/PrsAndGoals";
+import Goals from "./pages/Goals";
 
 function App() {
   const {
@@ -94,6 +95,7 @@ function App() {
           <Route exact path="/login" element={<Login />} />
           <Route exact path="/dashboard" element={<Dashboard />} />
           <Route exact path="/prsandgoals" element={<PrsAndGoals />} />
+          <Route exact path="/goals" element={<Goals />} />
           <Route exact path="/history" element={<History />} />
           <Route
             exact
