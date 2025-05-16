@@ -19,6 +19,8 @@ export default function PrsAndGoals() {
   });
   const [selectedExercises, setSelectedExercises] = useState({});
   const [showFullData, setShowFullData] = useState(false);
+  const [volumePrs, setVolumePrs] = useState(null);
+  const [showVolumeSets, setShowVolumeSets] = useState(false);
 
   const handleExercisesFilter = (query, type) => {
     const lowerQuery = query.toLowerCase();
@@ -43,13 +45,32 @@ export default function PrsAndGoals() {
     }));
     setActiveDropdown(null);
     setFilteredExercises([]);
+    setShowVolumeSets(false);
   };
 
-  const fetchAndShowVolumeSets = async (logId, exerciseId) => {
+  const fetchAndShowVolumeSets = async (exerciseId) => {
+    // Basically want to fetch all exercises and their set amount, reps and weight associated with a specific log id
     try {
-      const response = await fetch();
+      setIsLoading(true);
+      const response = await fetch("http://localhost:1337/prs/volume_pr_data", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          exerciseId: exerciseId,
+        }),
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        throw new Error(`nah fam`, response.statusText);
+      }
+
+      const data = await response.json();
+      setVolumePrs(data);
     } catch (err) {
       console.log(err.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -94,7 +115,8 @@ export default function PrsAndGoals() {
     }
   }, [exercises, temporary]);
 
-  console.log(prsData);
+  /*   console.log(prsData); */
+  console.log("full prs:", prsData);
 
   if (showSpinner) {
     <Spinner />;
@@ -159,24 +181,46 @@ export default function PrsAndGoals() {
                       </span>
                     </p>
                   ) : (
-                    <div>
+                    <div className="mt-2">
                       <p className="text-lg">
                         📊 <strong>{matchingPr.exercise_name}</strong> —{" "}
                         <span className="font-semibold">
                           {matchingPr.value} kg total
                         </span>
                       </p>
+
                       <button
-                        onClick={() =>
-                          fetchAndShowVolumeSets(
-                            matchingPr.log_id,
-                            matchingPr.exercise_id
-                          )
-                        }
-                        className="mt-3 inline-block px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-md"
+                        onClick={() => {
+                          fetchAndShowVolumeSets(matchingPr.exercise_id);
+                          setShowVolumeSets(!showVolumeSets);
+                        }}
+                        className="mt-3 inline-block px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-md transition"
                       >
-                        View Set Breakdown
+                        {showVolumeSets
+                          ? "Close Set Breakdown"
+                          : "View Set Breakdown"}
                       </button>
+
+                      {showVolumeSets && (
+                        <div className="mt-6 p-4 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm">
+                          <h3 className="text-md font-semibold text-gray-700 dark:text-gray-300 mb-4">
+                            {volumePrs?.length} total sets
+                          </h3>
+                          <ul className="space-y-2">
+                            {volumePrs?.map((pr, index) => (
+                              <li
+                                key={index}
+                                className="flex justify-between text-sm text-gray-800 dark:text-gray-200 border-b border-gray-200 dark:border-gray-600 pb-1"
+                              >
+                                <span className="font-medium">
+                                  {pr.weight} kg
+                                </span>
+                                <span>{pr.reps} reps</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -189,13 +233,13 @@ export default function PrsAndGoals() {
           );
         })}
       </div>
-      <div className="mt-20 w-full max-w-4xl flex flex-col">
+      <div className="mt-6 w-full max-w-4xl flex flex-col">
         <div className="flex items-center justify-center">
           <button
             onClick={() => setShowFullData(!showFullData)}
             className="mb-6 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition"
           >
-            {showFullData ? "Hide full PR data" : "Show full PR data"}
+            {showFullData ? "Hide all PRs" : "Show all PRs"}
           </button>
         </div>
         <div className="flex gap-5">
@@ -217,12 +261,9 @@ export default function PrsAndGoals() {
                           <p className="text-lg font-semibold text-gray-800 dark:text-white">
                             {pr.exercise_name}
                           </p>
+
                           <p className="text-sm text-gray-600 dark:text-gray-400">
-                            Type:{" "}
-                            <span className="capitalize">{pr.pr_type}</span>
-                          </p>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">
-                            Value: {pr.value}{" "}
+                            Weight: {pr.value}{" "}
                             {pr.pr_type === "weight" ? "kg" : "kg total"}
                           </p>
                           <p className="text-sm text-gray-500 dark:text-gray-500">
