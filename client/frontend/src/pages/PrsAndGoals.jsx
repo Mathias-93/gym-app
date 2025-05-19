@@ -116,7 +116,7 @@ export default function PrsAndGoals() {
   }, [exercises, temporary]);
 
   /*   console.log(prsData); */
-  console.log("full prs:", prsData);
+  /* console.log("full prs:", prsData); */
 
   if (showSpinner) {
     <Spinner />;

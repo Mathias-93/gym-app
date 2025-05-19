@@ -83,7 +83,7 @@ function App() {
   }, [isAuthenticated]);
 
   return (
-    <div className="bg-slate-100 dark:bg-gray-900">
+    <div className="bg-slate-100 dark:bg-gray-900 transition-all ">
       {/* Toast container */}
       <Toaster position="top-center" reverseOrder={false} />
 

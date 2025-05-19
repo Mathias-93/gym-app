@@ -35,7 +35,7 @@ export default function NavHeader() {
   };
 
   return (
-    <header className="fixed top-0 left-0 w-full bg-gray-900 dark:bg-gray-950 shadow-lg z-50">
+    <header className="fixed top-0 left-0 w-full bg-gray-800 dark:bg-gray-950 shadow-lg z-50">
       {/* Title Bar */}
       <div className="w-full h-20 flex items-center justify-between px-6 relative">
         {/* Mobile Menu Toggle */}
@@ -50,7 +50,7 @@ export default function NavHeader() {
 
         {/* Centered Title */}
         <h1 className="absolute left-1/2 -translate-x-1/2 text-2xl md:text-5xl font-extrabold text-white tracking-wider drop-shadow-xl">
-          The <span className="text-blue-600 dark:text-blue-400">Bro</span>
+          The <span className="text-blue-500 dark:text-blue-400">Bro</span>
           chives 💪
         </h1>
 
