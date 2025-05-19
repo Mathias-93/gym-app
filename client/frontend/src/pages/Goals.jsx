@@ -2,9 +2,11 @@ import React, { useContext, useEffect, useState } from "react";
 import { GlobalContext } from "../Context";
 import SuggestionDropdown from "../components/SuggestionDropdown";
 import { useClickOutsideAndEscape } from "../hooks/useClickOutsideAndEscape";
+import InfoModal from "../components/InfoModal";
 
 export default function Goals() {
-  const { setIsLoading, exercises } = useContext(GlobalContext);
+  const { setIsLoading, exercises, showInfoModal, setShowInfoModal } =
+    useContext(GlobalContext);
   const [goalsData, setGoalsData] = useState(null);
   const [addingNewGoal, setAddingNewGoal] = useState(false);
   const [goalTypes, setGoalTypes] = useState(["1RM", "Volume", "Custom"]);
@@ -63,18 +65,38 @@ export default function Goals() {
 
   return (
     <div className="w-full min-h-screen px-4 py-10 bg-gray-100 dark:bg-gray-900 flex flex-col items-center gap-12">
+      {showInfoModal && (
+        <InfoModal
+          message={"How to calculate total volume for an exercise"}
+          subMessage={
+            "Total number of repetitions x weight x number of sets. You can calculate your current volume PR for an exercise and set this to a slightly higher number for an appropriate volume goal to aim for."
+          }
+          onClick={() => setShowInfoModal(false)}
+        />
+      )}
       <h1 className="text-3xl font-bold text-gray-900 dark:text-white mt-52">
         🎯 Personal Goals
       </h1>
       <div className="flex flex-col">
-        <button
-          onClick={() => setAddingNewGoal(!addingNewGoal)}
-          className="mb-6 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition"
-        >
-          + Add new goal
-        </button>
+        {!addingNewGoal && (
+          <button
+            onClick={() => setAddingNewGoal(!addingNewGoal)}
+            className="mt-3 mb-5 w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
+          >
+            + Add new goal
+          </button>
+        )}
         {addingNewGoal && (
           <div className="flex flex-col gap-5">
+            <div>
+              <h2 className="block mb-2 text-lg font-semibold text-gray-700 dark:text-gray-200">
+                Optional Title
+              </h2>
+              <input
+                placeholder="Enter goal title"
+                className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              />
+            </div>
             <div>
               <label
                 htmlFor="goal-type-select"
@@ -104,32 +126,97 @@ export default function Goals() {
             </div>
 
             <div>
-              {selectedGoalType !== "Custom" && selectedGoalType !== null ? (
-                <div className="relative">
-                  <h2 className="block mb-2 text-lg font-semibold text-gray-700 dark:text-gray-200">
-                    Exercise
-                  </h2>
-                  <input
-                    value={selectedExercise || ""}
-                    onChange={(e) => {
-                      handleFilterExercises(e.target.value);
-                      setSelectedExercise(e.target.value);
-                    }}
-                    placeholder="Search for an exercise"
-                    className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                  />
-                  {dropdownIsActive && filteredExercises?.length > 0 && (
-                    <SuggestionDropdown
-                      ref={dropdownref}
-                      data={filteredExercises}
-                      handleClickDropdown={(exerciseName) =>
-                        handleClickDropdown(exerciseName)
-                      }
+              {selectedGoalType === "1RM" && (
+                <div className="flex flex-col gap-5">
+                  <div className="relative">
+                    <h2 className="block mb-2 text-lg font-semibold text-gray-700 dark:text-gray-200">
+                      Exercise
+                    </h2>
+                    <input
+                      value={selectedExercise || ""}
+                      onChange={(e) => {
+                        handleFilterExercises(e.target.value);
+                        setSelectedExercise(e.target.value);
+                      }}
+                      placeholder="Search for an exercise"
+                      className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
                     />
-                  )}
+                    {dropdownIsActive && filteredExercises?.length > 0 && (
+                      <SuggestionDropdown
+                        ref={dropdownref}
+                        data={filteredExercises}
+                        handleClickDropdown={(exerciseName) =>
+                          handleClickDropdown(exerciseName)
+                        }
+                      />
+                    )}
+                  </div>
+                  <div>
+                    <h2 className="block mb-2 text-lg font-semibold text-gray-700 dark:text-gray-200">
+                      Weight (kg)
+                    </h2>
+                    <input
+                      type="number"
+                      placeholder="Enter weight goal"
+                      className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    />
+                  </div>
                 </div>
-              ) : null}
+              )}
+              {selectedGoalType === "Volume" && (
+                <div className="relative flex flex-col gap-5">
+                  <div className="relative">
+                    <h2 className="block mb-2 text-lg font-semibold text-gray-700 dark:text-gray-200">
+                      Exercise
+                    </h2>
+                    <input
+                      value={selectedExercise || ""}
+                      onChange={(e) => {
+                        handleFilterExercises(e.target.value);
+                        setSelectedExercise(e.target.value);
+                      }}
+                      placeholder="Search for an exercise"
+                      className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    />
+                    {dropdownIsActive && filteredExercises?.length > 0 && (
+                      <SuggestionDropdown
+                        ref={dropdownref}
+                        data={filteredExercises}
+                        handleClickDropdown={(exerciseName) =>
+                          handleClickDropdown(exerciseName)
+                        }
+                      />
+                    )}
+                  </div>
+                  <div>
+                    <h2 className="block mb-2 text-lg font-semibold text-gray-700 dark:text-gray-200">
+                      Volume Goal (total kg){" "}
+                      <i
+                        onClick={() => setShowInfoModal(true)}
+                        className="fa-regular fa-circle-question text-sm cursor-pointer"
+                      ></i>
+                    </h2>
+                    <input
+                      type="number"
+                      className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    />
+                  </div>
+                </div>
+              )}
+              {selectedGoalType === "Custom" && (
+                <div className="relative flex flex-col gap-5">
+                  <div className="relative">
+                    <h2 className="block mb-2 text-lg font-semibold text-gray-700 dark:text-gray-200">
+                      Describe your goal here:
+                    </h2>
+                    <textarea className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
+                  </div>
+                </div>
+              )}
             </div>
+            <button className="mt-3 w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition">
+              Submit goal
+            </button>
           </div>
         )}
       </div>

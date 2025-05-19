@@ -18,6 +18,7 @@ export default function GlobalState({ children }) {
   const [showSpinner, setShowSpinner] = useState(false);
   const [workouts, setWorkouts] = useState([]);
   const [editableWorkouts, setEditableWorkouts] = useState([]);
+  const [showInfoModal, setShowInfoModal] = useState(false);
 
   const fetchUserSplit = async () => {
     try {
@@ -110,6 +111,8 @@ export default function GlobalState({ children }) {
         editableWorkouts,
         setEditableWorkouts,
         fetchWorkouts,
+        showInfoModal,
+        setShowInfoModal,
       }}
     >
       {children}
