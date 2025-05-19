@@ -3,6 +3,8 @@ import { GlobalContext } from "../Context";
 import SuggestionDropdown from "../components/SuggestionDropdown";
 import { useClickOutsideAndEscape } from "../hooks/useClickOutsideAndEscape";
 import InfoModal from "../components/InfoModal";
+import { toast } from "react-hot-toast";
+import CustomToast from "../components/CustomToast";
 
 export default function Goals() {
   const { setIsLoading, exercises, showInfoModal, setShowInfoModal } =
@@ -14,6 +16,9 @@ export default function Goals() {
   const [filteredExercises, setFilteredExercises] = useState(null);
   const [dropdownIsActive, setDropdownIsActive] = useState(false);
   const [selectedExercise, setSelectedExercise] = useState(null);
+  const [optionalTitle, setOptionalTitle] = useState("");
+  const [goalValue, setGoalValue] = useState(0);
+  const [customGoal, setCustomGoal] = useState("");
   const dropdownref = useClickOutsideAndEscape(() => {
     setDropdownIsActive(false);
     setFilteredExercises(null);
@@ -38,6 +43,105 @@ export default function Goals() {
   const handleClickDropdown = (exerciseName) => {
     setSelectedExercise(exerciseName);
     setDropdownIsActive(false);
+  };
+
+  const collectAndVerifyData = async () => {
+    // Collect all the form data into one object
+    const goalFormData = {
+      title: optionalTitle.trim() || "",
+      goal_type: selectedGoalType,
+      exercise_name:
+        selectedGoalType === "Custom" ? null : selectedExercise?.trim(),
+      target_value:
+        selectedGoalType === "Custom" && !isNaN(goalValue)
+          ? null
+          : Number(goalValue),
+      custom_goal_description:
+        selectedGoalType === "Custom" ? customGoal.trim() : null,
+    };
+    let validationErrors = [];
+
+    // Write verification logic to make sure data is formatted correctly
+    if (!goalFormData.goal_type) {
+      validationErrors.push("You must select a goal type.");
+    }
+
+    if (
+      (goalFormData.goal_type === "1RM" ||
+        goalFormData.goal_type === "Volume") &&
+      (!goalFormData.exercise_name ||
+        goalFormData.target_value === null ||
+        goalFormData.target_value === 0)
+    ) {
+      validationErrors.push(
+        "Please provide exercise and a target value greater than 0."
+      );
+    }
+
+    if (
+      goalFormData.goal_type === "Custom" &&
+      !goalFormData.custom_goal_description
+    ) {
+      validationErrors.push("Please enter a description for your custom goal.");
+    }
+
+    if (validationErrors.length > 0) {
+      // show toast, modal, or inline errors
+      toast.custom(
+        (t) =>
+          t.visible && (
+            <CustomToast
+              t={t}
+              message="Please make sure all fields are filled in with valid information."
+              type="error"
+            />
+          ),
+        { duration: 5000, position: "top-center" }
+      );
+      console.log("Validation failed:", validationErrors);
+      return;
+    }
+
+    // Call POST function to save to backend
+    try {
+      setIsLoading(true);
+      const response = await fetch("", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: {
+          goal: goalFormData,
+        },
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        toast.custom(
+          (t) =>
+            t.visible && (
+              <CustomToast
+                t={t}
+                message="Server error; goal not saved"
+                type="error"
+              />
+            ),
+          { duration: 5000, position: "top-center" }
+        );
+        throw new Error(
+          `Something went wrong when saving goal ${response.statusText}`
+        );
+      }
+      toast.custom(
+        (t) =>
+          t.visible && (
+            <CustomToast t={t} message="Goal saved!" type="success" />
+          ),
+        { duration: 5000, position: "top-center" }
+      );
+    } catch (err) {
+      console.log("Something went wrong when saving goal", err.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const fetchUserGoals = async () => {
@@ -93,6 +197,8 @@ export default function Goals() {
                 Optional Title
               </h2>
               <input
+                value={optionalTitle}
+                onChange={(e) => setOptionalTitle(e.target.value)}
                 placeholder="Enter goal title"
                 className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
               />
@@ -156,6 +262,8 @@ export default function Goals() {
                       Weight (kg)
                     </h2>
                     <input
+                      value={goalValue}
+                      onChange={(e) => setGoalValue(e.target.value)}
                       type="number"
                       placeholder="Enter weight goal"
                       className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
@@ -197,6 +305,8 @@ export default function Goals() {
                       ></i>
                     </h2>
                     <input
+                      value={goalValue}
+                      onChange={(e) => setGoalValue(e.target.value)}
                       type="number"
                       className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
                     />
@@ -209,12 +319,19 @@ export default function Goals() {
                     <h2 className="block mb-2 text-lg font-semibold text-gray-700 dark:text-gray-200">
                       Describe your goal here:
                     </h2>
-                    <textarea className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
+                    <textarea
+                      value={customGoal}
+                      onChange={(e) => setCustomGoal(e.target.value)}
+                      className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    ></textarea>
                   </div>
                 </div>
               )}
             </div>
-            <button className="mt-3 w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition">
+            <button
+              onClick={() => collectAndVerifyData()}
+              className="mt-3 w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
+            >
               Submit goal
             </button>
           </div>
