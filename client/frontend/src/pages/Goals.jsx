@@ -46,12 +46,19 @@ export default function Goals() {
   };
 
   const collectAndVerifyData = async () => {
+    const matchingExercise = exercises.find(
+      (exercise) =>
+        exercise.name.toLowerCase().trim() ===
+        selectedExercise.toLowerCase().trim()
+    );
+
     // Collect all the form data into one object
     const goalFormData = {
-      title: optionalTitle.trim() || "",
+      title: optionalTitle.trim() || null,
       goal_type: selectedGoalType,
-      exercise_name:
+      selected_exercise_name:
         selectedGoalType === "Custom" ? null : selectedExercise?.trim(),
+      selected_exercise_id: matchingExercise?.exercise_id,
       target_value:
         selectedGoalType === "Custom" && !isNaN(goalValue)
           ? null
@@ -69,7 +76,7 @@ export default function Goals() {
     if (
       (goalFormData.goal_type === "1RM" ||
         goalFormData.goal_type === "Volume") &&
-      (!goalFormData.exercise_name ||
+      (!goalFormData.selected_exercise_name ||
         goalFormData.target_value === null ||
         goalFormData.target_value === 0)
     ) {
@@ -83,6 +90,22 @@ export default function Goals() {
       !goalFormData.custom_goal_description
     ) {
       validationErrors.push("Please enter a description for your custom goal.");
+    }
+
+    if (!matchingExercise && selectedGoalType !== "Custom") {
+      toast.custom(
+        (t) =>
+          t.visible && (
+            <CustomToast
+              t={t}
+              message="Please select an already existing exercise."
+              type="error"
+            />
+          ),
+        { duration: 5000, position: "top-center" }
+      );
+      console.log("Validation failed:", validationErrors);
+      return;
     }
 
     if (validationErrors.length > 0) {
