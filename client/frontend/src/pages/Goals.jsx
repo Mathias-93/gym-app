@@ -11,7 +11,7 @@ export default function Goals() {
     useContext(GlobalContext);
   const [goalsData, setGoalsData] = useState(null);
   const [addingNewGoal, setAddingNewGoal] = useState(false);
-  const [goalTypes, setGoalTypes] = useState(["1RM", "Volume", "Custom"]);
+  const [goalTypes, setGoalTypes] = useState(["Weight", "Volume", "Custom"]);
   const [selectedGoalType, setSelectedGoalType] = useState(null);
   const [filteredExercises, setFilteredExercises] = useState(null);
   const [dropdownIsActive, setDropdownIsActive] = useState(false);
@@ -74,14 +74,14 @@ export default function Goals() {
     }
 
     if (
-      (goalFormData.goal_type === "1RM" ||
-        goalFormData.goal_type === "Volume") &&
+      (goalFormData.goal_type === "weight" ||
+        goalFormData.goal_type === "volume") &&
       (!goalFormData.selected_exercise_name ||
         goalFormData.target_value === null ||
         goalFormData.target_value === 0)
     ) {
       validationErrors.push(
-        "Please provide exercise and a target value greater than 0."
+        "Please provide an exercise and a target value greater than 0."
       );
     }
 
@@ -128,12 +128,10 @@ export default function Goals() {
     // Call POST function to save to backend
     try {
       setIsLoading(true);
-      const response = await fetch("", {
+      const response = await fetch("http://localhost:1337/goals/create_goal", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: {
-          goal: goalFormData,
-        },
+        body: JSON.stringify(goalFormData),
         credentials: "include",
       });
 
@@ -255,7 +253,7 @@ export default function Goals() {
             </div>
 
             <div>
-              {selectedGoalType === "1RM" && (
+              {selectedGoalType === "Weight" && (
                 <div className="flex flex-col gap-5">
                   <div className="relative">
                     <h2 className="block mb-2 text-lg font-semibold text-gray-700 dark:text-gray-200">
@@ -282,7 +280,7 @@ export default function Goals() {
                   </div>
                   <div>
                     <h2 className="block mb-2 text-lg font-semibold text-gray-700 dark:text-gray-200">
-                      Weight (kg)
+                      Weight goal (kg)
                     </h2>
                     <input
                       value={goalValue}
