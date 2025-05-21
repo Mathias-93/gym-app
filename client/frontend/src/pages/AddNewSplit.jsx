@@ -166,15 +166,14 @@ export default function AddNewSplit() {
   }
 
   return (
-    <div className="mt-[200px] flex justify-center">
+    <div className="w-full min-h-screen px-4 py-10 bg-gray-100 dark:bg-gray-900 flex flex-col items-center">
+      <h1 className="text-3xl font-semibold text-gray-900 dark:text-gray-100 text-center mt-52 mb-10">
+        🔁🏋️ Add New Split
+      </h1>
       <div className="w-full mid:min-w-[500px] max-w-3xl bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
-        <h1 className="text-3xl font-semibold text-gray-900 dark:text-gray-100 mb-6 text-center">
-          Add New Split
-        </h1>
-
         {/* Split Name Input */}
         <div className="mb-5">
-          <label className="block text-gray-700 dark:text-gray-300 font-medium mb-1">
+          <label className="block text-gray-900 dark:text-gray-100 text-lg font-semibold mb-1">
             Split Name
           </label>
           <input
@@ -188,7 +187,7 @@ export default function AddNewSplit() {
 
         {/* Select Number of Days */}
         <div className="mb-5">
-          <label className="block text-gray-700 dark:text-gray-300 font-medium mb-1">
+          <label className="block text-gray-900 dark:text-gray-100 text-lg font-semibold mb-1">
             Number of workout days per split
           </label>
           <input
@@ -232,9 +231,9 @@ export default function AddNewSplit() {
                 <button
                   type="button"
                   onClick={() => removeExercise(day, index)}
-                  className="mt-2 w-10 h-10 flex items-center justify-center bg-red-500 dark:bg-red-900 text-red-900 dark:text-red-400 rounded-lg hover:bg-red-400 dark:hover:bg-red-800 transition"
+                  className="mt-2 w-8 h-8 flex items-center justify-center rounded-lg"
                 >
-                  <i className="fa-solid fa-xmark text-xl"></i>
+                  <i className="fa-solid fa-xmark text-2xl text-red-700 hover:text-red-400 transition"></i>
                 </button>
               </div>
             ))}

@@ -355,7 +355,7 @@ export default function SplitPage() {
   }
 
   return (
-    <div className="w-full min-h-screen p-6 bg-gray-100 dark:bg-gray-900 pt-[200px] flex flex-col gap-10 mt-10 justify-center items-center">
+    <div className="w-full min-h-screen px-4 py-10 bg-gray-100 dark:bg-gray-900 flex flex-col items-center">
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-40">
           <CustomModal
@@ -374,7 +374,7 @@ export default function SplitPage() {
         </div>
       )}
       {splitNameIsEdit ? (
-        <div className="flex gap-5 items-center justify-center">
+        <div className="flex gap-5 items-center justify-center mt-52 mb-10">
           <input
             value={editableSplitName}
             onChange={(e) => setEditableSplitName(e.target.value)}
@@ -389,7 +389,7 @@ export default function SplitPage() {
           ></i>
         </div>
       ) : (
-        <h1 className="text-3xl mid:text-5xl font-bold text-center text-gray-800 dark:text-gray-200 flex gap-5">
+        <h1 className="text-3xl mid:text-5xl font-bold text-center text-gray-800 dark:text-gray-200 flex gap-5 mt-52 mb-10">
           {editableSplitName}
           <i
             className="fa-solid fa-pencil text-2xl cursor-pointer"
@@ -404,14 +404,14 @@ export default function SplitPage() {
         return (
           <div
             key={workoutIndex}
-            className="w-full mid:min-w-[500px] max-w-3xl bg-white dark:bg-gray-800 p-2 md:p-4 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700"
+            className="w-full mb-10 mid:min-w-[500px] max-w-3xl bg-white dark:bg-gray-800 p-2 md:p-4 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700"
           >
             <div className="relative mb-6">
               <button
                 onClick={() => removeWorkout(workoutIndex)}
-                className="absolute top-0 right-0 mid:top-0 mid:right-0 m-1 w-6 h-6 flex items-center justify-center bg-red-500 dark:bg-red-900 text-red-100 dark:text-red-400 rounded hover:bg-red-200 dark:hover:bg-red-800 transition"
+                className="absolute top-0 right-0 mid:top-0 mid:right-0 m-1 w-6 h-6 flex items-center justify-center rounded transition"
               >
-                <i className="fa-solid fa-xmark text-xs"></i>
+                <i className="fa-solid fa-xmark text-2xl text-red-700 hover:text-red-400 transition"></i>
               </button>
             </div>
             {editableWorkoutNamesAndIsEdit[workoutIndex]?.isEdit ? (
@@ -504,9 +504,9 @@ export default function SplitPage() {
                         onClick={() =>
                           removeExercise(workoutIndex, exerciseIndex)
                         }
-                        className="mt-2 w-10 h-10 flex items-center justify-center bg-red-500 dark:bg-red-900 text-red-100 dark:text-red-400 rounded-lg hover:bg-red-200 dark:hover:bg-red-800 transition"
+                        className="mt-2 w-8 h-8 flex items-center justify-center rounded transition"
                       >
-                        <i className="fa-solid fa-xmark text-xl"></i>
+                        <i className="fa-solid fa-xmark text-2xl text-red-700 hover:text-red-400 transition"></i>
                       </button>
                     </div>
                   </div>
@@ -540,11 +540,11 @@ export default function SplitPage() {
             className="w-full sm:w-1/2 bg-green-500 text-white py-3 rounded-lg hover:bg-green-600 transition"
             onClick={() => handleSaveSplitToDb(editableWorkouts)}
           >
-            Save Split
+            Save Changes
           </button>
           <button
             type="button"
-            className="w-full sm:w-1/2 bg-red-500 dark:bg-red-800 text-white py-3 rounded-lg hover:bg-red-400 dark:hover:bg-red-700 transition"
+            className="w-full sm:w-1/2 bg-red-500 hover:bg-red-600 text-white py-3 rounded-lg transition"
             onClick={() => {
               setShowModal(!showModal);
             }}

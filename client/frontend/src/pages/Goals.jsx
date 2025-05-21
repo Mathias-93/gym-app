@@ -40,8 +40,6 @@ export default function Goals() {
     }
   };
 
-  const handleFindExerciseForGoal = (exerciseId) => {};
-
   const handleClickDropdown = (exerciseName) => {
     setSelectedExercise(exerciseName);
     setDropdownIsActive(false);
@@ -232,14 +230,16 @@ export default function Goals() {
   return (
     <div className="w-full min-h-screen px-4 py-10 bg-gray-100 dark:bg-gray-900 flex flex-col items-center">
       {showInfoModal && (
-        <InfoModal
-          message="How to calculate total volume for an exercise"
-          subMessage="Total number of repetitions x weight x number of sets. You can calculate your current volume PR for an exercise and set this to a slightly higher number for an appropriate volume goal to aim for."
-          onClick={() => setShowInfoModal(false)}
-        />
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-40">
+          <InfoModal
+            message="How to calculate total volume for an exercise"
+            subMessage="Total number of repetitions x weight x number of sets. You can calculate your current volume PR for an exercise and set this to a slightly higher number for an appropriate volume goal to aim for."
+            onClick={() => setShowInfoModal(false)}
+          />
+        </div>
       )}
 
-      <h1 className="text-3xl font-bold text-gray-900 dark:text-white mt-44 mb-10 text-center">
+      <h1 className="text-3xl font-bold text-gray-900 dark:text-white mt-52 mb-10 text-center">
         🎯 Personal Goals
       </h1>
       {goalsData?.length > 0 && (
@@ -425,7 +425,7 @@ export default function Goals() {
             </button>
             <button
               onClick={() => setAddingNewGoal(false)}
-              className="w-full text-white py-3 rounded-lg font-semibold bg-red-500 hover:bg-red-600 text-white transition"
+              className="w-full py-3 rounded-lg font-semibold bg-red-500 hover:bg-red-600 text-white transition"
             >
               Cancel
             </button>
