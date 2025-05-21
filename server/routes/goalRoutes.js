@@ -3,6 +3,7 @@ import pool from "../db.js";
 
 const router = express.Router();
 
+// Route for fetching user goals
 router.get("/user_goals", async (req, res) => {
   const userId = req.user.id;
 
@@ -22,7 +23,7 @@ router.get("/user_goals", async (req, res) => {
 
     const userGoals = await pool.query(
       `
-            SELECT exercise_id, goal_type, target_value, current_value, is_completed, created_at, completed_at FROM goals
+            SELECT exercise_id, goal_type, goal_id, target_value, current_value, is_completed, created_at, completed_at, custom_goal_description FROM goals
             WHERE user_id = $1
         `,
       [userId]
@@ -34,6 +35,7 @@ router.get("/user_goals", async (req, res) => {
   }
 });
 
+// Route for creating user goals
 router.post("/create_goal", async (req, res) => {
   const userId = req.user.id;
   const {
@@ -126,6 +128,53 @@ router.post("/create_goal", async (req, res) => {
     res
       .status(500)
       .json({ message: `Could not save goal to db: ${err.message}` });
+  }
+});
+
+// Route for deleting user goals
+router.delete("/delete_goal/:goalId", async (req, res) => {
+  const userId = req.user.id;
+  const goalId = req.params.goalId;
+
+  try {
+    await pool.query("BEGIN");
+    console.log("1");
+    const check = await pool.query(
+      `
+        SELECT * FROM workout_logs WHERE user_id = $1
+      `,
+      [userId]
+    );
+
+    // Authorization check
+    if (check.rows.length === 0) {
+      await pool.query("ROLLBACK");
+      return res
+        .status(403)
+        .json({ message: "Unauthorized to add goals to this user." });
+    }
+    console.log("2");
+
+    // Delete goal based on goal_id and user_id
+    const result = await pool.query(
+      `DELETE FROM goals WHERE user_id = $1 AND goal_id = $2 RETURNING *`,
+      [userId, goalId]
+    );
+
+    if (result.rowCount === 0) {
+      await pool.query("ROLLBACK");
+      return res
+        .status(404)
+        .json({ message: "No matching goal found to delete." });
+    }
+    await pool.query("COMMIT");
+    res.status(200).json({
+      message: "Goal successfully deleted!",
+    });
+    console.log("3");
+  } catch (err) {
+    console.error(err.message);
+    res.status(400).json({ message: "Could not delete goal" });
   }
 });
 

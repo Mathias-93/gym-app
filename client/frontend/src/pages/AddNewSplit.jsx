@@ -232,7 +232,7 @@ export default function AddNewSplit() {
                 <button
                   type="button"
                   onClick={() => removeExercise(day, index)}
-                  className="mt-2 w-10 h-10 flex items-center justify-center bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-200 dark:hover:bg-red-800 transition"
+                  className="mt-2 w-10 h-10 flex items-center justify-center bg-red-500 dark:bg-red-900 text-red-900 dark:text-red-400 rounded-lg hover:bg-red-400 dark:hover:bg-red-800 transition"
                 >
                   <i className="fa-solid fa-xmark text-xl"></i>
                 </button>
