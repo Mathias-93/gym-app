@@ -253,7 +253,7 @@ export default function PrsAndGoals() {
         <div className="flex items-center justify-center">
           <button
             onClick={() => setShowFullData(!showFullData)}
-            className="mb-6 px-5 py-2 hover:bg-blue-600 bg-blue-500 text-white dark:bg-gray-700 dark:text-white rounded dark:hover:bg-gray-600 transition"
+            className="mb-6 px-5 py-2 hover:bg-blue-600 bg-blue-500 text-white dark:bg-blue-600 dark:text-white rounded dark:hover:bg-blue-500 transition"
           >
             {showFullData ? "Hide all PRs" : "Show all PRs"}
           </button>

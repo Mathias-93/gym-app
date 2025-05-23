@@ -232,7 +232,7 @@ export default function AddNewSplit() {
             <button
               type="button"
               onClick={() => addWorkout(day)}
-              className="mt-3 w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
+              className="mt-3 w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-500 transition"
             >
               + Add Exercise
             </button>
@@ -244,13 +244,13 @@ export default function AddNewSplit() {
           <button
             onClick={() => navigate("/dashboard")}
             type="button"
-            className="w-1/2 bg-gray-300 dark:bg-gray-700 text-gray-900 dark:text-white py-3 rounded-lg mr-2 hover:bg-gray-400 dark:hover:bg-gray-600 transition"
+            className="w-1/2 dark:bg-red-600 dark:hover:bg-red-500 bg-red-500 hover:bg-red-400 text-white font-semibold dark:text-white py-3 rounded-lg mr-2 transition"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="w-1/2 bg-green-500 text-white py-3 rounded-lg ml-2 hover:bg-green-600 transition"
+            className="w-1/2 bg-green-500 text-white py-3 rounded-lg ml-2 hover:bg-green-600 font-semibold transition dark:bg-green-600 dark:hover:bg-green-500"
             onClick={() => addCustomSplitToDb(splitName, days, workouts)}
           >
             Save Split

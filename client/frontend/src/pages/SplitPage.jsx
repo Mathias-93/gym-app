@@ -517,7 +517,7 @@ export default function SplitPage() {
             <button
               type="button"
               onClick={() => addExercise(workoutIndex)}
-              className="w-full mt-3 bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
+              className="w-full mt-3 bg-blue-500 text-white py-2 rounded-lg dark:bg-blue-600 dark:hover:bg-blue-500 hover:bg-blue-600 transition"
             >
               + Add Exercise
             </button>
@@ -528,24 +528,24 @@ export default function SplitPage() {
         <div className="w-full">
           <button
             type="button"
-            className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition"
+            className="w-full bg-blue-500 text-white py-3 rounded-lg dark:bg-blue-600 dark:hover:bg-blue-500 hover:bg-blue-600 transition"
             onClick={addWorkout}
           >
             + Add Workout
           </button>
         </div>
 
-        <div className="flex flex-col sm:flex-row justify-between gap-4 w-full">
+        <div className="flex font-semibold flex-col sm:flex-row justify-between gap-4 w-full">
           <button
             type="button"
-            className="w-full sm:w-1/2 bg-green-500 text-white py-3 rounded-lg hover:bg-green-600 transition"
+            className="w-full sm:w-1/2 bg-green-500 text-white py-3 rounded-lg dark:bg-green-600 dark:hover:bg-green-500 hover:bg-green-600 transition"
             onClick={() => handleSaveSplitToDb(editableWorkouts)}
           >
             Save Changes
           </button>
           <button
             type="button"
-            className="w-full sm:w-1/2 bg-red-500 hover:bg-red-600 text-white py-3 rounded-lg transition"
+            className="w-full font-semibold sm:w-1/2 bg-red-500 hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-500 text-white py-3 rounded-lg transition"
             onClick={() => {
               setShowModal(!showModal);
             }}

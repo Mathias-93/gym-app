@@ -345,7 +345,7 @@ export default function LogPage() {
           <div className="w-full flex flex-col">
             <button
               type="button"
-              className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition"
+              className="w-full bg-blue-500 text-white py-3 rounded-lg dark:bg-blue-600 dark:hover:bg-blue-500 hover:bg-blue-600 transition"
               onClick={() => {
                 setShowOtherModal(true);
               }}
@@ -362,7 +362,7 @@ export default function LogPage() {
             className={`w-full py-3 rounded-lg transition
               ${
                 sets.some((set) => set.length > 0)
-                  ? "bg-blue-500 text-white hover:bg-blue-600"
+                  ? "bg-blue-500 text-white hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-500"
                   : "bg-gray-300 text-gray-500 cursor-not-allowed"
               }`}
             onClick={() => {
@@ -430,7 +430,7 @@ export default function LogPage() {
                 <div className="flex items-center mt-6">
                   <button
                     onClick={() => handleRemoveSet(exerciseIndex, setIndex)}
-                    className="text-red-500 hover:text-red-700"
+                    className="text-red-500 hover:text-red-700 font-semibold"
                   >
                     Remove
                   </button>
@@ -440,7 +440,7 @@ export default function LogPage() {
 
             <button
               onClick={() => handleAddSet(exerciseIndex)}
-              className="text-sm text-blue-500 hover:text-blue-700 mt-2"
+              className="text-sm text-blue-500 hover:text-blue-700 mt-2 font-semibold"
             >
               + Add Set
             </button>
@@ -457,7 +457,7 @@ export default function LogPage() {
         <div className="w-full flex flex-col">
           <button
             type="button"
-            className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition"
+            className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition dark:bg-blue-600 dark:hover:bg-blue-500"
             onClick={() => {
               setShowModal(!showModal);
             }}

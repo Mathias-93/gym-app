@@ -1,7 +1,10 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { GlobalContext } from "../Context";
+import { useContext } from "react";
 
 export default function CompletedGoals() {
+  const { exercises } = useContext(GlobalContext);
   const location = useLocation();
   const completedGoals = location.state?.completedGoals || [];
 
@@ -27,15 +30,24 @@ export default function CompletedGoals() {
             key={index}
             className="mb-4 p-4 bg-gray-200 dark:bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-600"
           >
-            <span className="text-lg font-semibold block text-gray-800 dark:text-white">
-              {goal.goal_type === "Custom"
-                ? "📝 Custom Goal"
-                : `${goal.goal_type} Goal`}
-            </span>
+            <div className="flex flex-col">
+              <span className="text-lg font-semibold block text-gray-800 dark:text-white">
+                {goal.goal_type === "Custom"
+                  ? "📝 Custom Goal"
+                  : `${goal.goal_type} Goal for ${
+                      exercises?.find(
+                        (exercise) => goal.exercise_id === exercise.exercise_id
+                      )?.name || "unknown exercise"
+                    }`}
+              </span>
+              <span className="text-sm text-gray-600 dark:text-gray-300">
+                {goal.goal_type === "Custom"
+                  ? goal.custom_goal_description
+                  : `Target: ${goal.target_value} kg`}
+              </span>
+            </div>
             <span className="text-sm text-gray-600 dark:text-gray-300">
-              {goal.goal_type === "Custom"
-                ? goal.custom_goal_description
-                : `Target: ${goal.target_value} kg`}
+              {new Date(goal.completed_at).toLocaleDateString("en-GB")}
             </span>
           </div>
         ))}

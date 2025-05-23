@@ -188,20 +188,34 @@ export default function Goals() {
       });
 
       if (!response.ok) {
-        toast.custom(
-          (t) =>
-            t.visible && (
-              <CustomToast
-                t={t}
-                message="Server error; goal not saved"
-                type="error"
-              />
-            ),
-          { duration: 5000, position: "top-center" }
-        );
-        throw new Error(
-          `Something went wrong when saving goal ${response.statusText}`
-        );
+        if (response.status === 409) {
+          toast.custom(
+            (t) =>
+              t.visible && (
+                <CustomToast
+                  t={t}
+                  message="Could not add goal; you've already achieved this goal!"
+                  type="info"
+                />
+              ),
+            { duration: 5000, position: "top-center" }
+          );
+        } else {
+          toast.custom(
+            (t) =>
+              t.visible && (
+                <CustomToast
+                  t={t}
+                  message="Server error; goal not saved"
+                  type="error"
+                />
+              ),
+            { duration: 5000, position: "top-center" }
+          );
+        }
+
+        // Still throw to enter the catch block if needed
+        throw new Error(`Goal save failed with status: ${response.status}`);
       }
       toast.custom(
         (t) =>
@@ -211,6 +225,7 @@ export default function Goals() {
         { duration: 5000, position: "top-center" }
       );
       setRefreshGoals((prev) => prev + 1);
+      setAddingNewGoal(false);
     } catch (err) {
       console.log("Something went wrong when saving goal", err.message);
     } finally {
@@ -280,7 +295,7 @@ export default function Goals() {
         <div className="fixed inset-0 bg-black bg-opacity-50 z-40">
           <InfoModal
             message="How to calculate total volume for an exercise"
-            subMessage="Total number of repetitions x weight x number of sets. You can calculate your current volume PR for an exercise and set this to a slightly higher number for an appropriate volume goal to aim for."
+            subMessage="Total volume equals the total number of repetitions x weight x number of sets. You can calculate your current volume PR for an exercise and set this to a slightly higher number for an appropriate volume goal to aim for."
             onClick={() => setShowInfoModal(false)}
           />
         </div>
@@ -391,7 +406,7 @@ export default function Goals() {
         {!addingNewGoal && (
           <button
             onClick={() => setAddingNewGoal(true)}
-            className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition font-semibold"
+            className="w-full bg-blue-500 text-white py-3 rounded-lg dark:bg-blue-600 dark:hover:bg-blue-500 hover:bg-blue-600 transition font-semibold"
           >
             <span className="text-lg">+</span> Add new goal
           </button>
@@ -517,9 +532,8 @@ export default function Goals() {
             <button
               onClick={() => {
                 collectAndVerifyData();
-                setAddingNewGoal(false);
               }}
-              className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition font-semibold"
+              className="w-full bg-blue-500 dark:bg-blue-600 dark:hover:bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition font-semibold"
             >
               Submit goal
             </button>
@@ -530,7 +544,7 @@ export default function Goals() {
                 setSelectedExercise(null);
                 setGoalValue(0);
               }}
-              className="w-full py-3 rounded-lg font-semibold bg-red-500 hover:bg-red-600 text-white transition"
+              className="w-full py-3 rounded-lg font-semibold dark:bg-red-600 dark:hover:bg-red-500 bg-red-500 hover:bg-red-600 text-white transition"
             >
               Cancel
             </button>

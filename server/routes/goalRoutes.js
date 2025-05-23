@@ -41,7 +41,6 @@ router.post("/create_goal", async (req, res) => {
   const {
     title,
     goal_type,
-    selected_exercise_name,
     selected_exercise_id,
     target_value,
     custom_goal_description,
@@ -81,7 +80,9 @@ router.post("/create_goal", async (req, res) => {
       if (currentPrValue > target_value) {
         await pool.query("ROLLBACK");
         console.error("This goal is already achieved!");
-        return res.status(409).json({ message: `Could not save goal to db` });
+        return res
+          .status(409)
+          .json({ message: `This goal is already achieved!` });
       }
 
       const result = await pool.query(
@@ -156,7 +157,9 @@ router.post("/update_custom_goal/:goalId", async (req, res) => {
 
     await pool.query(
       `
-        UPDATE goals SET is_completed = $1 WHERE user_id = $2 AND goal_id = $3
+        UPDATE goals 
+        SET is_completed = $1, completed_at = CURRENT_TIMESTAMP 
+        WHERE user_id = $2 AND goal_id = $3
       `,
       [isCompleted, userId, goalId]
     );
