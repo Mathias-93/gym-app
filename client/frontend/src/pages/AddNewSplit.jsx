@@ -154,6 +154,7 @@ export default function AddNewSplit() {
           ),
         { duration: 5000, position: "top-center" }
       );
+      navigate("/dashboard");
     } catch (err) {
       console.error("Something went wrong:", err.message);
     } finally {

@@ -183,7 +183,9 @@ export default function PrsAndGoals() {
                       </p>
                       <p className="text-sm text-gray-500 dark:text-gray-500">
                         Achieved{" "}
-                        {new Date(matchingPr.achieved_at).toLocaleDateString()}
+                        {new Date(matchingPr.achieved_at).toLocaleDateString(
+                          "en-GB"
+                        )}
                       </p>
                     </div>
                   ) : (
@@ -197,9 +199,9 @@ export default function PrsAndGoals() {
                         </p>
                         <p className="text-sm text-gray-500 dark:text-gray-500">
                           Achieved{" "}
-                          {new Date(
-                            matchingPr.achieved_at
-                          ).toLocaleDateString()}
+                          {new Date(matchingPr.achieved_at).toLocaleDateString(
+                            "en-GB"
+                          )}
                         </p>
                       </div>
 
@@ -282,7 +284,9 @@ export default function PrsAndGoals() {
                           </p>
                           <p className="text-sm text-gray-500 dark:text-gray-500">
                             Achieved:{" "}
-                            {new Date(pr.achieved_at).toLocaleDateString()}
+                            {new Date(pr.achieved_at).toLocaleDateString(
+                              "en-GB"
+                            )}
                           </p>
                         </li>
                       ))}

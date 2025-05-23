@@ -393,7 +393,7 @@ export default function Goals() {
             onClick={() => setAddingNewGoal(true)}
             className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition font-semibold"
           >
-            + Add new goal
+            <span className="text-lg">+</span> Add new goal
           </button>
         )}
 
