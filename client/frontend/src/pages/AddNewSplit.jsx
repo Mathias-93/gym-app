@@ -8,16 +8,7 @@ import CustomToast from "../components/CustomToast";
 import { toast } from "react-hot-toast";
 
 export default function AddNewSplit() {
-  const {
-    isLoading,
-    setIsLoading,
-    exercises,
-    setExercises,
-    customUserSplit,
-    setCustomUserSplit,
-    showSpinner,
-    setShowSpinner,
-  } = useContext(GlobalContext);
+  const { setIsLoading, exercises, showSpinner } = useContext(GlobalContext);
   const [splitName, setSplitName] = useState("");
   const [days, setDays] = useState(3); // Default to 3 days
   const [workouts, setWorkouts] = useState({});

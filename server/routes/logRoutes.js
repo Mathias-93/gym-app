@@ -1,5 +1,6 @@
 import express from "express";
 import pool from "../db.js";
+import checkForMetGoals from "../utils/checkForMetGoals.js";
 
 const router = express.Router();
 
@@ -51,6 +52,8 @@ router.post("/workout/:splitId", async (req, res) => {
   }
 
   try {
+    let completedGoals = [];
+
     await pool.query("BEGIN");
 
     const check = await pool.query(
@@ -143,6 +146,16 @@ router.post("/workout/:splitId", async (req, res) => {
           `,
           [userId, exerciseId, "volume", totalVolume, logId]
         );
+
+        // Helper function for checking if a PR meets or exceeds an existing goal for that exercise
+        const completedVolumeGoals = await checkForMetGoals(
+          userId,
+          exerciseId,
+          totalVolume,
+          "Volume",
+          pool
+        );
+        completedGoals.push(...completedVolumeGoals);
       }
 
       // Write all datapoints to exercise_volume_logs
@@ -176,13 +189,24 @@ router.post("/workout/:splitId", async (req, res) => {
           `,
           [userId, exerciseId, "weight", highestWeight, logId]
         );
+
+        // Check if the weight PR hits a goal for that exercise
+        const completedWeightsGoals = await checkForMetGoals(
+          userId,
+          exerciseId,
+          highestWeight,
+          "Weight",
+          pool
+        );
+        completedGoals.push(...completedWeightsGoals);
       }
-      /*       console.log("totalVolume:", totalVolume);
-      console.log("highestRecordedVolume:", highestRecordedVolume); */
     }
 
     await pool.query("COMMIT");
-    res.status(200).json({ message: "Successfully logged exercise!" });
+    res.status(200).json({
+      message: "Successfully logged exercise!",
+      completed_goals: completedGoals,
+    });
   } catch (err) {
     await pool.query("ROLLBACK");
     console.error("Something went wrong:", err.message);

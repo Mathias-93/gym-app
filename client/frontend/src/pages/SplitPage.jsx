@@ -260,6 +260,7 @@ export default function SplitPage() {
           ),
         { duration: 5000, position: "top-center" }
       );
+      navigate("/dashboard");
     } catch (err) {
       console.error("Couldn't save to db:", err.message);
     } finally {
