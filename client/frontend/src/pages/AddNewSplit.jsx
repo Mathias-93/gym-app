@@ -15,6 +15,7 @@ export default function AddNewSplit() {
   const [searchParam, setSearchParam] = useState("");
   const [filteredExercises, setFilteredExercises] = useState([]);
   const [activeDropdown, setActiveDropdown] = useState(null); // e.g., 'Monday-0'
+  const [highlightedIndex, setHighlightedIndex] = useState(0);
 
   const dropdownref = useClickOutsideAndEscape(() => {
     setActiveDropdown(null);
@@ -35,6 +36,7 @@ export default function AddNewSplit() {
 
       setFilteredExercises(filteredData);
       setActiveDropdown(`${day}-${index}`);
+      setHighlightedIndex(0);
     } else {
       setActiveDropdown(null);
     }
@@ -43,12 +45,13 @@ export default function AddNewSplit() {
   const handleClickDropdown = (day, index, exerciseName) => {
     setWorkouts((prev) => ({
       ...prev,
-      [day]: prev[day].map(
+      [day]: prev[day]?.map(
         (exercise, i) => (i === index ? exerciseName : exercise) // Update the correct field
       ),
     }));
     setActiveDropdown(null);
     setFilteredExercises([]);
+    setHighlightedIndex(0);
   };
 
   // Remove exercise from form for specific day
@@ -153,6 +156,10 @@ export default function AddNewSplit() {
     }
   };
 
+  useEffect(() => {
+    setHighlightedIndex(0); // Reset when filtered list updates
+  }, [filteredExercises]);
+
   if (showSpinner) {
     return <Spinner />;
   }
@@ -201,6 +208,33 @@ export default function AddNewSplit() {
             {workouts[day]?.map((exercise, index) => (
               <div key={index} className="flex items-center space-x-3 relative">
                 <input
+                  onKeyDown={(e) => {
+                    if (!filteredExercises || filteredExercises.length === 0)
+                      return;
+
+                    if (e.key === "ArrowDown") {
+                      e.preventDefault();
+                      setHighlightedIndex((prev) =>
+                        prev < filteredExercises.length - 1 ? prev + 1 : 0
+                      );
+                    }
+
+                    if (e.key === "ArrowUp") {
+                      e.preventDefault();
+                      setHighlightedIndex((prev) =>
+                        prev > 0 ? prev - 1 : filteredExercises.length - 1
+                      );
+                    }
+
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      if (filteredExercises[highlightedIndex]) {
+                        const selectedName =
+                          filteredExercises[highlightedIndex].name;
+                        handleClickDropdown(day, index, selectedName);
+                      }
+                    }
+                  }}
                   type="text"
                   value={exercise}
                   onChange={(e) => {
@@ -213,6 +247,7 @@ export default function AddNewSplit() {
                 {activeDropdown === `${day}-${index}` &&
                   filteredExercises.length > 0 && (
                     <SuggestionDropdown
+                      highlightedIndex={highlightedIndex}
                       ref={dropdownref}
                       data={filteredExercises}
                       handleClickDropdown={(exerciseName) =>

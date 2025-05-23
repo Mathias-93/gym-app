@@ -35,6 +35,7 @@ export default function Goals() {
     setDropdownIsActive(false);
     setFilteredExercises(null);
   });
+  const [highlightedIndex, setHighlightedIndex] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -60,6 +61,7 @@ export default function Goals() {
 
       setFilteredExercises(filteredData);
       setDropdownIsActive(true);
+      setHighlightedIndex(0);
     } else {
       setDropdownIsActive(false);
     }
@@ -68,6 +70,7 @@ export default function Goals() {
   const handleClickDropdown = (exerciseName) => {
     setSelectedExercise(exerciseName);
     setDropdownIsActive(false);
+    setHighlightedIndex(0);
   };
 
   const collectAndVerifyData = async () => {
@@ -286,6 +289,10 @@ export default function Goals() {
     fetchUserGoals();
   }, [refreshGoals]);
 
+  useEffect(() => {
+    setHighlightedIndex(0); // Reset when filtered list updates
+  }, [filteredExercises]);
+
   const activeGoals = goalsData?.filter((goal) => !goal.is_completed);
   const completedGoals = goalsData?.filter((goal) => goal.is_completed);
 
@@ -471,11 +478,39 @@ export default function Goals() {
                       handleFilterExercises(e.target.value);
                       setSelectedExercise(e.target.value);
                     }}
+                    onKeyDown={(e) => {
+                      if (!filteredExercises || filteredExercises.length === 0)
+                        return;
+
+                      if (e.key === "ArrowDown") {
+                        e.preventDefault();
+                        setHighlightedIndex((prev) =>
+                          prev < filteredExercises.length - 1 ? prev + 1 : 0
+                        );
+                      }
+
+                      if (e.key === "ArrowUp") {
+                        e.preventDefault();
+                        setHighlightedIndex((prev) =>
+                          prev > 0 ? prev - 1 : filteredExercises.length - 1
+                        );
+                      }
+
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        if (filteredExercises[highlightedIndex]) {
+                          const selectedName =
+                            filteredExercises[highlightedIndex].name;
+                          handleClickDropdown(selectedName);
+                        }
+                      }
+                    }}
                     placeholder="Search for an exercise"
                     className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
                   />
                   {dropdownIsActive && filteredExercises?.length > 0 && (
                     <SuggestionDropdown
+                      highlightedIndex={highlightedIndex}
                       ref={dropdownref}
                       data={filteredExercises}
                       handleClickDropdown={(exerciseName) =>

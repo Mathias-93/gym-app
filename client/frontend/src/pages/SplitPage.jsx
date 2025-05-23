@@ -29,6 +29,7 @@ export default function SplitPage() {
   const [editableSplitName, setEditableSplitName] = useState("");
   const [editableWorkoutNamesAndIsEdit, setEditableWorkoutNamesAndIsEdit] =
     useState([{ name: "", isEdit: false }]);
+  const [highlightedIndex, setHighlightedIndex] = useState(0);
 
   const { splitId } = useParams();
 
@@ -59,6 +60,7 @@ export default function SplitPage() {
 
       setFilteredExercises(filteredData);
       setActiveDropdown(`${workoutIndex}-${exerciseIndex}`);
+      setHighlightedIndex(0);
     } else {
       setActiveDropdown(null);
     }
@@ -73,6 +75,7 @@ export default function SplitPage() {
 
     setActiveDropdown(null);
     setFilteredExercises([]);
+    setHighlightedIndex(0);
   };
 
   const handleChangeExercise = (exerciseIndex, workoutIndex, newName) => {
@@ -351,6 +354,10 @@ export default function SplitPage() {
     }
   }, [editableWorkouts]);
 
+  useEffect(() => {
+    setHighlightedIndex(0); // Reset when filtered list updates
+  }, [filteredExercises]);
+
   if (showSpinner || !localUserSplit) {
     return <Spinner />;
   }
@@ -465,6 +472,40 @@ export default function SplitPage() {
                     </h2>
                     <div className="flex items-center space-x-3 relative">
                       <input
+                        onKeyDown={(e) => {
+                          if (
+                            !filteredExercises ||
+                            filteredExercises.length === 0
+                          )
+                            return;
+
+                          if (e.key === "ArrowDown") {
+                            e.preventDefault();
+                            setHighlightedIndex((prev) =>
+                              prev < filteredExercises.length - 1 ? prev + 1 : 0
+                            );
+                          }
+
+                          if (e.key === "ArrowUp") {
+                            e.preventDefault();
+                            setHighlightedIndex((prev) =>
+                              prev > 0 ? prev - 1 : filteredExercises.length - 1
+                            );
+                          }
+
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            if (filteredExercises[highlightedIndex]) {
+                              const selectedName =
+                                filteredExercises[highlightedIndex].name;
+                              handleClickDropdown(
+                                exerciseIndex,
+                                workoutIndex,
+                                selectedName
+                              );
+                            }
+                          }
+                        }}
                         type="text"
                         value={exercise.name}
                         onChange={(e) => {
@@ -484,6 +525,7 @@ export default function SplitPage() {
                       {activeDropdown === `${workoutIndex}-${exerciseIndex}` &&
                         filteredExercises.length > 0 && (
                           <SuggestionDropdown
+                            highlightedIndex={highlightedIndex}
                             ref={
                               activeDropdown ===
                               `${workoutIndex}-${exerciseIndex}`
