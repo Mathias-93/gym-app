@@ -14,6 +14,7 @@ import History from "./pages/History";
 import HistorySpecific from "./pages/HistorySpecific";
 import PrsAndGoals from "./pages/PrsAndGoals";
 import Goals from "./pages/Goals";
+import CompletedGoals from "./pages/CompletedGoals";
 
 function App() {
   const {
@@ -96,6 +97,7 @@ function App() {
           <Route exact path="/dashboard" element={<Dashboard />} />
           <Route exact path="/prsandgoals" element={<PrsAndGoals />} />
           <Route exact path="/goals" element={<Goals />} />
+          <Route exact path="/completedgoals" element={<CompletedGoals />} />
           <Route exact path="/history" element={<History />} />
           <Route
             exact

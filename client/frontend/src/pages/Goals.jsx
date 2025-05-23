@@ -30,6 +30,7 @@ export default function Goals() {
   const [goalValue, setGoalValue] = useState(0);
   const [customGoal, setCustomGoal] = useState("");
   const [refreshGoals, setRefreshGoals] = useState(0);
+  const [showOtherModal, setShowOtherModal] = useState(false);
   const dropdownref = useClickOutsideAndEscape(() => {
     setDropdownIsActive(false);
     setFilteredExercises(null);
@@ -41,6 +42,12 @@ export default function Goals() {
       navigate("/login");
     }
   }, [isAuthenticated, isLoadingAuth, navigate]);
+
+  const handleViewCompletedGoals = () => {
+    navigate("/completedgoals", {
+      state: { completedGoals },
+    });
+  };
 
   const handleFilterExercises = (query) => {
     const lowerQuery = query.toLowerCase();
@@ -218,7 +225,7 @@ export default function Goals() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ is_completed: !currentCompletedStatus }),
+        body: JSON.stringify({ isCompleted: !currentCompletedStatus }),
       });
       setRefreshGoals((prev) => prev + 1);
     } catch (err) {
@@ -264,6 +271,9 @@ export default function Goals() {
     fetchUserGoals();
   }, [refreshGoals]);
 
+  const activeGoals = goalsData?.filter((goal) => !goal.is_completed);
+  const completedGoals = goalsData?.filter((goal) => goal.is_completed);
+
   return (
     <div className="w-full min-h-screen px-4 py-10 bg-gray-100 dark:bg-gray-900 flex flex-col items-center">
       {showInfoModal && (
@@ -279,27 +289,60 @@ export default function Goals() {
       <h1 className="text-3xl font-bold text-gray-900 dark:text-white mt-52 mb-10 text-center">
         🎯 Personal Goals
       </h1>
-      {goalsData?.length > 0 && (
+
+      {activeGoals?.length > 0 && (
         <div className="w-full max-w-2xl mb-10 space-y-4">
           <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
             🧭 Current Goals
           </h2>
 
-          {goalsData.map((goal, index) => (
+          {activeGoals?.map((goal, index) => (
             <div
               key={index}
               className="flex flex-col md:flex-row justify-between items-start md:items-center bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg p-4 shadow-sm"
             >
               <div className="flex flex-col text-gray-800 dark:text-white">
                 <span className="text-lg font-semibold capitalize">
-                  {goal.goal_type === "Custom"
-                    ? "📝 Custom Goal"
-                    : `${goal.goal_type} Goal for ${
-                        exercises.find(
-                          (exercise) =>
-                            exercise.exercise_id === goal.exercise_id
-                        )?.name || "unknown exercise"
-                      }`}
+                  {goal.goal_type === "Custom" ? (
+                    <div className="flex gap-4 ">
+                      📝 Custom Goal
+                      <button
+                        onClick={() => setShowOtherModal(true)}
+                        className="text-lg text-gray-500 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 transition"
+                        title={goal.is_completed ? null : "Mark as complete"}
+                      >
+                        <div className="flex gap-2">
+                          <i className="fa-regular fa-square flex items-center"></i>
+                          <span className="text-sm italic text-gray-500 dark:text-gray-400">
+                            Mark as complete
+                          </span>
+                        </div>
+                      </button>
+                      {showOtherModal && (
+                        <div className="fixed inset-0 bg-black bg-opacity-50 z-40">
+                          <CustomModal
+                            buttonColors={
+                              "bg-red-500 hover:bg-red-600 text-white"
+                            }
+                            confirmMessage={"mark this goal as completed?"}
+                            secondMessage={"This action cannot be undone."}
+                            confirmButton={"Complete"}
+                            onCancel={() => setShowOtherModal(false)}
+                            onConfirm={() => {
+                              toggleCustomGoal(goal.goal_id, goal.is_completed);
+                              setShowOtherModal(false);
+                            }}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    `${goal.goal_type} Goal for ${
+                      exercises.find(
+                        (exercise) => exercise.exercise_id === goal.exercise_id
+                      )?.name || "unknown exercise"
+                    }`
+                  )}
                 </span>
 
                 {goal.goal_type !== "Custom" ? (
@@ -312,21 +355,6 @@ export default function Goals() {
                     <span className="text-sm italic text-gray-500 dark:text-gray-400">
                       {goal.custom_goal_description}
                     </span>
-
-                    {/* Checkbox */}
-                    <button
-                      onClick={() =>
-                        toggleCustomGoal(goal.goal_id, goal.is_completed)
-                      }
-                      className="text-lg text-gray-500 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 transition"
-                      title={goal.is_completed ? null : "Mark as complete"}
-                    >
-                      {goal.is_completed ? (
-                        <i className="fa-regular fa-square-check"></i>
-                      ) : (
-                        <i className="fa-regular fa-square"></i>
-                      )}
-                    </button>
                   </div>
                 )}
               </div>
@@ -345,6 +373,7 @@ export default function Goals() {
                   />
                 </div>
               )}
+
               {!goal.is_completed && (
                 <button
                   onClick={() => setShowModal(true)}
@@ -507,6 +536,12 @@ export default function Goals() {
             </button>
           </div>
         )}
+        <button
+          onClick={handleViewCompletedGoals}
+          className="mt-4 w-full px-4 py-2 font-semibold text-gray-800 bg-gray-300 hover:bg-gray-400 dark:bg-gray-300 dark:hover:bg-gray-400 dark:text-gray-800 rounded-lg transition"
+        >
+          🏆 View Completed Goals
+        </button>
       </div>
     </div>
   );
