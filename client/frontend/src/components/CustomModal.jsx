@@ -26,7 +26,7 @@ export default function CustomModal({
             Cancel
           </button>
           <button
-            className={`w-full sm:w-1/2 rounded-lg ${buttonColors} transition`}
+            className={`w-full sm:w-1/2 rounded-lg ${buttonColors} transition cursor-pointer`}
             onClick={onConfirm}
             disabled={isLoading}
           >

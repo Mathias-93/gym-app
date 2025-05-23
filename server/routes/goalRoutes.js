@@ -131,6 +131,44 @@ router.post("/create_goal", async (req, res) => {
   }
 });
 
+// Toggle custom goal complete
+router.post("/update_custom_goal/:goalId", async (req, res) => {
+  const userId = req.user.id;
+  const goalId = req.params.goalId;
+  const { isCompleted } = req.body;
+
+  try {
+    await pool.query("BEGIN");
+    const check = await pool.query(
+      `
+        SELECT * FROM workout_logs WHERE user_id = $1
+      `,
+      [userId]
+    );
+
+    // Authorization check
+    if (check.rows.length === 0) {
+      await pool.query("ROLLBACK");
+      return res
+        .status(403)
+        .json({ message: "Unauthorized to edit goals for this user." });
+    }
+
+    await pool.query(
+      `
+        UPDATE goals SET is_completed = $1 WHERE user_id = $2 AND goal_id = $3
+      `,
+      [isCompleted, userId, goalId]
+    );
+    await pool.query("COMMIT");
+    res.status(200).json({ message: "Successfully set goal to completed!" });
+  } catch (err) {
+    await pool.query("ROLLBACK");
+    console.error(err.message);
+    res.status(400).json({ message: "Could not update goal" });
+  }
+});
+
 // Route for deleting user goals
 router.delete("/delete_goal/:goalId", async (req, res) => {
   const userId = req.user.id;
@@ -138,7 +176,7 @@ router.delete("/delete_goal/:goalId", async (req, res) => {
 
   try {
     await pool.query("BEGIN");
-    console.log("1");
+
     const check = await pool.query(
       `
         SELECT * FROM workout_logs WHERE user_id = $1
@@ -153,7 +191,6 @@ router.delete("/delete_goal/:goalId", async (req, res) => {
         .status(403)
         .json({ message: "Unauthorized to add goals to this user." });
     }
-    console.log("2");
 
     // Delete goal based on goal_id and user_id
     const result = await pool.query(
@@ -171,8 +208,8 @@ router.delete("/delete_goal/:goalId", async (req, res) => {
     res.status(200).json({
       message: "Goal successfully deleted!",
     });
-    console.log("3");
   } catch (err) {
+    await pool.query("ROLLBACK");
     console.error(err.message);
     res.status(400).json({ message: "Could not delete goal" });
   }

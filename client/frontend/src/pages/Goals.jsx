@@ -5,10 +5,20 @@ import { useClickOutsideAndEscape } from "../hooks/useClickOutsideAndEscape";
 import InfoModal from "../components/InfoModal";
 import { toast } from "react-hot-toast";
 import CustomToast from "../components/CustomToast";
+import CustomModal from "../components/CustomModal";
+import { useNavigate } from "react-router";
 
 export default function Goals() {
-  const { setIsLoading, exercises, showInfoModal, setShowInfoModal } =
-    useContext(GlobalContext);
+  const {
+    setIsLoading,
+    exercises,
+    showInfoModal,
+    setShowInfoModal,
+    showModal,
+    setShowModal,
+    isAuthenticated,
+    isLoadingAuth,
+  } = useContext(GlobalContext);
   const [goalsData, setGoalsData] = useState(null);
   const [addingNewGoal, setAddingNewGoal] = useState(false);
   const [goalTypes, setGoalTypes] = useState(["Weight", "Volume", "Custom"]);
@@ -19,10 +29,18 @@ export default function Goals() {
   const [optionalTitle, setOptionalTitle] = useState("");
   const [goalValue, setGoalValue] = useState(0);
   const [customGoal, setCustomGoal] = useState("");
+  const [refreshGoals, setRefreshGoals] = useState(0);
   const dropdownref = useClickOutsideAndEscape(() => {
     setDropdownIsActive(false);
     setFilteredExercises(null);
   });
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isAuthenticated && !isLoadingAuth) {
+      navigate("/login");
+    }
+  }, [isAuthenticated, isLoadingAuth, navigate]);
 
   const handleFilterExercises = (query) => {
     const lowerQuery = query.toLowerCase();
@@ -185,8 +203,26 @@ export default function Goals() {
           ),
         { duration: 5000, position: "top-center" }
       );
+      setRefreshGoals((prev) => prev + 1);
     } catch (err) {
       console.log("Something went wrong when saving goal", err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const toggleCustomGoal = async (goalId, currentCompletedStatus) => {
+    try {
+      setIsLoading(true);
+      await fetch(`http://localhost:1337/goals/update_custom_goal/${goalId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ is_completed: !currentCompletedStatus }),
+      });
+      setRefreshGoals((prev) => prev + 1);
+    } catch (err) {
+      console.log(err.message);
     } finally {
       setIsLoading(false);
     }
@@ -199,6 +235,7 @@ export default function Goals() {
         method: "DELETE",
         credentials: "include",
       });
+      setRefreshGoals((prev) => prev + 1);
     } catch (err) {
       console.log(err.message);
     } finally {
@@ -225,7 +262,7 @@ export default function Goals() {
 
   useEffect(() => {
     fetchUserGoals();
-  }, [goalsData]);
+  }, [refreshGoals]);
 
   return (
     <div className="w-full min-h-screen px-4 py-10 bg-gray-100 dark:bg-gray-900 flex flex-col items-center">
@@ -270,18 +307,52 @@ export default function Goals() {
                     {goal.current_value} / {goal.target_value} kg
                   </span>
                 ) : (
-                  <span className="text-sm italic text-gray-500 dark:text-gray-400 mt-1">
-                    {goal.custom_goal_description}
-                  </span>
+                  <div className="flex items-center justify-between gap-4 mt-1">
+                    {/* Description */}
+                    <span className="text-sm italic text-gray-500 dark:text-gray-400">
+                      {goal.custom_goal_description}
+                    </span>
+
+                    {/* Checkbox */}
+                    <button
+                      onClick={() =>
+                        toggleCustomGoal(goal.goal_id, goal.is_completed)
+                      }
+                      className="text-lg text-gray-500 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 transition"
+                      title={goal.is_completed ? null : "Mark as complete"}
+                    >
+                      {goal.is_completed ? (
+                        <i className="fa-regular fa-square-check"></i>
+                      ) : (
+                        <i className="fa-regular fa-square"></i>
+                      )}
+                    </button>
+                  </div>
                 )}
               </div>
-
-              <button
-                onClick={() => deleteUserGoal(goal.goal_id)}
-                className="mt-3 md:mt-0 inline-block px-4 py-2 bg-red-500 hover:bg-red-600 text-white text-sm rounded-md transition"
-              >
-                Delete
-              </button>
+              {showModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 z-40">
+                  <CustomModal
+                    buttonColors={"bg-red-500 hover:bg-red-600 text-white"}
+                    confirmMessage={"delete this goal?"}
+                    secondMessage={"This action cannot be undone."}
+                    confirmButton={"Delete"}
+                    onCancel={() => setShowModal(false)}
+                    onConfirm={() => {
+                      deleteUserGoal(goal.goal_id);
+                      setShowModal(false);
+                    }}
+                  />
+                </div>
+              )}
+              {!goal.is_completed && (
+                <button
+                  onClick={() => setShowModal(true)}
+                  className="mt-3 md:mt-0 inline-block px-4 py-2 bg-red-500 hover:bg-red-600 text-white text-sm rounded-md transition"
+                >
+                  Delete
+                </button>
+              )}
             </div>
           ))}
         </div>
@@ -424,7 +495,12 @@ export default function Goals() {
               Submit goal
             </button>
             <button
-              onClick={() => setAddingNewGoal(false)}
+              onClick={() => {
+                setAddingNewGoal(false);
+                setSelectedGoalType(null);
+                setSelectedExercise(null);
+                setGoalValue(0);
+              }}
               className="w-full py-3 rounded-lg font-semibold bg-red-500 hover:bg-red-600 text-white transition"
             >
               Cancel
