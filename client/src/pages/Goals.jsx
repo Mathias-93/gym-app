@@ -36,6 +36,7 @@ export default function Goals() {
     setFilteredExercises(null);
   });
   const [highlightedIndex, setHighlightedIndex] = useState(0);
+  const [selectedGoal, setSelectedGoal] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -246,6 +247,17 @@ export default function Goals() {
         body: JSON.stringify({ isCompleted: !currentCompletedStatus }),
       });
       setRefreshGoals((prev) => prev + 1);
+      toast.custom(
+        (t) =>
+          t.visible && (
+            <CustomToast
+              t={t}
+              message="Goal completed, solid effort 💪"
+              type="success"
+            />
+          ),
+        { duration: 5000, position: "top-center" }
+      );
     } catch (err) {
       console.log(err.message);
     } finally {
@@ -256,13 +268,37 @@ export default function Goals() {
   const deleteUserGoal = async (goalId) => {
     try {
       setIsLoading(true);
-      await fetch(`http://localhost:1337/goals/delete_goal/${goalId}`, {
-        method: "DELETE",
-        credentials: "include",
-      });
+      const response = await fetch(
+        `http://localhost:1337/goals/delete_goal/${goalId}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
       setRefreshGoals((prev) => prev + 1);
+      if (!response.ok) {
+        throw new Error();
+      }
+      toast.custom(
+        (t) =>
+          t.visible && (
+            <CustomToast t={t} message="Goal deleted!" type="success" />
+          ),
+        { duration: 5000, position: "top-center" }
+      );
     } catch (err) {
       console.log(err.message);
+      toast.custom(
+        (t) =>
+          t.visible && (
+            <CustomToast
+              t={t}
+              message="Something went wrong, could not deleted goal"
+              type="error"
+            />
+          ),
+        { duration: 5000, position: "top-center" }
+      );
     } finally {
       setIsLoading(false);
     }
@@ -334,15 +370,19 @@ export default function Goals() {
               className="flex flex-col md:flex-row justify-between items-start md:items-center bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg p-4 shadow-sm"
             >
               <div className="flex flex-col text-gray-800 dark:text-white">
-                <span className="text-lg font-semibold capitalize">
+                <span className="text-lg font-semibold">
                   {goal.goal_type === "Custom" ? (
                     <div className="flex gap-4 ">
                       📝 Custom Goal
                       <button
-                        onClick={() => setShowOtherModal(true)}
+                        onClick={() => {
+                          setSelectedGoal(goal);
+                          setShowOtherModal(true);
+                        }}
                         className="text-lg text-gray-500 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-400 transition"
                         title={goal.is_completed ? null : "Mark as complete"}
                       >
+                        {}
                         <div className="flex gap-2">
                           <i className="fa-regular fa-square flex items-center"></i>
                           <span className="text-sm italic text-gray-500 dark:text-gray-400">
@@ -354,15 +394,19 @@ export default function Goals() {
                         <div className="fixed inset-0 bg-black bg-opacity-50 z-40">
                           <CustomModal
                             buttonColors={
-                              "bg-red-500 hover:bg-red-600 text-white"
+                              "bg-blue-500 text-white dark:bg-blue-600 dark:hover:bg-blue-500 hover:bg-blue-600 transition"
                             }
                             confirmMessage={"mark this goal as completed?"}
                             secondMessage={"This action cannot be undone."}
                             confirmButton={"Complete"}
                             onCancel={() => setShowOtherModal(false)}
                             onConfirm={() => {
-                              toggleCustomGoal(goal.goal_id, goal.is_completed);
+                              toggleCustomGoal(
+                                selectedGoal.goal_id,
+                                selectedGoal.is_completed
+                              );
                               setShowOtherModal(false);
+                              setSelectedGoal(null);
                             }}
                           />
                         </div>
@@ -393,14 +437,15 @@ export default function Goals() {
               {showModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 z-40">
                   <CustomModal
-                    buttonColors={"bg-red-500 hover:bg-red-600 text-white"}
+                    buttonColors={"bg-red-500 hover:bg-red-600 text-white n"}
                     confirmMessage={"delete this goal?"}
                     secondMessage={"This action cannot be undone."}
                     confirmButton={"Delete"}
                     onCancel={() => setShowModal(false)}
                     onConfirm={() => {
-                      deleteUserGoal(goal.goal_id);
+                      deleteUserGoal(selectedGoal.goal_id);
                       setShowModal(false);
+                      setSelectedGoal(null);
                     }}
                   />
                 </div>
@@ -408,7 +453,10 @@ export default function Goals() {
 
               {!goal.is_completed && (
                 <button
-                  onClick={() => setShowModal(true)}
+                  onClick={() => {
+                    setSelectedGoal(goal);
+                    setShowModal(true);
+                  }}
                   className="mt-3 md:mt-0 inline-block px-4 py-2 bg-red-500 hover:bg-red-600 text-white text-sm rounded-md transition"
                 >
                   Delete

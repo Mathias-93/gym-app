@@ -13,7 +13,7 @@ export default function CompletedGoals() {
     return (
       <div className="w-full min-h-screen px-4 py-10 bg-gray-100 dark:bg-gray-900 flex flex-col items-center">
         <p className="text-center text-gray-500 mt-48">
-          No completed goals available.
+          No completed goals yet.
         </p>
       </div>
     );
