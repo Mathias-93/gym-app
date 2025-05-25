@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { GlobalContext } from "../Context";
 import { Link, useNavigate } from "react-router";
 import DashboardCard from "../components/DashboardCard";

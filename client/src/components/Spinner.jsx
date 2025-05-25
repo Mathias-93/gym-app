@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function Spinner() {
   return (
     <div className="w-full min-h-screen p-6 bg-gray-100 dark:bg-gray-900 pt-[250px] flex justify-center items-center">

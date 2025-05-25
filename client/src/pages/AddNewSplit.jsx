@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { GlobalContext } from "../Context";
 import SuggestionDropdown from "../components/SuggestionDropdown";
 import { useClickOutsideAndEscape } from "../hooks/useClickOutsideAndEscape";

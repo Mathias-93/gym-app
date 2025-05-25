@@ -1,4 +1,4 @@
-import React, { forwardRef } from "react";
+import { forwardRef } from "react";
 
 const SuggestionDropdown = forwardRef(
   ({ data, handleClickDropdown, highlightedIndex }, ref) => {

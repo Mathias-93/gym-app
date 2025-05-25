@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { GlobalContext } from "../Context";
 import useTheme from "../hooks/useTheme";

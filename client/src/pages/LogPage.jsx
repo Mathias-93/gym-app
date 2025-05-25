@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { GlobalContext } from "../Context";
 import Spinner from "../components/Spinner";
 import { useNavigate, useParams } from "react-router";
