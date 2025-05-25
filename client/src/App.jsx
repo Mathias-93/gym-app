@@ -1,3 +1,4 @@
+import React from "react";
 import { useContext, useEffect, useState } from "react";
 import Login from "./pages/Login";
 import LandingPage from "./pages/LandingPage";

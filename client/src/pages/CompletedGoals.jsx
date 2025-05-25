@@ -1,3 +1,4 @@
+import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { GlobalContext } from "../Context";
 import { useContext } from "react";
