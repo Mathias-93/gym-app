@@ -302,11 +302,7 @@ export default function SplitPage() {
       toast.custom(
         (t) =>
           t.visible && (
-            <CustomToast
-              t={t}
-              message="Split successfully deleted!"
-              type="success"
-            />
+            <CustomToast t={t} message="Split deleted!" type="success" />
           ),
         { duration: 5000, position: "top-center" }
       );

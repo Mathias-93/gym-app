@@ -147,7 +147,9 @@ export default function History() {
                     {dataEntry.workout_name}
                   </span>
                   <span className="text-sm text-gray-500 dark:text-gray-400">
-                    {new Date(dataEntry.completed_at).toLocaleDateString()}
+                    {new Date(dataEntry.completed_at).toLocaleDateString(
+                      "en-GB"
+                    )}
                   </span>
                 </div>
               </button>
@@ -179,7 +181,9 @@ export default function History() {
                     {dataEntry.workout_name}
                   </span>
                   <span className="text-sm text-gray-500 dark:text-gray-400">
-                    {new Date(dataEntry.completed_at).toLocaleDateString()}
+                    {new Date(dataEntry.completed_at).toLocaleDateString(
+                      "en-GB"
+                    )}
                   </span>
                 </div>
               </button>

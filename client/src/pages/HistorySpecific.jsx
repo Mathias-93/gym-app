@@ -62,34 +62,36 @@ export default function HistorySpecific() {
     <div className="w-full min-h-screen p-6 bg-gray-100 dark:bg-gray-900 pt-[200px] flex flex-col gap-10 items-center">
       {formattedLogData && (
         <div className="w-full max-w-2xl space-y-6">
-          {Object.entries(formattedLogData).map(([exerciseName, sets]) => (
-            <div
-              key={exerciseName}
-              className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow border border-gray-300 dark:border-gray-700"
-            >
-              <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">
-                {exerciseName}
-              </h2>
+          {Object.entries(formattedLogData).map(
+            ([exerciseName, sets, completed_at]) => (
+              <div
+                key={exerciseName}
+                className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow border border-gray-300 dark:border-gray-700"
+              >
+                <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">
+                  {exerciseName}
+                </h2>
 
-              <ul className="space-y-2">
-                {sets.map((set, index) => (
-                  <li
-                    key={index}
-                    className="text-gray-700 dark:text-gray-200 text-md"
-                  >
-                    Set {set.set_number}: {set.reps} reps @ {set.weight} kg
-                  </li>
-                ))}
-              </ul>
+                <ul className="space-y-2">
+                  {sets.map((set, index) => (
+                    <li
+                      key={index}
+                      className="text-gray-700 dark:text-gray-200 text-md"
+                    >
+                      Set {set.set_number}: {set.reps} reps @ {set.weight} kg
+                    </li>
+                  ))}
+                </ul>
 
-              {/* Show notes once, after all sets */}
-              {sets[0]?.notes && (
-                <div className="text-md text-gray-500 dark:text-gray-400 mt-4 italic">
-                  Notes: {sets[0].notes}
-                </div>
-              )}
-            </div>
-          ))}
+                {/* Show notes once, after all sets */}
+                {sets[0]?.notes && (
+                  <div className="text-md text-gray-500 dark:text-gray-400 mt-4 italic">
+                    Notes: {sets[0].notes}
+                  </div>
+                )}
+              </div>
+            )
+          )}
         </div>
       )}
     </div>
