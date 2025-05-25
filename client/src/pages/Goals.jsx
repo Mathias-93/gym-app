@@ -276,6 +276,16 @@ export default function Goals() {
         credentials: "include",
       });
 
+      if (!response.ok) {
+        if (response.status === 403) {
+          console.warn("User is not authorized to view goals.");
+          setGoalsData(null);
+          return;
+        }
+
+        throw new Error("Failed to fetch goals");
+      }
+
       const data = await response.json();
       setGoalsData(data);
     } catch (err) {

@@ -21,6 +21,7 @@ export default function PrsAndGoals() {
   const [showFullData, setShowFullData] = useState(false);
   const [volumePrs, setVolumePrs] = useState(null);
   const [showVolumeSets, setShowVolumeSets] = useState(false);
+  const [highlightedIndex, setHighlightedIndex] = useState(0);
 
   const handleExercisesFilter = (query, type) => {
     const lowerQuery = query.toLowerCase();
@@ -33,6 +34,7 @@ export default function PrsAndGoals() {
 
       setFilteredExercises(filteredData);
       setActiveDropdown(type);
+      setHighlightedIndex(0);
     } else {
       setActiveDropdown(null);
     }
@@ -46,6 +48,7 @@ export default function PrsAndGoals() {
     setActiveDropdown(null);
     setFilteredExercises([]);
     setShowVolumeSets(false);
+    setHighlightedIndex(0);
   };
 
   const fetchAndShowVolumeSets = async (exerciseId) => {
@@ -95,6 +98,10 @@ export default function PrsAndGoals() {
   useEffect(() => {
     fetchUserPrs();
   }, []);
+
+  useEffect(() => {
+    setHighlightedIndex(0); // Reset when filtered list updates
+  }, [filteredExercises]);
 
   useEffect(() => {
     if (temporary && exercises?.length > 0) {
@@ -149,6 +156,33 @@ export default function PrsAndGoals() {
                 <input
                   type="text"
                   value={selectedExercises[type] || ""}
+                  onKeyDown={(e) => {
+                    if (!filteredExercises || filteredExercises.length === 0)
+                      return;
+
+                    if (e.key === "ArrowDown") {
+                      e.preventDefault();
+                      setHighlightedIndex((prev) =>
+                        prev < filteredExercises.length - 1 ? prev + 1 : 0
+                      );
+                    }
+
+                    if (e.key === "ArrowUp") {
+                      e.preventDefault();
+                      setHighlightedIndex((prev) =>
+                        prev > 0 ? prev - 1 : filteredExercises.length - 1
+                      );
+                    }
+
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      if (filteredExercises[highlightedIndex]) {
+                        const selectedName =
+                          filteredExercises[highlightedIndex].name;
+                        handleClickDropdown(selectedName, type);
+                      }
+                    }
+                  }}
                   onChange={(e) => {
                     handleExercisesFilter(e.target.value, type);
                     setSelectedExercises((prev) => ({
@@ -163,6 +197,7 @@ export default function PrsAndGoals() {
                 {activeDropdown === type && filteredExercises?.length > 0 && (
                   <SuggestionDropdown
                     ref={dropdownref}
+                    highlightedIndex={highlightedIndex}
                     data={filteredExercises}
                     handleClickDropdown={(exerciseName) =>
                       handleClickDropdown(exerciseName, type)
@@ -252,13 +287,15 @@ export default function PrsAndGoals() {
       <div className="mt-6 w-full max-w-4xl flex flex-col">
         <div className="flex items-center justify-center">
           <button
+            disabled={prsData?.length === 0}
             onClick={() => setShowFullData(!showFullData)}
-            className="mb-6 px-5 py-2 hover:bg-blue-600 bg-blue-500 text-white dark:bg-blue-600 dark:text-white rounded dark:hover:bg-blue-500 transition"
+            className="mb-6 px-5 py-2 dark:disabled:bg-blue-300 disabled:bg-blue-200 hover:bg-blue-600 bg-blue-500 text-white dark:bg-blue-600 dark:text-white rounded dark:hover:bg-blue-500 transition"
           >
             {showFullData ? "Hide all PRs" : "Show all PRs"}
           </button>
         </div>
-        <div className="flex flex-col md:flex-row gap-5">
+
+        <div className="flex flex-col md:flex-row gap-5 justify-center items-center mt-5">
           {showFullData &&
             prTypes.map((type, index) => {
               return (

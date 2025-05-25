@@ -27,17 +27,6 @@ router.post("/volume_pr_data", async (req, res) => {
   const { exerciseId } = req.body;
 
   try {
-    const check = await pool.query(
-      `
-        SELECT * FROM workout_logs WHERE user_id = $1
-      `,
-      [userId]
-    );
-
-    if (check.rows.length === 0) {
-      return res.status(403).json({ message: "Unauthorized to see PR data." });
-    }
-
     const prData = await pool.query(
       `
         SELECT exercise_name, reps, weight FROM workout_log_exercises

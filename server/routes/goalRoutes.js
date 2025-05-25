@@ -8,19 +8,6 @@ router.get("/user_goals", async (req, res) => {
   const userId = req.user.id;
 
   try {
-    const check = await pool.query(
-      `
-        SELECT * FROM workout_logs WHERE user_id = $1
-      `,
-      [userId]
-    );
-
-    if (check.rows.length === 0) {
-      return res
-        .status(403)
-        .json({ message: "Unauthorized to see goals data." });
-    }
-
     const userGoals = await pool.query(
       `
             SELECT exercise_id, goal_type, goal_id, target_value, current_value, is_completed, created_at, completed_at, custom_goal_description FROM goals
@@ -48,20 +35,6 @@ router.post("/create_goal", async (req, res) => {
 
   try {
     await pool.query("BEGIN");
-    const check = await pool.query(
-      `
-        SELECT * FROM workout_logs WHERE user_id = $1
-      `,
-      [userId]
-    );
-
-    // Authorization check
-    if (check.rows.length === 0) {
-      await pool.query("ROLLBACK");
-      return res
-        .status(403)
-        .json({ message: "Unauthorized to add goals to this user." });
-    }
 
     let goalToReturn;
 
@@ -140,20 +113,6 @@ router.post("/update_custom_goal/:goalId", async (req, res) => {
 
   try {
     await pool.query("BEGIN");
-    const check = await pool.query(
-      `
-        SELECT * FROM workout_logs WHERE user_id = $1
-      `,
-      [userId]
-    );
-
-    // Authorization check
-    if (check.rows.length === 0) {
-      await pool.query("ROLLBACK");
-      return res
-        .status(403)
-        .json({ message: "Unauthorized to edit goals for this user." });
-    }
 
     await pool.query(
       `
@@ -179,21 +138,6 @@ router.delete("/delete_goal/:goalId", async (req, res) => {
 
   try {
     await pool.query("BEGIN");
-
-    const check = await pool.query(
-      `
-        SELECT * FROM workout_logs WHERE user_id = $1
-      `,
-      [userId]
-    );
-
-    // Authorization check
-    if (check.rows.length === 0) {
-      await pool.query("ROLLBACK");
-      return res
-        .status(403)
-        .json({ message: "Unauthorized to add goals to this user." });
-    }
 
     // Delete goal based on goal_id and user_id
     const result = await pool.query(
