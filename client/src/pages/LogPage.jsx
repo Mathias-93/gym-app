@@ -5,6 +5,7 @@ import { useNavigate, useParams } from "react-router";
 import CustomModal from "../components/CustomModal";
 import { toast } from "react-hot-toast";
 import CustomToast from "../components/CustomToast";
+import { BASE_URL } from "../api/config";
 
 export default function LogPage() {
   const {
@@ -70,24 +71,21 @@ export default function LogPage() {
     // send to backend...
     try {
       setIsLoading(true);
-      const response = await fetch(
-        `http://localhost:1337/log/workout/${splitId}`,
-        {
-          method: "POST",
-          headers: { "Content-type": "application/json" },
-          body: JSON.stringify({
-            workoutId: logData.workoutId,
-            setsData: logData.sets,
-            notes: logData.notes,
-            workoutName: selectedWorkout.name,
-            exerciseNamesList: selectedWorkout.exercises.map((ex) => ex.name),
-            exerciseIdsList: selectedWorkout.exercises.map(
-              (ex) => ex.exercise_id
-            ),
-          }),
-          credentials: "include",
-        }
-      );
+      const response = await fetch(`${BASE_URL}/log/workout/${splitId}`, {
+        method: "POST",
+        headers: { "Content-type": "application/json" },
+        body: JSON.stringify({
+          workoutId: logData.workoutId,
+          setsData: logData.sets,
+          notes: logData.notes,
+          workoutName: selectedWorkout.name,
+          exerciseNamesList: selectedWorkout.exercises.map((ex) => ex.name),
+          exerciseIdsList: selectedWorkout.exercises.map(
+            (ex) => ex.exercise_id
+          ),
+        }),
+        credentials: "include",
+      });
 
       if (!response.ok) {
         throw new Error(`Something went wrong: ${response.statusText}`);
@@ -127,14 +125,11 @@ export default function LogPage() {
 
   const handleFetchPreviousWorkoutData = async (workoutId) => {
     try {
-      const response = await fetch(
-        `http://localhost:1337/log/previous/${workoutId}`,
-        {
-          method: "GET",
-          headers: { "Content-type": "application/json" },
-          credentials: "include",
-        }
-      );
+      const response = await fetch(`${BASE_URL}/log/previous/${workoutId}`, {
+        method: "GET",
+        headers: { "Content-type": "application/json" },
+        credentials: "include",
+      });
       if (!response.ok) {
         throw new Error(
           `Somethig went wrong fetching the previous workout data:${response.statusText}`

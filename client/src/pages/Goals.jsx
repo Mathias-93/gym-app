@@ -7,6 +7,7 @@ import { toast } from "react-hot-toast";
 import CustomToast from "../components/CustomToast";
 import CustomModal from "../components/CustomModal";
 import { useNavigate } from "react-router";
+import { BASE_URL } from "../api/config";
 
 export default function Goals() {
   const {
@@ -184,7 +185,7 @@ export default function Goals() {
     // Call POST function to save to backend
     try {
       setIsLoading(true);
-      const response = await fetch("http://localhost:1337/goals/create_goal", {
+      const response = await fetch(`${BASE_URL}/goals/create_goal`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(goalFormData),
@@ -240,7 +241,7 @@ export default function Goals() {
   const toggleCustomGoal = async (goalId, currentCompletedStatus) => {
     try {
       setIsLoading(true);
-      await fetch(`http://localhost:1337/goals/update_custom_goal/${goalId}`, {
+      await fetch(`${BASE_URL}/goals/update_custom_goal/${goalId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -268,13 +269,10 @@ export default function Goals() {
   const deleteUserGoal = async (goalId) => {
     try {
       setIsLoading(true);
-      const response = await fetch(
-        `http://localhost:1337/goals/delete_goal/${goalId}`,
-        {
-          method: "DELETE",
-          credentials: "include",
-        }
-      );
+      const response = await fetch(`${BASE_URL}/goals/delete_goal/${goalId}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
       setRefreshGoals((prev) => prev + 1);
       if (!response.ok) {
         throw new Error();
@@ -307,7 +305,7 @@ export default function Goals() {
   const fetchUserGoals = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch("http://localhost:1337/goals/user_goals", {
+      const response = await fetch(`${BASE_URL}/goals/user_goals`, {
         method: "GET",
         credentials: "include",
       });

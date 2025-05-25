@@ -1,4 +1,5 @@
 import { createContext, useEffect, useState } from "react";
+import { BASE_URL } from "../src/api/config";
 
 export const GlobalContext = createContext(null);
 
@@ -23,13 +24,10 @@ export default function GlobalState({ children }) {
   const fetchUserSplit = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch(
-        "http://localhost:1337/plan/workout_splits",
-        {
-          method: "GET",
-          credentials: "include",
-        }
-      );
+      const response = await fetch(`${BASE_URL}/plan/workout_splits`, {
+        method: "GET",
+        credentials: "include",
+      });
       if (response.ok) {
         const data = await response.json();
         // console.log("Fetched data:", data); // Log the fetched data
@@ -47,18 +45,13 @@ export default function GlobalState({ children }) {
   const fetchWorkouts = async (splitId) => {
     try {
       setIsLoading(true);
-      const res = await fetch(
-        `http://localhost:1337/plan/split/${splitId}/full`,
-        {
-          method: "GET",
-          credentials: "include",
-        }
-      );
+      const res = await fetch(`${BASE_URL}/plan/split/${splitId}/full`, {
+        method: "GET",
+        credentials: "include",
+      });
 
       if (res.ok) {
         const data = await res.json();
-        // console.log("Fetched workouts:", data);
-        // console.log("Cloned workouts:", structuredClone(data));
         setWorkouts(data);
         setEditableWorkouts(structuredClone(data));
       } else {

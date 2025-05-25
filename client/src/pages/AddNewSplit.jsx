@@ -6,6 +6,7 @@ import Spinner from "../components/Spinner";
 import { useNavigate } from "react-router";
 import CustomToast from "../components/CustomToast";
 import { toast } from "react-hot-toast";
+import { BASE_URL } from "../api/config";
 
 export default function AddNewSplit() {
   const { setIsLoading, exercises, showSpinner } = useContext(GlobalContext);
@@ -123,19 +124,16 @@ export default function AddNewSplit() {
     }
     try {
       setIsLoading(true);
-      const response = await fetch(
-        "http://localhost:1337/plan/save_custom_split",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            splitName: splitName,
-            numberOfDays: days,
-            workouts: workouts,
-          }),
-          credentials: "include",
-        }
-      );
+      const response = await fetch(`${BASE_URL}/plan/save_custom_split`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          splitName: splitName,
+          numberOfDays: days,
+          workouts: workouts,
+        }),
+        credentials: "include",
+      });
       if (!response.ok) {
         throw new Error(`Something went wrong: ${response.statusText}`);
       }

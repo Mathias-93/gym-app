@@ -105,36 +105,3 @@ export default function Dashboard() {
     </div>
   );
 }
-
-{
-  /*  <DashboardCard>
-          <h2 className="text-lg font-semibold dark:text-gray-100">
-            Previous Workouts
-          </h2>
-          <ul className="space-y-2 text-gray-600 dark:text-gray-300">
-            <li>
-              <button
-                onClick={() => navigate("/workout/history/1")}
-                className="text-blue-600 dark:text-blue-400 hover:underline"
-              >
-                Last Workout
-              </button>
-            </li>
-          </ul>
-          <button
-            onClick={() => navigate("/workout/history")}
-            className="mt-4 text-sm text-gray-500 hover:underline"
-          >
-            View full history →
-          </button>
-        </DashboardCard> */
-}
-
-{
-  /* <DashboardCard>
-          <h2 className="text-lg font-semibold dark:text-gray-100">
-            Weekly Summary
-          </h2>
-          <p className="text-gray-600 dark:text-gray-300">Coming soon...</p>
-        </DashboardCard> */
-}

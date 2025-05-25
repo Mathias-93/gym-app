@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import Spinner from "../components/Spinner";
 import { GlobalContext } from "../Context";
+import { BASE_URL } from "../api/config";
 
 export default function HistorySpecific() {
   const { showSpinner, setIsLoading } = useContext(GlobalContext);
@@ -27,7 +28,7 @@ export default function HistorySpecific() {
     try {
       setIsLoading(true);
       const response = await fetch(
-        `http://localhost:1337/log/log-history-specific/${logId}`,
+        `${BASE_URL}/log/log-history-specific/${logId}`,
         {
           method: "GET",
           credentials: "include",

@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { GlobalContext } from "../Context";
 import Spinner from "../components/Spinner";
 import { useNavigate, Link } from "react-router";
+import { BASE_URL } from "../api/config";
 
 export default function History() {
   const {
@@ -36,7 +37,7 @@ export default function History() {
     try {
       setIsLoading(true);
       const response = await fetch(
-        `http://localhost:1337/log/history/${selectedSplit.split_id}`,
+        `${BASE_URL}/log/history/${selectedSplit.split_id}`,
         {
           method: "GET",
           credentials: "include",
@@ -64,13 +65,10 @@ export default function History() {
   const handleFetchCompleteLogHistory = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch(
-        `http://localhost:1337/log/history/fullHistory`,
-        {
-          method: "GET",
-          credentials: "include",
-        }
-      );
+      const response = await fetch(`${BASE_URL}/log/history/fullHistory`, {
+        method: "GET",
+        credentials: "include",
+      });
 
       if (!response.ok) {
         throw new Error(`Something went wrong: ${response.statusText}`);

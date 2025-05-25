@@ -15,6 +15,7 @@ import HistorySpecific from "./pages/HistorySpecific";
 import PrsAndGoals from "./pages/PrsAndGoals";
 import Goals from "./pages/Goals";
 import CompletedGoals from "./pages/CompletedGoals";
+import { BASE_URL } from "../src/api/config";
 
 function App() {
   const {
@@ -35,7 +36,7 @@ function App() {
   const checkAuth = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch("http://localhost:1337/auth/me", {
+      const response = await fetch(`${BASE_URL}/auth/me`, {
         method: "GET",
         credentials: "include",
       });
@@ -59,7 +60,7 @@ function App() {
   const fetchExercises = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch("http://localhost:1337/exercises", {
+      const response = await fetch(`${BASE_URL}/exercises`, {
         method: "GET",
         credentials: "include",
       });

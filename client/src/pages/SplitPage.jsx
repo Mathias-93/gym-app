@@ -7,6 +7,7 @@ import { toast } from "react-hot-toast";
 import CustomToast from "../components/CustomToast";
 import CustomModal from "../components/CustomModal";
 import Spinner from "../components/Spinner";
+import { BASE_URL } from "../api/config";
 
 export default function SplitPage() {
   const {
@@ -230,19 +231,16 @@ export default function SplitPage() {
 
     try {
       setIsLoading(true);
-      const response = await fetch(
-        `http://localhost:1337/plan/update_split/${splitId}`,
-        {
-          method: "PUT",
-          headers: { "Content-type": "application/json" },
-          body: JSON.stringify({
-            name: editableSplitName,
-            workouts: editableWorkouts,
-            numberOfDays: editableWorkouts.length,
-          }),
-          credentials: "include",
-        }
-      );
+      const response = await fetch(`${BASE_URL}/plan/update_split/${splitId}`, {
+        method: "PUT",
+        headers: { "Content-type": "application/json" },
+        body: JSON.stringify({
+          name: editableSplitName,
+          workouts: editableWorkouts,
+          numberOfDays: editableWorkouts.length,
+        }),
+        credentials: "include",
+      });
 
       if (!response.ok) {
         toast.custom(
@@ -274,14 +272,11 @@ export default function SplitPage() {
   const handleDeleteSplit = async (splitId) => {
     try {
       setIsLoading(true);
-      const response = await fetch(
-        `http://localhost:1337/plan/delete_split/${splitId}`,
-        {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-        }
-      );
+      const response = await fetch(`${BASE_URL}/plan/delete_split/${splitId}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
 
       if (!response.ok) {
         toast.custom(

@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { GlobalContext } from "../Context";
 import Spinner from "../components/Spinner";
+import { BASE_URL } from "../api/config";
 
 export default function Login() {
   const [isRegistered, setIsRegistered] = useState(true);
@@ -17,7 +18,7 @@ export default function Login() {
 
   const handleLoginUser = async () => {
     try {
-      const response = await fetch("http://localhost:1337/auth/login", {
+      const response = await fetch(`${BASE_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -47,7 +48,7 @@ export default function Login() {
 
   const handleRegisterUser = async () => {
     try {
-      const response = await fetch("http://localhost:1337/auth/register", {
+      const response = await fetch(`${BASE_URL}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

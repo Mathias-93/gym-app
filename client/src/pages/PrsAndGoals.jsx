@@ -5,6 +5,7 @@ import { GlobalContext } from "../Context";
 import Spinner from "../components/Spinner";
 import SuggestionDropdown from "../components/SuggestionDropdown";
 import { useClickOutsideAndEscape } from "../hooks/useClickOutsideAndEscape";
+import { BASE_URL } from "../api/config";
 
 export default function PrsAndGoals() {
   const { setIsLoading, showSpinner, exercises } = useContext(GlobalContext);
@@ -55,7 +56,7 @@ export default function PrsAndGoals() {
     // Basically want to fetch all exercises and their set amount, reps and weight associated with a specific log id
     try {
       setIsLoading(true);
-      const response = await fetch("http://localhost:1337/prs/volume_pr_data", {
+      const response = await fetch(`${BASE_URL}/prs/volume_pr_data`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -80,7 +81,7 @@ export default function PrsAndGoals() {
   const fetchUserPrs = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch("http://localhost:1337/prs/user_prs", {
+      const response = await fetch(`${BASE_URL}/prs/user_prs`, {
         method: "GET",
         credentials: "include",
       });

@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { GlobalContext } from "../Context";
 import useTheme from "../hooks/useTheme";
 import { SunIcon, MoonIcon } from "@heroicons/react/24/outline";
+import { BASE_URL } from "../api/config";
 
 export default function NavHeader() {
   const {
@@ -19,7 +20,7 @@ export default function NavHeader() {
 
   const logoutUser = async () => {
     try {
-      const response = await fetch("http://localhost:1337/auth/logout", {
+      const response = await fetch(`${BASE_URL}/auth/logout`, {
         method: "POST",
         credentials: "include",
       });
