@@ -15,12 +15,17 @@ const PORT = process.env.PORT || 1337;
 const app = express();
 
 app.use(cookieParser());
-app.use(
-  cors({
-    origin: process.env.CORS_ORIGIN?.split(",") || [
+const allowedOrigins = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.split(",")
+  : [
       "http://localhost:5173",
       "http://127.0.0.1:5173",
-    ],
+      "https://thebrochives.netlify.app",
+    ];
+
+app.use(
+  cors({
+    origin: allowedOrigins,
     credentials: true,
   })
 );
