@@ -7,6 +7,15 @@ import authenticateToken from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
+router.get("/test-db", async (req, res) => {
+  try {
+    const result = await pool.query("SELECT * FROM users LIMIT 1");
+    res.json({ success: true, user: result.rows[0] || null });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 router.post("/register", async (req, res) => {
   const { username, email, password } = req.body;
 
